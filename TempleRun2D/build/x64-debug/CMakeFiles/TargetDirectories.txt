@@ -1,0 +1,5 @@
+C:/522H0088_HoangVien/DVC/Personal Projects/2D Games/TempleRun2D/out/build/x64-debug/CMakeFiles/edit_cache.dir
+C:/522H0088_HoangVien/DVC/Personal Projects/2D Games/TempleRun2D/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
+C:/522H0088_HoangVien/DVC/Personal Projects/2D Games/TempleRun2D/out/build/x64-debug/TempleRun2D/CMakeFiles/TempleRun2D.dir
+C:/522H0088_HoangVien/DVC/Personal Projects/2D Games/TempleRun2D/out/build/x64-debug/TempleRun2D/CMakeFiles/edit_cache.dir
+C:/522H0088_HoangVien/DVC/Personal Projects/2D Games/TempleRun2D/out/build/x64-debug/TempleRun2D/CMakeFiles/rebuild_cache.dir

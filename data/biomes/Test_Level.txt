@@ -1,0 +1,27 @@
+name=Test_Level
+background=data/textures/background/background_desert.png
+isTransition=0
+
+[floor]
+6    32 32    0 0 32 32
+7    32 32    0 0 32 32
+
+[tripped]
+51    37 15    0 17 37 15
+52    32 26    0 6 32 26
+53    26 15    0 17 26 15
+54    32 16    0 16 32 16
+
+[wall]
+101    64 64    0 -32 64 64
+102    32 32    0 0 32 32
+103    32 32    0 0 32 32
+105    32 32    -20 -20 32 32
+
+[burnt]
+151    32 32    0 0 32 32
+
+[spike]
+201    32 32    0 0 32 32
+
+end
