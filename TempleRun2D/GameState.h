@@ -18,6 +18,7 @@ const size_t LAYER_IDX_PLAYER = 0;          // Index for the player layer in 'la
 const size_t LAYER_IDX_MONSTER = 1;
 const size_t LAYER_IDX_OBSTACLES = 2;       // Index for obstacle background tiles
 const size_t LAYER_IDX_LEVEL = 3;           // Index for the level tiles and walls of the map
+const std::string TRANSITION_BIOME = "";
 
 struct GameState
 {
@@ -42,6 +43,8 @@ struct GameState
 	bool lastChunkEmpty;
 
 	Biome currentBiome;
+	Biome transitionBiome;
+	std::string lastBiomeName;
 
 	const std::vector<std::string> biomeList = {"Swamp", "Industrial_Zone", "Pirate_Bay"};
 
@@ -58,43 +61,17 @@ struct GameState
 		debugMode = false;
 
 		gameMap = {
+			{0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 		};
-
-		/*gameMap = {
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-		};*/
-		/*
-		gameMap = {
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-		};*/
 
 		loadedLeftCol = 0;
 		loadedRightCol = gameMap.at(0).size() - 1;
@@ -105,6 +82,9 @@ struct GameState
 		//std::cout << "Current Biome: " << currentBiome.name << std::endl;
 		//currentBiome.loadBiome(currentBiome.name);
 		currentBiome.loadBiome(currentBiome.name);
+		lastBiomeName = currentBiome.name;
+
+		transitionBiome.loadBiome("Transition");
 	}
 
 	Player& player()                  // The player() function quickly returns
@@ -169,16 +149,16 @@ struct GameState
 		}
 		else              // Generate obstacles 
 		{
-			lastChunkEmpty = false;
+			// Fix 10 -> 20 if you want 2 obstacles
 			int obstaclesChance = randomInt(0, 10);
 			int obstaclesCount = 0;
 
 			// 5% chance to have 2 obstacles
-			if (obstaclesChance <= 19)
+			if (obstaclesChance <= 15)
 			{
 				obstaclesCount = 1;
 			}
-			else if (obstaclesChance == 20)
+			else if (obstaclesChance > 15 && obstaclesChance <= 20)
 			{
 				obstaclesCount = 2;
 			}
@@ -197,36 +177,35 @@ struct GameState
 		// Obstacle chunk 
 		std::vector<std::vector<short>> obstacleChunk;
 
-		// All the obstacles from each types
-		std::vector<short> trippedObstacles;
-		std::vector<short> wallObstacles;
-		std::vector<short> burntObstacles;
-		std::vector<short> spikeObstacles;
+		// Create a vector to store all the obstacles
+		std::vector<short> obstaclesMaps;
+
+		// Floor tiles vector
 		std::vector<short> floorTiles;
-		
-		// Get all the ids from the maps 
+
+		// Get all the ids from the maps
 		// Tripped obstacles
 		for (auto& obj : currentBiome.tripped)
 		{
-			trippedObstacles.push_back(obj.first);
+			obstaclesMaps.push_back(obj.first);
 		}
 
 		// Wall obstacles
 		for (auto& obj : currentBiome.wall)
 		{
-			wallObstacles.push_back(obj.first);
+			obstaclesMaps.push_back(obj.first);
 		}
 
 		// Burnt obstacles 
 		for (auto& obj : currentBiome.burnt)
 		{
-			burntObstacles.push_back(obj.first);
+			obstaclesMaps.push_back(obj.first);
 		}
 
 		// Spike obstacles
 		for (auto& obj : currentBiome.spike)
 		{
-			spikeObstacles.push_back(obj.first);
+			obstaclesMaps.push_back(obj.first);
 		}
 
 		// Floor tiles 
@@ -236,7 +215,8 @@ struct GameState
 		}
 
 		// Helper to build the floor by randomizing the set of 5 tiles
-		auto generateFloorRow = [&](int setSize = 5) {
+		auto generateFloorRow = [&](int setSize = 5)
+		{
 			std::vector<short> row;
 
 			if (!floorTiles.empty() && floorTiles.size() >= setSize) {
@@ -257,13 +237,14 @@ struct GameState
 			else 
 			{
 				// fallback if not enough floorTiles
-				for (int i = 0; i < setSize; i++) {
+				for (int i = 0; i < setSize; i++)
+				{
 					row.push_back(5);
 				}
 			}
 
 			return row;
-			};
+		};
 
 		if (obstaclesCount == 0)
 		{
@@ -283,73 +264,9 @@ struct GameState
 		else if (obstaclesCount == 1)
 		{
 			// Pick which type of obstacle
-			int chance = randomInt(0, 99);
+			int chance = randomInt(0, obstaclesMaps.size());
 
-			if (chance < 20)  // Tripped
-			{
-				short chosenID = trippedObstacles[randomInt(0, trippedObstacles.size() - 1)];
-				obstacleChunk = {
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, chosenID, 0, 0},
-					generateFloorRow()
-				};
-			}
-			else if (chance < 40)  // Walls
-			{
-				short chosenID = wallObstacles[randomInt(0, wallObstacles.size() - 1)];
-				obstacleChunk = {
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, chosenID, 0, 0},
-					generateFloorRow()
-				};
-			}
-			else if (chance < 60)  // Burnt
-			{
-				short chosenID = burntObstacles[randomInt(0, burntObstacles.size() - 1)];
-				obstacleChunk = {
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, chosenID, 0, 0},
-					generateFloorRow()
-				};
-			}
-			else if (chance < 80)  // Spike
-			{
-				short chosenID = spikeObstacles[randomInt(0, spikeObstacles.size() - 1)];
-				obstacleChunk = {
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, chosenID, 0, 0},
-					generateFloorRow()
-				};
-			}
-			else // Falling
+			if (chance == obstaclesMaps.size())
 			{
 				std::vector<short> floor = generateFloorRow();
 				floor.at(1) = 0;
@@ -369,30 +286,30 @@ struct GameState
 					floor
 				};
 			}
+			else
+			{
+				short obsID = obstaclesMaps[chance];
+
+				obstacleChunk = {
+					{0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0},
+					{0, 0, obsID, 0, 0},
+					generateFloorRow()
+				};
+			}
 		}
 		else if (obstaclesCount == 2)
 		{
-			// Create a pool of wall and tripped obstacles
-			std::vector<std::vector<short>*> pools1 = {
-				&trippedObstacles,
-				&wallObstacles,
-			};
+			// Get 2 IDs for 2 obstacles
+			short obs1ID = obstaclesMaps[randomInt(0, obstaclesMaps.size())];
+			short obs2ID = obstaclesMaps[randomInt(0, obstaclesMaps.size())];
 
-			// Create a pool of spike and burnt obstacles
-			std::vector<std::vector<short>*> pools2 = {
-				&burntObstacles,
-				&spikeObstacles
-			};
-
-			// Pick first obstacle
-			const std::vector<short>* pool1 = pools1[randomInt(0, pools1.size() - 1)];
-			short chosenID1 = (*pool1)[randomInt(0, pool1->size() - 1)];
-
-			// Pick second obstacle
-			const std::vector<short>* pool2 = pools2[randomInt(0, pools2.size() - 1)];
-			short chosenID2 = (*pool2)[randomInt(0, pool2->size() - 1)];
-
-			// chosenID1 and chosenID2 now hold your 2 random picks
 			// Create the chunk
 			obstacleChunk = {
 					{0, 0, 0, 0, 0},
@@ -403,7 +320,7 @@ struct GameState
 					{0, 0, 0, 0, 0},
 					{0, 0, 0, 0, 0},
 					{0, 0, 0, 0, 0},
-					{0, chosenID1, 0, 0, chosenID2},
+					{0, obs1ID, 0, 0, obs2ID},
 					generateFloorRow()
 			};
 		}

@@ -10,8 +10,8 @@ struct SDLState
 	SDL_Window* window = nullptr;      // Window 
 	int width = 640;                   // Width of screen
 	int height = 360;                  // Height of screen
-	int logW = 640;                    // Logical width
-	int logH = 360;                    // Logical height
+	int logW = 544;                    // Logical width
+	int logH = 306;                    // Logical height
 
 	SDL_Renderer* renderer = nullptr;  // Renderer
 	
