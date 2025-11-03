@@ -45,6 +45,7 @@ const int CHUNK_SIZE = 5;
 const SDL_FRect RUN_COLLISION = { 7, 5, 16, 27 };
 const SDL_FRect SLIDE_COLLISION = { 1, 21, 30, 11 };
 const SDL_FRect BURNT_COLLISION = { 0, 0, 0, 0 };
+const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
 
 // Count number of tiles spawned
 static int TOTAL_TILE = 0;
@@ -153,6 +154,7 @@ int main(int argc, char* argv[])
 				{
 					handleKeyInput(sdl, game, game.player(), e.key.scancode, false);
 
+					// Full screen
 					if (e.key.scancode == SDL_SCANCODE_F11)
 					{ 
 						sdl.fullscreen = !sdl.fullscreen;
@@ -161,9 +163,16 @@ int main(int argc, char* argv[])
 						sdl.height = 1080;
 					}
 
+					// Debug mode
 					if (e.key.scancode == SDL_SCANCODE_F10)
 					{
 						game.debugMode = !game.debugMode;
+					}
+
+					// Invincibility mode
+					if (e.key.scancode == SDL_SCANCODE_G)
+					{
+						game.invincibleMode = !game.invincibleMode;
 					}
 
 					break;
@@ -354,6 +363,7 @@ int main(int argc, char* argv[])
 		// Display debug information
 		SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
 
+		// Debug mode
 		if (game.debugMode)
 		{
 			// Display the player information
@@ -368,6 +378,13 @@ int main(int argc, char* argv[])
 			// Display the PLAYING status
 			std::string playingText = std::format("PLAYING: {}", PLAYING ? "true" : "false");
 			//SDL_RenderDebugText(sdl.renderer, 5, 165, playingText.c_str());  // Adjust y-coordinate if needed
+		}
+
+		// Invincible mode
+		if (game.invincibleMode)
+		{
+			game.player().clearCollider();
+			game.player().addCollider(INVINCIBLE_COLLISION);
 		}
 
 		// Render the current game frame
@@ -875,6 +892,11 @@ void collisionResponse(const SDLState& state, GameState& gs, Resources& res, Gam
 
 			case ObjectType::obstacle:
 			{
+				if (gs.invincibleMode)
+				{
+					break;
+				}
+
 				// Cast the GameObject to Obstacle type
 				Obstacle& obs = static_cast<Obstacle&>(objB);
 

@@ -32,6 +32,7 @@ struct GameState
 	float backgroundScroll;               // Parallax scrolling offsets
 
 	bool debugMode;                       // Debug mode
+	bool invincibleMode;                   // Invincible mode
 
 	std::vector<std::vector<short>> gameMap;  // Game Map
 
@@ -59,6 +60,7 @@ struct GameState
 
 		backgroundScroll = 0.f;
 		debugMode = false;
+		invincibleMode = false;
 
 		gameMap = {
 			{0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -417,10 +419,7 @@ struct GameState
 		SDL_RenderDebugText(state.renderer, 5, 45, std::format("Velocity: {:.0f}", player().getVelocity().x).c_str());
 		SDL_RenderDebugText(state.renderer, 5, 65, std::format("X-position: {:.0f}", player().getPosition().x).c_str());
 		SDL_RenderDebugText(state.renderer, 5, 85, std::format("Y-position: {:.0f}", player().getPosition().y).c_str());
-		SDL_RenderDebugText(state.renderer, 5, 105, std::format("Grounded: {}", player().isGrounded()).c_str());
-		SDL_RenderDebugText(state.renderer, 5, 125, std::format("Jump Requested: {}", player().isJumpRequested()).c_str());
-		SDL_RenderDebugText(state.renderer, 5, 145, std::format("Slide Requested: {}", player().isSlideRequested()).c_str());
-		SDL_RenderDebugText(state.renderer, 5, 185, std::format("Jump Buffer Time: {}", player().getJumpBufferTime() * 100).c_str());
+		SDL_RenderDebugText(state.renderer, 5, 105, std::format("Invincible: {}", invincibleMode).c_str());
 	}
 
 	void displayGameInformation(SDLState& state)
