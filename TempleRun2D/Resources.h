@@ -118,6 +118,7 @@ struct Resources
         playerAnims[ANIM_PLAYER_BLEED] = Animation(8, 1.0f, false);
         playerAnims[ANIM_PLAYER_FALLING] = Animation(8, 1.0f, false);
         playerAnims[ANIM_PLAYER_SPEEDING] = Animation(8, 1.0f, true);
+        playerAnims[ANIM_PLAYER_CAUGHT] = Animation(8, 1.0f, true);
 
         playerIdle = loadTexture(state.renderer, "data/textures/characters/" + playerName +  "/idle.png");
         playerRun = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/run.png");

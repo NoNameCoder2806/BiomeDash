@@ -46,6 +46,7 @@ const SDL_FRect RUN_COLLISION = { 7, 5, 16, 27 };
 const SDL_FRect SLIDE_COLLISION = { 1, 21, 30, 11 };
 const SDL_FRect BURNT_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
+const SDL_FRect DIED_COLLISION = { 7, 0, 16, 100 };
 
 // Count number of tiles spawned
 static int TOTAL_TILE = 0;
@@ -577,7 +578,18 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 
 			if (!player.isAlive())
 			{
-				return;
+				// still allow processing of certain death states (caught, bleed, etc)
+				switch (player.getState())
+				{
+					case PlayerState::caught:
+					case PlayerState::burnt:
+					case PlayerState::bleed:
+					case PlayerState::knocked:
+					case PlayerState::falling:
+						break;
+					default:
+						return;
+				}
 			}
 
 			switch (player.getState()) 
@@ -652,11 +664,12 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 				{
 					player.setTexture(res.playerKnocked);
 					player.setCurrentAnimation(res.ANIM_PLAYER_KNOCKED);
+					player.clearCollider();
+					player.addCollider(DIED_COLLISION);
 					player.setAlive(false);
 
 					// Mark this animation as non-looping
 					player.getAnimations().at(res.ANIM_PLAYER_KNOCKED).setLoop(false);
-
 
 					PLAYING = false;
 
@@ -674,7 +687,6 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 					// Mark this animation as non-looping
 					player.getAnimations().at(res.ANIM_PLAYER_BURNT).setLoop(false);
 
-
 					PLAYING = false;
 
 					break;
@@ -684,11 +696,12 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 				{
 					player.setTexture(res.playerBleed);
 					player.setCurrentAnimation(res.ANIM_PLAYER_BLEED);
+					player.clearCollider();
+					player.addCollider(DIED_COLLISION);
 					player.setAlive(false);
 
 					// Mark the animation as non-looping
 					player.getAnimations().at(res.ANIM_PLAYER_BLEED).setLoop(false);
-
 
 					PLAYING = false;
 
@@ -721,6 +734,8 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 				{
 					player.setTexture(res.playerCaught);
 					player.setCurrentAnimation(res.ANIM_PLAYER_CAUGHT);
+					player.clearCollider();
+					player.addCollider(DIED_COLLISION);
 					player.setAlive(false);
 					PLAYING = false;
 
@@ -1137,7 +1152,6 @@ bool checkGrounded(const GameObject& player, const std::vector<std::unique_ptr<G
 	return false;
 }
 
-
 void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUpdate)
 {
 	int startCol = 0;
@@ -1278,6 +1292,19 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 						obs->setTexture(tex);
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+						OBSTACLES++;
+						break;
+					}
+
+					// Portal
+					else if (id == 999)
+					{
+						auto& portal = gs.currentBiome.floor.at(id); // or a dedicated portal texture
+						auto tile = std::make_unique<Level>(portal);
+						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						tile->setTexture(tex);
+						tile->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(tile));
 						OBSTACLES++;
 						break;
 					}
