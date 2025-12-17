@@ -53,7 +53,15 @@ struct Resources
     SDL_Texture* monsterKill = nullptr;
     SDL_Texture* monsterNotVisible = nullptr;
 
-    // ----- III/ BACKGROUNDS -----
+    // ----- III/ STARTING PORTAL ANIMATIONS -----
+    std::vector<Animation> startPortalAnim;
+    SDL_Texture* startPortal = nullptr;
+    
+    // ----- IV / ENDING PORTAL ANIMATIONS -----
+    std::vector<Animation> endPortalAnim;
+    SDL_Texture* endPortal = nullptr;
+    
+    // ----- V/ BACKGROUNDS -----
     SDL_Texture* background = nullptr;
     std::vector<SDL_Texture*> parallaxBackgrounds;
 
@@ -143,6 +151,16 @@ struct Resources
         monsterDestroy = loadTexture(state.renderer, "");
         monsterKill = loadTexture(state.renderer, "");
         monsterNotVisible = loadTexture(state.renderer, "");
+
+        // ----- III/ Starting Portal's animations -----
+        // startPortalAnim.resize(1);
+        // startPortalAnim[0] = Animation(8, 1.0f, false);
+        // startPortal = loadTexture(state.renderer, "data/textures/portals/startPortal");
+
+        // ----- IV/ Ending Portal's animations -----
+        endPortalAnim.resize(1);
+        endPortalAnim[0] = Animation(7, 1.0f, true);
+        endPortal = loadTexture(state.renderer, "data/textures/portals/end_portal.png");
 
         // Load background 
         background = loadTexture(state.renderer, "data/textures/background/" + biomeName + "/" + biomeName + ".png");

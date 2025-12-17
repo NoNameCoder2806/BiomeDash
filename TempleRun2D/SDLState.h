@@ -52,6 +52,7 @@ struct SDLState
 
 		// Create a renderer
 		renderer = SDL_CreateRenderer(window, nullptr);
+		SDL_SetRenderVSync(renderer, true);
 		if (!renderer)
 		{
 			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error creating window", window);

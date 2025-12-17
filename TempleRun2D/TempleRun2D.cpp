@@ -36,6 +36,7 @@ using namespace std;
 // Constants
 const int PLAYER_SIZE = 32;
 const int MONSTER_SIZE = 128;
+const int END_PORTAL_SIZE = 128;
 const int TILE_SIZE = 32;
 const int MAP_ROWS = 10;
 const int MAP_COLS = 15;
@@ -47,6 +48,8 @@ const SDL_FRect SLIDE_COLLISION = { 1, 21, 30, 11 };
 const SDL_FRect BURNT_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect DIED_COLLISION = { 7, 0, 16, 100 };
+const SDL_FRect END_PORTAL_COLLISION = { 0, 0, 0, 0 };
+//const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
 
 // Count number of tiles spawned
 static int TOTAL_TILE = 0;
@@ -97,8 +100,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Create a GameState and Resources object
-	GameState game(sdl);    // Create a GameState object
-	game.currentBiome.name = "Pirate_Bay";
+	GameState game(sdl, "Transition");    // Create a GameState object
 	game.updateBiome(game.currentBiome.name);
 	Resources res;          // Create a Resources object
 	res.load(sdl, "default_character", "default_monster", game.currentBiome.name, game.currentBiome.parallaxBackgrounds);          // Load our player and monster
@@ -112,6 +114,11 @@ int main(int argc, char* argv[])
 	// Store the time into prevTime
 	uint64_t prevTime = SDL_GetTicks();
 
+	// Count FPS
+	int frames = 0;
+	float fps = 0.0f;
+	uint64_t fpsLastTime = SDL_GetTicks();
+
 	// Declare a vector to hold the background scroll rates
 	std::vector<float> scrollPositions;
 	scrollPositions.resize(res.parallaxBackgrounds.size(), 0.0f);
@@ -122,6 +129,16 @@ int main(int argc, char* argv[])
 	{
 		uint64_t nowTime = SDL_GetTicks();
 		float deltaTime = (float) (nowTime - prevTime) / 1000;    // Convert to seconds
+		
+		// Increment the frame count
+		frames++;
+		uint64_t fpsNow = SDL_GetTicks();
+		if (fpsNow - fpsLastTime >= 1000)
+		{
+			fps = frames * 1000.0f / (fpsNow - fpsLastTime);
+			frames = 0;
+			fpsLastTime = fpsNow;
+		}
 
 		// Event polling loop
 		SDL_Event e;
@@ -388,6 +405,10 @@ int main(int argc, char* argv[])
 			game.player().addCollider(INVINCIBLE_COLLISION);
 		}
 
+		// Display FPS
+		std::string fpsText = std::format("FPS: {:.1f}", fps);
+		SDL_RenderDebugText(sdl.renderer, 5, 5, fpsText.c_str());
+
 		// Render the current game frame
 		SDL_RenderPresent(sdl.renderer);
 
@@ -469,13 +490,34 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 		// Render the object's texture
 		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
 	}
+	else if (obj.getType() == ObjectType::endportal)
+	{
+		SDL_FRect src
+		{
+			.x = srcX,
+			.y = 0,
+			.w = obj.getImageSize().x,
+			.h = obj.getImageSize().y
+		};
+
+		SDL_FRect dst    // Destination 
+		{
+			.x = obj.getPosition().x - gs.mapViewport.x,
+			.y = obj.getPosition().y - TILE_SIZE * 4,
+			.w = END_PORTAL_SIZE,
+			.h = END_PORTAL_SIZE
+		};
+		
+		// Render the object's texture
+		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
+	}
 	else    // Obstacles, Floor Tiles 
 	{
 		SDL_FRect src{
-		.x = 0,
-		.y = 0,
-		.w = obj.getImageSize().x,
-		.h = obj.getImageSize().y
+			.x = 0,
+			.y = 0,
+			.w = obj.getImageSize().x,
+			.h = obj.getImageSize().y
 		};
 
 		SDL_FRect dst{
@@ -789,6 +831,15 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 
 			break;
 		}
+		// ----- III/ END PORTAL -----
+		case ObjectType::endportal:
+		{
+			obj.setTexture(res.endPortal);
+			obj.setCurrentAnimation(0);
+			obj.addCollider(END_PORTAL_COLLISION);
+
+			break;
+		}
 	}
 }
 
@@ -1029,11 +1080,6 @@ void collisionResponse(const SDLState& state, GameState& gs, Resources& res, Gam
 
 				break;
 			}
-
-			case ObjectType::boost:
-			{
-				break;
-			}
 		}
 	}
 	else if (objA.getType() == ObjectType::monster)
@@ -1159,7 +1205,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 	// If we are in update mode, we're only adding new tile to the last column (with chunk overlap)
 	if (isUpdate)
 	{
-		startCol = gs.loadedRightCol - CHUNK_SIZE;
+		startCol = gs.loadedRightCol - CHUNK_SIZE * 2;
 		if (startCol < 0) startCol = 0;
 	}
 
@@ -1225,6 +1271,46 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					auto monster = std::make_unique<Monster>(res);
 					monster->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 					gs.layers[LAYER_IDX_MONSTER].push_back(std::move(monster));
+
+					break;
+				}
+
+				// Second player
+				case 3:
+				{
+					break;
+				}
+
+				// Starting portal
+				case 4:
+				{
+					auto portal = std::make_unique<GameObject>();
+					
+					portal->setType(ObjectType::startportal);      // or endportal
+					//portal->setImageSize({ START_PORTAL_SIZE, START_PORTAL_SIZE });
+					portal->setTexture(res.startPortal);           // texture from Resources
+					portal->setAnimations(res.startPortalAnim);     // add animation
+					portal->setCurrentAnimation(0);                // start at frame 0
+					portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
+					
+					break;
+				}
+
+				// Ending portal
+				case 5:
+				{
+					auto portal = std::make_unique<GameObject>();
+
+					portal->setType(ObjectType::endportal);      // or endportal
+					portal->setImageSize({ END_PORTAL_SIZE, END_PORTAL_SIZE });
+					portal->setTexture(res.endPortal);           // texture from Resources
+					portal->setAnimations(res.endPortalAnim);     // add animation
+					portal->setCurrentAnimation(0);                // start at frame 0
+					portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
 
 					break;
 				}
@@ -1297,17 +1383,17 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					}
 
 					// Portal
-					else if (id == 999)
-					{
-						auto& portal = gs.currentBiome.floor.at(id); // or a dedicated portal texture
-						auto tile = std::make_unique<Level>(portal);
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						tile->setTexture(tex);
-						tile->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(tile));
-						OBSTACLES++;
-						break;
-					}
+					//else if (id == 999)
+					//{
+					//	auto& portal = gs.currentBiome.floor.at(id); // or a dedicated portal texture
+					//	auto tile = std::make_unique<Level>(portal);
+					//	SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+					//	tile->setTexture(tex);
+					//	tile->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					//	gs.layers[LAYER_IDX_LEVEL].push_back(std::move(tile));
+					//	OBSTACLES++;
+					//	break;
+					//}
 
 					// Others
 					else
