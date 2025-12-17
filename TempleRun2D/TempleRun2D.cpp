@@ -41,6 +41,7 @@ const int TILE_SIZE = 32;
 const int MAP_ROWS = 10;
 const int MAP_COLS = 15;
 const int CHUNK_SIZE = 5;
+const int TILE_PRELOAD_AHEAD = 5;
 
 // Collision boxes
 const SDL_FRect RUN_COLLISION = { 7, 5, 16, 27 };
@@ -48,8 +49,8 @@ const SDL_FRect SLIDE_COLLISION = { 1, 21, 30, 11 };
 const SDL_FRect BURNT_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect DIED_COLLISION = { 7, 0, 16, 100 };
-const SDL_FRect END_PORTAL_COLLISION = { 0, 0, 0, 0 };
-//const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
+const SDL_FRect START_PORTAL_COLLISION = { 0, 0, 0, 0 };
+const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
 
 // Count number of tiles spawned
 static int TOTAL_TILE = 0;
@@ -361,11 +362,13 @@ int main(int argc, char* argv[])
 						localCollider.h
 					};
 
+					float preloadMargin = TILE_SIZE * 2; // preload 2 tiles ahead
+
 					// If any collider is inside the viewport, mark object visible
-					if (!(worldCollider.x + worldCollider.w < game.mapViewport.x ||
-						worldCollider.x > game.mapViewport.x + game.mapViewport.w ||
-						worldCollider.y + worldCollider.h < game.mapViewport.y ||
-						worldCollider.y > game.mapViewport.y + game.mapViewport.h))
+					if (!(worldCollider.x + worldCollider.w < game.mapViewport.x - preloadMargin ||
+						worldCollider.x > game.mapViewport.x + game.mapViewport.w + preloadMargin ||
+						worldCollider.y + worldCollider.h < game.mapViewport.y  - preloadMargin ||
+						worldCollider.y > game.mapViewport.y + game.mapViewport.h + preloadMargin))
 					{
 						visible = true;
 						break; // no need to check the rest
@@ -836,7 +839,6 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 		{
 			obj.setTexture(res.endPortal);
 			obj.setCurrentAnimation(0);
-			obj.addCollider(END_PORTAL_COLLISION);
 
 			break;
 		}
@@ -1205,8 +1207,11 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 	// If we are in update mode, we're only adding new tile to the last column (with chunk overlap)
 	if (isUpdate)
 	{
-		startCol = gs.loadedRightCol - CHUNK_SIZE * 2;
-		if (startCol < 0) startCol = 0;
+		startCol = gs.loadedRightCol - TILE_PRELOAD_AHEAD;
+		if (startCol < 0)
+		{
+			startCol = 0;
+		}
 	}
 
 	// If map width hasn't changed, nothing to do
@@ -1309,7 +1314,9 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					portal->setAnimations(res.endPortalAnim);     // add animation
 					portal->setCurrentAnimation(0);                // start at frame 0
 					portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					
+					portal->clearCollider();
+					portal->addCollider(END_PORTAL_COLLISION);
+
 					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
 
 					break;
