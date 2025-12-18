@@ -75,6 +75,7 @@ struct Resources
     // Helper function to load a texture from file
     SDL_Texture* loadTexture(SDL_Renderer* renderer, const std::string& filepath)
     {
+        std::cout << "----- Loading from path " << filepath << " -----" << std::endl;
         SDL_Texture* tex = IMG_LoadTexture(renderer, filepath.c_str());
 
         if (tex == nullptr)
@@ -97,7 +98,10 @@ struct Resources
             std::string path = "data/textures/biomes/" + biomeName + "/" + std::to_string(id) + ".png";
             SDL_Texture* tex = IMG_LoadTexture(renderer, path.c_str());
 
-            if (!tex)
+            // Debug print
+            std::cout << "Loading tile ID " << id << " from path: " << path << std::endl;
+            
+            if (tex == nullptr)
             {
                 std::cout << "Cannot open: " << path << std::endl;
                 return nullptr;

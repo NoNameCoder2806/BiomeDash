@@ -50,7 +50,9 @@ const SDL_FRect BURNT_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect DIED_COLLISION = { 7, 0, 16, 100 };
 const SDL_FRect START_PORTAL_COLLISION = { 0, 0, 0, 0 };
-const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
+
+const SDL_FRect END_PORTAL_COLLISION = { 50, 0, 28, 128 };
+//const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
 
 // Count number of tiles spawned
 static int TOTAL_TILE = 0;
@@ -69,9 +71,9 @@ void cleanupOffscreenObjects(GameState& gs);
 
 void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObject& obj, float deltaTime);
 
-void checkCollision(const SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB, float deltaTime);
+void checkCollision(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB, float deltaTime);
 
-void collisionResponse(const SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB,
+void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB,
 	SDL_FRect rectA, SDL_FRect rectB, SDL_FRect rectC, float deltaTime);
 
 void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUpdate);
@@ -111,7 +113,7 @@ int main(int argc, char* argv[])
 
 	// Store the current map size
 	CURRENT_MAP_SIZE = game.gameMap.at(0).size();
-
+	
 	// Store the time into prevTime
 	uint64_t prevTime = SDL_GetTicks();
 
@@ -198,31 +200,6 @@ int main(int argc, char* argv[])
 				}
 			}
 		}
-
-		// Update all objects
-		/*for (auto& layer : game.layers)
-		{
-			for (auto& obj : layer)
-			{
-				updateObject(sdl, game, res, *obj, deltaTime);
-
-				// Only update the movement if the game is playing
-				if (obj->getType() == ObjectType::player)
-				{
-					bool isGroundedFlag = checkGrounded(*obj, game.layers[LAYER_IDX_LEVEL]);
-					obj->updateMovement(deltaTime, isGroundedFlag);
-				}
-				else if (obj->getType() == ObjectType::monster)
-				{
-					obj->updateMovement(deltaTime, true);
-				}
-
-				if ((*obj).getCurrentAnimation() != -1)
-				{
-					(*obj).getAnimations().at((*obj).getCurrentAnimation()).step(deltaTime);
-				}
-			}
-		}*/
 
 		for (auto& layer : game.layers)
 		{
@@ -321,6 +298,9 @@ int main(int argc, char* argv[])
 
 		manageTiles(sdl, game, res, true);
 
+		// Store the current map size
+		CURRENT_MAP_SIZE = game.gameMap.at(0).size();
+		
 		// Print total number of objects
 		//countObjectsWithTexture(game);
 
@@ -532,25 +512,6 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 
 		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
 	}
-
-	/*if (gs.debugMode)
-	{
-		for (int i = 0; i < obj.getCollider().size(); i++)
-		{
-			SDL_FRect rectA{
-				.x = obj.getPosition().x + obj.getCollider().at(i).x - gs.mapViewport.x,
-				.y = obj.getPosition().y + obj.getCollider().at(i).y - TILE_SIZE,
-				.w = obj.getCollider().at(i).w,
-				.h = obj.getCollider().at(i).h
-			};
-
-			SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_BLEND);
-			SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 150);
-			SDL_RenderFillRect(state.renderer, &rectA);
-			SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_BLEND);
-		}
-		
-	}*/
 
 	if (gs.debugMode)
 	{
@@ -845,7 +806,7 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 	}
 }
 
-void checkCollision(const SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB, float deltaTime)
+void checkCollision(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB, float deltaTime)
 {
 	for (const auto& colA : objA.getCollider())  // Loop through objA colliders
 	{
@@ -875,7 +836,7 @@ void checkCollision(const SDLState& state, GameState& gs, Resources& res, GameOb
 	}
 }
 
-void collisionResponse(const SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB,
+void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB,
 					   SDL_FRect rectA, SDL_FRect rectB, SDL_FRect rectC, float deltaTime)
 {
 	// Check the type of the object colliding
@@ -1082,6 +1043,84 @@ void collisionResponse(const SDLState& state, GameState& gs, Resources& res, Gam
 
 				break;
 			}
+			// End portal
+			case ObjectType::endportal:
+			{
+				cout << "Reached Portal" << endl;
+
+				// If current biome is not Transition, go to Transition first
+				if (gs.currentBiome.name != "Transition")
+				{
+					cout << "Going to Transition biome..." << endl;
+
+					string nextBiomeStr = "Transition";
+					gs.resetGameState(state, nextBiomeStr);
+
+					// Update the global map size
+					CURRENT_MAP_SIZE = gs.gameMap.at(0).size();
+
+					// Unload the Resources
+					res.unload();
+
+					// Reload resources for new biome
+					res.load(state, "default_character", "default_monster", gs.currentBiome.name, gs.currentBiome.parallaxBackgrounds);
+
+					// Create all the tiles
+					manageTiles(state, gs, res, false); // 'false' = initial spawn of tiles
+
+					cout << "Transition biome loaded!" << endl;
+				}
+				else
+				{
+					// Player is in Transition biome and will move to a new biome
+					if (!gs.unusedBiomes.empty())
+					{
+						int idx = gs.randomInt(0, gs.unusedBiomes.size() - 1);
+						//string nextBiomeStr = gs.unusedBiomes[idx];
+						string nextBiomeStr = "Swamp";
+
+						cout << "Next biome: " << nextBiomeStr << endl;
+
+						//// 1. CLEAR GAME OBJECTS FIRST
+						//gs.layers.clear();                 // <-- IMPORTANT
+						//gs.layers.resize(3);
+
+						// 2. UNLOAD OLD RESOURCES
+						res.unload();
+
+						// 3. RESET GAME STATE (creates NEW biome data)
+						gs.resetGameState(state, nextBiomeStr);
+						cout << "Game State reset done!" << endl;
+
+						// 4. LOAD RESOURCES FOR NEW BIOME
+						res.load(state, "default_character", "default_monster",
+							gs.currentBiome.name, gs.currentBiome.parallaxBackgrounds);
+
+						// 5. LOAD BIOME TILE TEXTURES
+						gs.currentBiome.loadTextures(res, state.renderer);
+						cout << "Loading all the textures..." << endl;
+
+						// 6. UPDATE MAP SIZE
+						CURRENT_MAP_SIZE = gs.gameMap.at(0).size();
+
+						// 7. BUILD ALL TILES FROM SCRATCH
+						manageTiles(state, gs, res, false);
+
+						// 8. CRITICAL: SET LOADED COLUMN
+						gs.loadedRightCol = gs.gameMap.at(0).size();
+
+						// 9. REMOVE BIOME FROM UNUSED LIST
+						gs.unusedBiomes.erase(gs.unusedBiomes.begin() + idx);
+						cout << "Removed the biome from the list!" << endl;
+					}
+					else
+					{
+						cout << "All biomes completed!" << endl;
+					}
+				}
+
+				break;
+			}
 		}
 	}
 	else if (objA.getType() == ObjectType::monster)
@@ -1207,7 +1246,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 	// If we are in update mode, we're only adding new tile to the last column (with chunk overlap)
 	if (isUpdate)
 	{
-		startCol = gs.loadedRightCol - TILE_PRELOAD_AHEAD;
+		startCol = gs.loadedRightCol;
 		if (startCol < 0)
 		{
 			startCol = 0;
@@ -1388,19 +1427,6 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 						OBSTACLES++;
 						break;
 					}
-
-					// Portal
-					//else if (id == 999)
-					//{
-					//	auto& portal = gs.currentBiome.floor.at(id); // or a dedicated portal texture
-					//	auto tile = std::make_unique<Level>(portal);
-					//	SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-					//	tile->setTexture(tex);
-					//	tile->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					//	gs.layers[LAYER_IDX_LEVEL].push_back(std::move(tile));
-					//	OBSTACLES++;
-					//	break;
-					//}
 
 					// Others
 					else

@@ -119,6 +119,9 @@ struct Biome {
         spike = {};
         floor = {};
 
+        // Display the file name before loading
+        std::cout << "Loading data file: data/biomes/" << name << ".txt" << std::endl;
+
         // Create the path based on the Biome name
         std::string path = "data/biomes/" + name + ".txt";
 
@@ -214,6 +217,14 @@ struct Biome {
             // Check whether this is the ending line
             if (line == "end")
             {
+                // Display all the obstacles and tiles
+                std::cout << "[Biome Loaded]\n";
+                std::cout << "  Name: " << this->name << "\n";
+                std::cout << "  Wall count: " << wall.size() << "\n";
+                std::cout << "  Floor count: " << floor.size() << "\n";
+                std::cout << "  Spike count: " << spike.size() << "\n";
+                std::cout << "  Burnt count: " << burnt.size() << "\n";
+
                 return;
             }
         }
@@ -224,19 +235,32 @@ struct Biome {
         // Load all the textures
         for (auto& [id, obj] : tripped) 
         {
+            std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
             obj.setTexture(res.loadTexture(renderer, "data/textures/biomes/" + name + "/" + std::to_string(id) + ".png"));
         }
         for (auto& [id, obj] : wall) 
         {
+            std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
             obj.setTexture(res.loadTexture(renderer, "data/textures/biomes/" + name + "/" + std::to_string(id) + ".png"));
         }
         for (auto& [id, obj] : burnt) 
         {
+            std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
             obj.setTexture(res.loadTexture(renderer, "data/textures/biomes/" + name + "/" + std::to_string(id) + ".png"));
         }
         for (auto& [id, obj] : floor) 
         {
+            std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
             obj.setTexture(res.loadTexture(renderer, "data/textures/biomes/" + name + "/" + std::to_string(id) + ".png"));
         }
+    }
+
+    void clearTextures()
+    {
+        for (auto& [id, obj] : tripped) obj.setTexture(nullptr);
+        for (auto& [id, obj] : wall)   obj.setTexture(nullptr);
+        for (auto& [id, obj] : burnt)  obj.setTexture(nullptr);
+        for (auto& [id, obj] : spike)  obj.setTexture(nullptr);
+        for (auto& [id, obj] : floor)  obj.setTexture(nullptr);
     }
 };
