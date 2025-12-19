@@ -1368,8 +1368,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					{
 						auto& floor = gs.currentBiome.floor.at(id);
 						auto obs = std::make_unique<Level>(floor);
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(floor.getTexture());
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
 						FLOOR_TILES++;
@@ -1381,8 +1380,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					{
 						auto& tripped = gs.currentBiome.tripped.at(id);
 						auto obs = std::make_unique<Obstacle>(tripped);
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(tripped.getTexture());
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
 						OBSTACLES++;
@@ -1394,8 +1392,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					{
 						auto& wall = gs.currentBiome.wall.at(id);
 						auto obs = std::make_unique<Obstacle>(wall);
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(wall.getTexture());
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
 						OBSTACLES++;
@@ -1407,8 +1404,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					{
 						auto& burnt = gs.currentBiome.burnt.at(id);
 						auto obs = std::make_unique<Obstacle>(burnt);
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(burnt.getTexture());
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
 						OBSTACLES++;
@@ -1420,8 +1416,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					{
 						auto& spike = gs.currentBiome.spike.at(id);
 						auto obs = std::make_unique<Obstacle>(spike);
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(spike.getTexture());
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
 						OBSTACLES++;

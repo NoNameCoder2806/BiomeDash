@@ -45,8 +45,8 @@ struct GameState
 
 	Biome currentBiome;
 
-	const std::vector<std::string> biomeList = {"Transition", "Swamp", "Industrial_Zone", "Pirate_Bay"};
-	std::vector<std::string> unusedBiomes = {"Swamp", "Industrial_Zone", "Pirate_Bay" };
+	const std::vector<std::string> biomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay" };
+	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
 
 	GameState(const SDLState& state, std::string biomeName = "Swamp") : playerIndex(1)
 	{
@@ -130,6 +130,15 @@ struct GameState
 		// Clear dynamic layers
 		//layers[LAYER_IDX_OBSTACLES].clear();
 		//layers[LAYER_IDX_LEVEL].clear();  // only if level tiles should reset
+
+		// Free up memory of dynamic layers before creating new objects
+		/*layers[LAYER_IDX_OBSTACLES].clear();
+		layers[LAYER_IDX_OBSTACLES].shrink_to_fit();
+		std::cout << "Obstacle Layer: " << layers[LAYER_IDX_OBSTACLES].size() << std::endl;
+
+		layers[LAYER_IDX_LEVEL].clear();
+		layers[LAYER_IDX_LEVEL].shrink_to_fit();
+		std::cout << "Level Layer: " << layers[LAYER_IDX_LEVEL].size() << std::endl;*/
 
 		// Reset the map
 		resetMapForBiome(biomeName);
@@ -216,16 +225,16 @@ struct GameState
 		lastChunkEmpty = false;
 
 		// Display the new Map
-		std::cout << "New Map: " << std::endl;
+		//std::cout << "New Map: " << std::endl;
 
-		for (size_t row = 0; row < gameMap.size(); ++row)
-		{
-			for (size_t col = 0; col < gameMap[row].size(); ++col)
-			{
-				std::cout << gameMap[row][col] << " ";
-			}
-			std::cout << std::endl; // Move to the next row
-		}
+		//for (size_t row = 0; row < gameMap.size(); ++row)
+		//{
+		//	for (size_t col = 0; col < gameMap[row].size(); ++col)
+		//	{
+		//		std::cout << gameMap[row][col] << " ";
+		//	}
+		//	std::cout << std::endl; // Move to the next row
+		//}
 	}
 
 	void updateBiome(std::string biomeName)
