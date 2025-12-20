@@ -45,6 +45,8 @@ struct GameState
 
 	Biome currentBiome;
 
+	bool needTransition;
+
 	const std::vector<std::string> biomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay" };
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
 
@@ -63,8 +65,8 @@ struct GameState
 
 		// Set the biome according to the name
 		currentBiome.name = biomeName;
-
-		std::vector<std::vector<short>> gameMapNormal = {
+		
+		gameMap = {
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -73,32 +75,9 @@ struct GameState
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0},
 			{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 		};
-
-		std::vector<std::vector<short>> gameMapTransition = {
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
-		};
-
-		// Choose the right game map depending on the biome
-		if (currentBiome.name == "Transition")
-		{
-			gameMap = gameMapTransition;
-		}
-		else
-		{
-			gameMap = gameMapNormal;
-		}
 
 		loadedLeftCol = 0;
 		loadedRightCol = gameMap.at(0).size() - 1;
@@ -111,6 +90,8 @@ struct GameState
 		lastChunkEmpty = false;
 
 		currentBiome.loadBiome(currentBiome.name);
+
+		needTransition = false;
 	}
 
 	Player& player()                  // The player() function quickly returns
@@ -195,7 +176,7 @@ struct GameState
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-				{2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 			};
 		}
@@ -211,18 +192,12 @@ struct GameState
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-				{2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 			};
 
 			std::cout << "Used the Normal Map!!!" << std::endl;
 		}
-
-		loadedLeftCol = 0;
-		loadedRightCol = gameMap.at(0).size() - 1;
-
-		currentTile = 5;
-		lastChunkEmpty = false;
 
 		// Display the new Map
 		//std::cout << "New Map: " << std::endl;
@@ -366,35 +341,35 @@ struct GameState
 
 		// Helper to build the floor by randomizing the set of 5 tiles
 		auto generateFloorRow = [&](int setSize = 5)
-		{
-			std::vector<short> row;
-
-			if (!floorTiles.empty() && floorTiles.size() >= setSize) {
-				// how many full sets do we have?
-				int numSets = floorTiles.size() / setSize;
-
-				// pick one set at random
-				int setIndex = randomInt(0, numSets - 1);
-
-				// starting position inside the vector
-				int start = setIndex * setSize;
-
-				// take exactly 'setSize' tiles from that set
-				for (int i = 0; i < setSize; i++) {
-					row.push_back(floorTiles[start + i]);
-				}
-			}
-			else 
 			{
-				// fallback if not enough floorTiles
-				for (int i = 0; i < setSize; i++)
-				{
-					row.push_back(5);
-				}
-			}
+				std::vector<short> row;
 
-			return row;
-		};
+				if (!floorTiles.empty() && floorTiles.size() >= setSize) {
+					// how many full sets do we have?
+					int numSets = floorTiles.size() / setSize;
+
+					// pick one set at random
+					int setIndex = randomInt(0, numSets - 1);
+
+					// starting position inside the vector
+					int start = setIndex * setSize;
+
+					// take exactly 'setSize' tiles from that set
+					for (int i = 0; i < setSize; i++) {
+						row.push_back(floorTiles[start + i]);
+					}
+				}
+				else
+				{
+					// fallback if not enough floorTiles
+					for (int i = 0; i < setSize; i++)
+					{
+						row.push_back(5);
+					}
+				}
+
+				return row;
+			};
 
 		if (obstaclesCount == 0)
 		{
@@ -506,61 +481,61 @@ struct GameState
 
 		switch (p.getState())
 		{
-			case PlayerState::idle: // PlayerState::idle
-			{
-				strState = "idle";
-				break;
-			}
-			case PlayerState::running: // PlayerState::running
-			{
-				strState = "running";
-				break;
-			}
-			case  PlayerState::jumping: // PlayerState::jumping
-			{
-				strState = "jumping";
-				break;
-			}
-			case PlayerState::sliding: // PlayerState::sliding
-			{
-				strState = "sliding";
-				break;
-			}
-			case PlayerState::tripped: // PlayerState::tripped
-			{
-				strState = "tripped";
-				break;
-			}
-			case PlayerState::knocked: // PlayerState::knocked
-			{
-				strState = "knocked";
-				break;
-			}
-			case PlayerState::burnt: // PlayerState::burnt
-			{
-				strState = "burnt";
-				break;
-			}
-			case PlayerState::speeding: // PlayerState::speeding
-			{
-				strState = "speeding";
-				break;
-			}
-			case PlayerState::falling: // PlayerState::falling
-			{
-				strState = "falling";
-				break;
-			}
-			case PlayerState::caught: // PlayerState::caught
-			{
-				strState = "caught";
-				break;
-			}
-			case PlayerState::bleed: // PlayerState::bleed
-			{
-				strState = "bleed";
-				break;
-			}
+		case PlayerState::idle: // PlayerState::idle
+		{
+			strState = "idle";
+			break;
+		}
+		case PlayerState::running: // PlayerState::running
+		{
+			strState = "running";
+			break;
+		}
+		case  PlayerState::jumping: // PlayerState::jumping
+		{
+			strState = "jumping";
+			break;
+		}
+		case PlayerState::sliding: // PlayerState::sliding
+		{
+			strState = "sliding";
+			break;
+		}
+		case PlayerState::tripped: // PlayerState::tripped
+		{
+			strState = "tripped";
+			break;
+		}
+		case PlayerState::knocked: // PlayerState::knocked
+		{
+			strState = "knocked";
+			break;
+		}
+		case PlayerState::burnt: // PlayerState::burnt
+		{
+			strState = "burnt";
+			break;
+		}
+		case PlayerState::speeding: // PlayerState::speeding
+		{
+			strState = "speeding";
+			break;
+		}
+		case PlayerState::falling: // PlayerState::falling
+		{
+			strState = "falling";
+			break;
+		}
+		case PlayerState::caught: // PlayerState::caught
+		{
+			strState = "caught";
+			break;
+		}
+		case PlayerState::bleed: // PlayerState::bleed
+		{
+			strState = "bleed";
+			break;
+		}
 		}
 		SDL_RenderDebugText(state.renderer, 5, 5, std::format("----- Player -----").c_str());
 		SDL_RenderDebugText(state.renderer, 5, 25, std::format("State: {}\n", strState).c_str());
@@ -587,5 +562,5 @@ struct GameState
 		{
 			SDL_RenderDebugText(state.renderer, 150, y, "|");
 		}
-	}	
+	}
 };

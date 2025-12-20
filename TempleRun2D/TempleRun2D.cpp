@@ -63,6 +63,8 @@ static bool BIOME_UPDATE = true;
 static int CURRENT_MAP_SIZE = 0;
 
 // Function prototypes
+void resetForNewBiome(SDLState& state, GameState& gs, Resources& res);
+
 //void countObjectsWithTexture(const GameState& game);
 
 void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float deltaTime);
@@ -93,7 +95,7 @@ int main(int argc, char* argv[])
 	{
 		return 1;
 	}
-	
+
 	for (int i = 0; i < SDL_SCANCODE_COUNT; ++i)
 	{
 		if (sdl.keys[i])
@@ -108,12 +110,15 @@ int main(int argc, char* argv[])
 	Resources res;          // Create a Resources object
 	res.load(sdl, "default_character", "default_monster", game.currentBiome.name, game.currentBiome.parallaxBackgrounds);          // Load our player and monster
 
+	// Load the current textures of the biome
+	game.currentBiome.loadTextures(res, sdl.renderer);
+
 	// Create the game tiles
 	manageTiles(sdl, game, res, false);
 
 	// Store the current map size
 	CURRENT_MAP_SIZE = game.gameMap.at(0).size();
-	
+
 	// Store the time into prevTime
 	uint64_t prevTime = SDL_GetTicks();
 
@@ -130,9 +135,22 @@ int main(int argc, char* argv[])
 	bool running = true;
 	while (running)
 	{
+		// Check whether the game needs to transition / change biome
+		if (game.needTransition)
+		{
+			cout << " - Transitioning... " << endl;
+			cout << " - Current biome: " << game.currentBiome.name << endl;
+
+			// Call the function to reset all the textures and game state
+			resetForNewBiome(sdl, game, res);
+
+			// Reset the flag
+			game.needTransition = false;
+		}
+
 		uint64_t nowTime = SDL_GetTicks();
-		float deltaTime = (float) (nowTime - prevTime) / 1000;    // Convert to seconds
-		
+		float deltaTime = (float)(nowTime - prevTime) / 1000;    // Convert to seconds
+
 		// Increment the frame count
 		frames++;
 		uint64_t fpsNow = SDL_GetTicks();
@@ -177,7 +195,7 @@ int main(int argc, char* argv[])
 
 					// Full screen
 					if (e.key.scancode == SDL_SCANCODE_F11)
-					{ 
+					{
 						sdl.fullscreen = !sdl.fullscreen;
 						SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
 						sdl.width = 1920;
@@ -212,7 +230,7 @@ int main(int argc, char* argv[])
 					// Pass it into updateMovement
 					obj->updateMovement(deltaTime);
 				}
-				
+
 				if (obj->getCurrentAnimation() != -1)
 				{
 					obj->getAnimations().at(obj->getCurrentAnimation()).step(deltaTime);
@@ -226,52 +244,52 @@ int main(int argc, char* argv[])
 		for (auto& objPtr : game.layers[LAYER_IDX_PLAYER])
 		{
 			GameObject& obj = *objPtr;  // Dereference the unique pointer
-			
+
 			// No need to loop through the collision boxes because player only has 1
 			// Player world rect
 			SDL_FRect pc = obj.getCollider().at(0);
-			SDL_FRect pWorld{ 
+			SDL_FRect pWorld{
 				obj.getPosition().x + pc.x,
 				obj.getPosition().y + pc.y,
-				pc.w, 
-				pc.h 
+				pc.w,
+				pc.h
 			};
 
 			// Player-centered collision window (big margin to be safe)
-			SDL_FRect cwin{ 
-				pWorld.x - 256.0f, 
+			SDL_FRect cwin{
+				pWorld.x - 256.0f,
 				pWorld.y - 256.0f,
-				pWorld.w + 512.0f, 
-				pWorld.h + 512.0f 
+				pWorld.w + 512.0f,
+				pWorld.h + 512.0f
 			};
 
 			auto processLayer = [&](auto& layer)
-			{
-				for (auto& objBPtr : layer)
 				{
-					GameObject& objB = *objBPtr;    // Dereference the unique pointer
-
-					// Loop through all the collision boxes
-					for (int i = 0; i < objB.getCollider().size(); i++)
+					for (auto& objBPtr : layer)
 					{
-						SDL_FRect cc = objB.getCollider().at(i);
-						SDL_FRect bWorld{
-							objB.getPosition().x + cc.x,
-							objB.getPosition().y + cc.y,
-							cc.w,
-							cc.h
-						};
+						GameObject& objB = *objBPtr;    // Dereference the unique pointer
 
-						// Fast reject against the player-centered window (all in world coords)
-						if (bWorld.x + bWorld.w < cwin.x)    continue;
-						if (bWorld.x > cwin.x + cwin.w)      continue;
-						if (bWorld.y + bWorld.h < cwin.y)    continue;
-						if (bWorld.y > cwin.y + cwin.h)      continue;
+						// Loop through all the collision boxes
+						for (int i = 0; i < objB.getCollider().size(); i++)
+						{
+							SDL_FRect cc = objB.getCollider().at(i);
+							SDL_FRect bWorld{
+								objB.getPosition().x + cc.x,
+								objB.getPosition().y + cc.y,
+								cc.w,
+								cc.h
+							};
 
-						checkCollision(sdl, game, res, obj, objB, deltaTime);
+							// Fast reject against the player-centered window (all in world coords)
+							if (bWorld.x + bWorld.w < cwin.x)    continue;
+							if (bWorld.x > cwin.x + cwin.w)      continue;
+							if (bWorld.y + bWorld.h < cwin.y)    continue;
+							if (bWorld.y > cwin.y + cwin.h)      continue;
+
+							checkCollision(sdl, game, res, obj, objB, deltaTime);
+						}
 					}
-				}
-			};
+				};
 
 			processLayer(game.layers[LAYER_IDX_MONSTER]);
 			processLayer(game.layers[LAYER_IDX_OBSTACLES]);
@@ -300,7 +318,7 @@ int main(int argc, char* argv[])
 
 		// Store the current map size
 		CURRENT_MAP_SIZE = game.gameMap.at(0).size();
-		
+
 		// Print total number of objects
 		//countObjectsWithTexture(game);
 
@@ -323,7 +341,7 @@ int main(int argc, char* argv[])
 
 			drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i], game.player().getVelocity().x, scrollPositions[i], scrollFactor, deltaTime);
 		}
-		
+
 		// Draw all objects
 		for (auto& layer : game.layers)
 		{
@@ -347,7 +365,7 @@ int main(int argc, char* argv[])
 					// If any collider is inside the viewport, mark object visible
 					if (!(worldCollider.x + worldCollider.w < game.mapViewport.x - preloadMargin ||
 						worldCollider.x > game.mapViewport.x + game.mapViewport.w + preloadMargin ||
-						worldCollider.y + worldCollider.h < game.mapViewport.y  - preloadMargin ||
+						worldCollider.y + worldCollider.h < game.mapViewport.y - preloadMargin ||
 						worldCollider.y > game.mapViewport.y + game.mapViewport.h + preloadMargin))
 					{
 						visible = true;
@@ -406,6 +424,65 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
+{
+	cout << "Reseting the resources and game state" << endl;
+
+	// Generate a new biome name
+	string nextBiome;
+
+	// If the current biome is a transition biome
+	if (gs.currentBiome.name == "Transition")
+	{
+		// If there are more biomes to play
+		if (gs.unusedBiomes.size() > 0)
+		{
+			// Then we need to generate one from the normal biomes
+			int idx = gs.randomInt(0, gs.unusedBiomes.size() - 1);
+			//nextBiome = gs.unusedBiomes[idx];
+			nextBiome = "Swamp";
+			gs.unusedBiomes.erase(gs.unusedBiomes.begin() + idx);  // remove it so it's not picked again
+
+			cout << "Next biome: " << nextBiome << endl;
+		}
+		// Otherwise
+		else
+		{
+			// Then we stop the game because the player has won!
+			cout << "Game won!" << endl;
+		}
+	}
+	// Otherwise
+	else
+	{
+		// We set the next biome to be transition
+		nextBiome = "Transition";
+	}
+
+	// Clear the old tiles textures
+	res.clearTiles();
+	
+	// Reset the game state
+	gs.resetGameState(state, nextBiome);
+
+	// Load the new biome textures
+	gs.currentBiome.loadTextures(res, state.renderer);
+
+	// Reset the resources
+	res.reset(state, gs.currentBiome.name, gs.currentBiome.parallaxBackgrounds);
+
+	cout << "Confirm!" << endl;
+
+	// Rebuild the game map
+	CURRENT_MAP_SIZE = 0;
+	manageTiles(state, gs, res, false);
+
+	// Store the current map size
+	CURRENT_MAP_SIZE = gs.gameMap.at(0).size();
+
+	cout << "Done creating tiles!" << endl;
+}
+
 //void countObjectsWithTexture(const GameState& game)
 //{
 //	int count = 0;
@@ -422,7 +499,7 @@ int main(int argc, char* argv[])
 //}
 
 void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float deltaTime)
-{		
+{
 	// Determine the current frame of the current animation
 	float srcX = 0.0f;
 
@@ -490,7 +567,7 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 			.w = END_PORTAL_SIZE,
 			.h = END_PORTAL_SIZE
 		};
-		
+
 		// Render the object's texture
 		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
 	}
@@ -573,236 +650,236 @@ void cleanupOffscreenObjects(GameState& gs)
 }
 
 void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObject& obj, float deltaTime)
-{	
+{
 	// Check which type the object is
 	switch (obj.getType())
 	{
 		// ----- I/ PLAYER -----
-		case ObjectType::player:
+	case ObjectType::player:
+	{
+		Player& player = static_cast<Player&>(obj);
+
+		if (!player.isAlive())
 		{
-			Player& player = static_cast<Player&>(obj);
-
-			if (!player.isAlive())
+			// still allow processing of certain death states (caught, bleed, etc)
+			switch (player.getState())
 			{
-				// still allow processing of certain death states (caught, bleed, etc)
-				switch (player.getState())
-				{
-					case PlayerState::caught:
-					case PlayerState::burnt:
-					case PlayerState::bleed:
-					case PlayerState::knocked:
-					case PlayerState::falling:
-						break;
-					default:
-						return;
-				}
+			case PlayerState::caught:
+			case PlayerState::burnt:
+			case PlayerState::bleed:
+			case PlayerState::knocked:
+			case PlayerState::falling:
+				break;
+			default:
+				return;
 			}
+		}
 
-			switch (player.getState()) 
-			{
-				case PlayerState::idle:
-				{
-					player.setTexture(res.playerIdle);
-					player.setCurrentAnimation(res.ANIM_PLAYER_IDLE);
-					player.clearCollider();
-					player.addCollider(RUN_COLLISION);
-					glm::vec2 v = obj.getVelocity();
-					v.y = 0;
-					player.setVelocity(v);
-					player.setAlive(true);
-
-					break;
-				}
-
-				case PlayerState::running:
-				{
-					player.setTexture(res.playerRun);
-					player.setCurrentAnimation(res.ANIM_PLAYER_RUN);
-					player.clearCollider();
-					player.addCollider(RUN_COLLISION);
-					player.setAlive(true);
-
-					// Reset the sliding animation
-					player.getAnimations().at(res.ANIM_PLAYER_SLIDE).getTimer().reset();
-
-					PLAYING = true;
-
-					break;
-				}
-
-				case PlayerState::jumping:
-				{
-					player.setTexture(res.playerJump);
-					player.setCurrentAnimation(res.ANIM_PLAYER_JUMP);
-					player.clearCollider();
-					player.addCollider(RUN_COLLISION);
-					player.setAlive(true);
-
-					// Reset the sliding animation
-					player.getAnimations().at(res.ANIM_PLAYER_SLIDE).getTimer().reset();
-
-					break;
-				}
-
-				case PlayerState::sliding:
-				{
-					player.setTexture(res.playerSlide);
-					player.setCurrentAnimation(res.ANIM_PLAYER_SLIDE);
-					player.clearCollider();
-					player.addCollider(SLIDE_COLLISION);
-					player.setAlive(true);
-
-					break;
-				}
-
-				case PlayerState::tripped:
-				{
-					player.setTexture(res.playerTripped);
-					player.setCurrentAnimation(res.ANIM_PLAYER_TRIPPED);
-					player.clearCollider();
-					player.addCollider(RUN_COLLISION);
-					player.setAlive(true);
-
-					break;
-				}
-
-				case PlayerState::knocked:
-				{
-					player.setTexture(res.playerKnocked);
-					player.setCurrentAnimation(res.ANIM_PLAYER_KNOCKED);
-					player.clearCollider();
-					player.addCollider(DIED_COLLISION);
-					player.setAlive(false);
-
-					// Mark this animation as non-looping
-					player.getAnimations().at(res.ANIM_PLAYER_KNOCKED).setLoop(false);
-
-					PLAYING = false;
-
-					break;
-				}
-				
-				case PlayerState::burnt:
-				{
-					player.setTexture(res.playerBurnt);
-					player.setCurrentAnimation(res.ANIM_PLAYER_BURNT);
-					player.clearCollider();
-					player.addCollider(BURNT_COLLISION);
-					player.setAlive(false);
-
-					// Mark this animation as non-looping
-					player.getAnimations().at(res.ANIM_PLAYER_BURNT).setLoop(false);
-
-					PLAYING = false;
-
-					break;
-				}
-
-				case PlayerState::bleed:
-				{
-					player.setTexture(res.playerBleed);
-					player.setCurrentAnimation(res.ANIM_PLAYER_BLEED);
-					player.clearCollider();
-					player.addCollider(DIED_COLLISION);
-					player.setAlive(false);
-
-					// Mark the animation as non-looping
-					player.getAnimations().at(res.ANIM_PLAYER_BLEED).setLoop(false);
-
-					PLAYING = false;
-
-					break;
-				}
-
-				case PlayerState::falling:
-				{
-					player.setTexture(res.playerFalling);
-					player.setCurrentAnimation(res.ANIM_PLAYER_FALLING);
-					player.setAlive(false);
-
-					PLAYING = false;
-
-					break;
-				}
-
-				case PlayerState::speeding:
-				{
-					player.setTexture(res.playerSpeeding);
-					player.setCurrentAnimation(res.ANIM_PLAYER_SPEEDING);
-					player.clearCollider();
-					player.addCollider(RUN_COLLISION);
-					player.setAlive(true);
-
-					break;
-				}
-
-				case PlayerState::caught:
-				{
-					player.setTexture(res.playerCaught);
-					player.setCurrentAnimation(res.ANIM_PLAYER_CAUGHT);
-					player.clearCollider();
-					player.addCollider(DIED_COLLISION);
-					player.setAlive(false);
-					PLAYING = false;
-
-					// Mark the animation as non-looping
-					player.getAnimations().at(res.ANIM_PLAYER_CAUGHT).setLoop(false);
-
-					break;
-				}
-			}
+		switch (player.getState())
+		{
+		case PlayerState::idle:
+		{
+			player.setTexture(res.playerIdle);
+			player.setCurrentAnimation(res.ANIM_PLAYER_IDLE);
+			player.clearCollider();
+			player.addCollider(RUN_COLLISION);
+			glm::vec2 v = obj.getVelocity();
+			v.y = 0;
+			player.setVelocity(v);
+			player.setAlive(true);
 
 			break;
 		}
-		// ----- II/ MONSTER -----
-		case ObjectType::monster:
+
+		case PlayerState::running:
 		{
-			Monster& monster = static_cast<Monster&>(obj);
+			player.setTexture(res.playerRun);
+			player.setCurrentAnimation(res.ANIM_PLAYER_RUN);
+			player.clearCollider();
+			player.addCollider(RUN_COLLISION);
+			player.setAlive(true);
 
-			switch (monster.getState())
+			// Reset the sliding animation
+			player.getAnimations().at(res.ANIM_PLAYER_SLIDE).getTimer().reset();
+
+			PLAYING = true;
+
+			break;
+		}
+
+		case PlayerState::jumping:
+		{
+			player.setTexture(res.playerJump);
+			player.setCurrentAnimation(res.ANIM_PLAYER_JUMP);
+			player.clearCollider();
+			player.addCollider(RUN_COLLISION);
+			player.setAlive(true);
+
+			// Reset the sliding animation
+			player.getAnimations().at(res.ANIM_PLAYER_SLIDE).getTimer().reset();
+
+			break;
+		}
+
+		case PlayerState::sliding:
+		{
+			player.setTexture(res.playerSlide);
+			player.setCurrentAnimation(res.ANIM_PLAYER_SLIDE);
+			player.clearCollider();
+			player.addCollider(SLIDE_COLLISION);
+			player.setAlive(true);
+
+			break;
+		}
+
+		case PlayerState::tripped:
+		{
+			player.setTexture(res.playerTripped);
+			player.setCurrentAnimation(res.ANIM_PLAYER_TRIPPED);
+			player.clearCollider();
+			player.addCollider(RUN_COLLISION);
+			player.setAlive(true);
+
+			break;
+		}
+
+		case PlayerState::knocked:
+		{
+			player.setTexture(res.playerKnocked);
+			player.setCurrentAnimation(res.ANIM_PLAYER_KNOCKED);
+			player.clearCollider();
+			player.addCollider(DIED_COLLISION);
+			player.setAlive(false);
+
+			// Mark this animation as non-looping
+			player.getAnimations().at(res.ANIM_PLAYER_KNOCKED).setLoop(false);
+
+			PLAYING = false;
+
+			break;
+		}
+
+		case PlayerState::burnt:
+		{
+			player.setTexture(res.playerBurnt);
+			player.setCurrentAnimation(res.ANIM_PLAYER_BURNT);
+			player.clearCollider();
+			player.addCollider(BURNT_COLLISION);
+			player.setAlive(false);
+
+			// Mark this animation as non-looping
+			player.getAnimations().at(res.ANIM_PLAYER_BURNT).setLoop(false);
+
+			PLAYING = false;
+
+			break;
+		}
+
+		case PlayerState::bleed:
+		{
+			player.setTexture(res.playerBleed);
+			player.setCurrentAnimation(res.ANIM_PLAYER_BLEED);
+			player.clearCollider();
+			player.addCollider(DIED_COLLISION);
+			player.setAlive(false);
+
+			// Mark the animation as non-looping
+			player.getAnimations().at(res.ANIM_PLAYER_BLEED).setLoop(false);
+
+			PLAYING = false;
+
+			break;
+		}
+
+		case PlayerState::falling:
+		{
+			player.setTexture(res.playerFalling);
+			player.setCurrentAnimation(res.ANIM_PLAYER_FALLING);
+			player.setAlive(false);
+
+			PLAYING = false;
+
+			break;
+		}
+
+		case PlayerState::speeding:
+		{
+			player.setTexture(res.playerSpeeding);
+			player.setCurrentAnimation(res.ANIM_PLAYER_SPEEDING);
+			player.clearCollider();
+			player.addCollider(RUN_COLLISION);
+			player.setAlive(true);
+
+			break;
+		}
+
+		case PlayerState::caught:
+		{
+			player.setTexture(res.playerCaught);
+			player.setCurrentAnimation(res.ANIM_PLAYER_CAUGHT);
+			player.clearCollider();
+			player.addCollider(DIED_COLLISION);
+			player.setAlive(false);
+			PLAYING = false;
+
+			// Mark the animation as non-looping
+			player.getAnimations().at(res.ANIM_PLAYER_CAUGHT).setLoop(false);
+
+			break;
+		}
+		}
+
+		break;
+	}
+	// ----- II/ MONSTER -----
+	case ObjectType::monster:
+	{
+		Monster& monster = static_cast<Monster&>(obj);
+
+		switch (monster.getState())
+		{
+		case MonsterState::idle:
+		{
+			obj.setTexture(res.monsterIdle);
+			obj.setCurrentAnimation(res.ANIM_MONSTER_IDLE);
+
+			if (PLAYING)
 			{
-				case MonsterState::idle:
-				{	
-					obj.setTexture(res.monsterIdle);
-					obj.setCurrentAnimation(res.ANIM_MONSTER_IDLE);
-
-					if (PLAYING)
-					{
-						monster.setState(MonsterState::chasing);
-					}
-
-					break;
-				}
-
-				case MonsterState::chasing:
-				{
-					monster.setTexture(res.monsterChase);
-					monster.setCurrentAnimation(res.ANIM_MONSTER_CHASE);
-					
-					monster.setSpeedMultiplier(gs.player().getSpeedMultiplier());
-
-					break;
-				}
-
-				case MonsterState::killing:
-				{
-					monster.setTexture(res.monsterKill);
-					monster.setCurrentAnimation(res.ANIM_MONSTER_KILL);
-
-					break;
-				}
+				monster.setState(MonsterState::chasing);
 			}
 
 			break;
 		}
-		// ----- III/ END PORTAL -----
-		case ObjectType::endportal:
+
+		case MonsterState::chasing:
 		{
-			obj.setTexture(res.endPortal);
-			obj.setCurrentAnimation(0);
+			monster.setTexture(res.monsterChase);
+			monster.setCurrentAnimation(res.ANIM_MONSTER_CHASE);
+
+			monster.setSpeedMultiplier(gs.player().getSpeedMultiplier());
 
 			break;
 		}
+
+		case MonsterState::killing:
+		{
+			monster.setTexture(res.monsterKill);
+			monster.setCurrentAnimation(res.ANIM_MONSTER_KILL);
+
+			break;
+		}
+		}
+
+		break;
+	}
+	// ----- III/ END PORTAL -----
+	case ObjectType::endportal:
+	{
+		obj.setTexture(res.endPortal);
+		obj.setCurrentAnimation(0);
+
+		break;
+	}
 	}
 }
 
@@ -837,7 +914,7 @@ void checkCollision(SDLState& state, GameState& gs, Resources& res, GameObject& 
 }
 
 void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB,
-					   SDL_FRect rectA, SDL_FRect rectB, SDL_FRect rectC, float deltaTime)
+	SDL_FRect rectA, SDL_FRect rectB, SDL_FRect rectC, float deltaTime)
 {
 	// Check the type of the object colliding
 	if (objA.getType() == ObjectType::player)
@@ -860,7 +937,7 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 					{
 						pos.x -= rectC.w;    // Add to the left
 					}
-					
+
 					if (player.getVelocity().x < 0)
 					{
 						pos.x += rectC.w;    // Add to the right
@@ -868,7 +945,7 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 
 					vel.x = 0;
 				}
-				
+
 				// Vertical collision
 				if (rectC.w > rectC.h)
 				{
@@ -1048,76 +1125,8 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 			{
 				cout << "Reached Portal" << endl;
 
-				// If current biome is not Transition, go to Transition first
-				if (gs.currentBiome.name != "Transition")
-				{
-					cout << "Going to Transition biome..." << endl;
-
-					string nextBiomeStr = "Transition";
-					gs.resetGameState(state, nextBiomeStr);
-
-					// Update the global map size
-					CURRENT_MAP_SIZE = gs.gameMap.at(0).size();
-
-					// Unload the Resources
-					res.unload();
-
-					// Reload resources for new biome
-					res.load(state, "default_character", "default_monster", gs.currentBiome.name, gs.currentBiome.parallaxBackgrounds);
-
-					// Create all the tiles
-					manageTiles(state, gs, res, false); // 'false' = initial spawn of tiles
-
-					cout << "Transition biome loaded!" << endl;
-				}
-				else
-				{
-					// Player is in Transition biome and will move to a new biome
-					if (!gs.unusedBiomes.empty())
-					{
-						int idx = gs.randomInt(0, gs.unusedBiomes.size() - 1);
-						//string nextBiomeStr = gs.unusedBiomes[idx];
-						string nextBiomeStr = "Swamp";
-
-						cout << "Next biome: " << nextBiomeStr << endl;
-
-						//// 1. CLEAR GAME OBJECTS FIRST
-						//gs.layers.clear();                 // <-- IMPORTANT
-						//gs.layers.resize(3);
-
-						// 2. UNLOAD OLD RESOURCES
-						res.unload();
-
-						// 3. RESET GAME STATE (creates NEW biome data)
-						gs.resetGameState(state, nextBiomeStr);
-						cout << "Game State reset done!" << endl;
-
-						// 4. LOAD RESOURCES FOR NEW BIOME
-						res.load(state, "default_character", "default_monster",
-							gs.currentBiome.name, gs.currentBiome.parallaxBackgrounds);
-
-						// 5. LOAD BIOME TILE TEXTURES
-						gs.currentBiome.loadTextures(res, state.renderer);
-						cout << "Loading all the textures..." << endl;
-
-						// 6. UPDATE MAP SIZE
-						CURRENT_MAP_SIZE = gs.gameMap.at(0).size();
-
-						// 7. BUILD ALL TILES FROM SCRATCH
-						manageTiles(state, gs, res, false);
-
-						// 8. CRITICAL: SET LOADED COLUMN
-						gs.loadedRightCol = gs.gameMap.at(0).size();
-
-						// 9. REMOVE BIOME FROM UNUSED LIST
-						gs.unusedBiomes.erase(gs.unusedBiomes.begin() + idx);
-						cout << "Removed the biome from the list!" << endl;
-					}
-					else
-					{
-						cout << "All biomes completed!" << endl;
-					}
-				}
+				// Set the needTransition flag to true
+				gs.needTransition = true;
 
 				break;
 			}
@@ -1125,7 +1134,7 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 	}
 	else if (objA.getType() == ObjectType::monster)
 	{
-		
+
 	}
 }
 
@@ -1150,50 +1159,50 @@ void handleKeyInput(const SDLState& state, GameState& gs, GameObject& obj, SDL_S
 
 	switch (player.getState())
 	{
-		case PlayerState::idle:
+	case PlayerState::idle:
+	{
+		if (key == SDL_SCANCODE_D || key == SDL_SCANCODE_RIGHT)
 		{
-			if (key == SDL_SCANCODE_D || key == SDL_SCANCODE_RIGHT)
-			{
-				player.setState(PlayerState::running);
-			}
-
-			break;
+			player.setState(PlayerState::running);
 		}
 
-		case PlayerState::running:
+		break;
+	}
+
+	case PlayerState::running:
+	{
+		if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP || key == SDL_SCANCODE_LSHIFT)
 		{
-			if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP || key == SDL_SCANCODE_LSHIFT)
-			{
-				player.setJumpBufferTime(player.getJumpBufferDuration());
-			}
-
-			if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_LCTRL)
-			{
-				player.setSlideRequested(true);
-			}
-
-			break;
+			player.setJumpBufferTime(player.getJumpBufferDuration());
 		}
 
-		case PlayerState::jumping:
+		if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_LCTRL)
 		{
-			if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_LCTRL)
-			{
-				player.setSlideRequested(true);
-			}
-
-			break;
+			player.setSlideRequested(true);
 		}
 
-		case PlayerState::sliding:
-		{
-			if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP || key == SDL_SCANCODE_LSHIFT)
-			{
-				player.setJumpBufferTime(player.getJumpBufferDuration());
-			}
+		break;
+	}
 
-			break;
+	case PlayerState::jumping:
+	{
+		if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_LCTRL)
+		{
+			player.setSlideRequested(true);
 		}
+
+		break;
+	}
+
+	case PlayerState::sliding:
+	{
+		if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP || key == SDL_SCANCODE_LSHIFT)
+		{
+			player.setJumpBufferTime(player.getJumpBufferDuration());
+		}
+
+		break;
+	}
 	}
 }
 
@@ -1260,26 +1269,26 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 	}
 
 	// Check whether a specific tile (row, col) already has something spawned there
-	auto tileAlreadySpawned = [&](int row, int col) -> bool 
-	{
-		float expectedX = static_cast<float>(col * TILE_SIZE);
-		float expectedY = state.logH - (MAP_ROWS - row - 1) * TILE_SIZE;
-
-		for (auto& layer : gs.layers)
+	auto tileAlreadySpawned = [&](int row, int col) -> bool
 		{
-			for (auto& obj : layer)
+			float expectedX = static_cast<float>(col * TILE_SIZE);
+			float expectedY = state.logH - (MAP_ROWS - row - 1) * TILE_SIZE;
+
+			for (auto& layer : gs.layers)
 			{
-				auto pos = obj->getPosition();
-				if (std::round(pos.x) == std::round(expectedX) &&
-					std::round(pos.y) == std::round(expectedY))
+				for (auto& obj : layer)
 				{
-					return true; // exact tile already has an object
+					auto pos = obj->getPosition();
+					if (std::round(pos.x) == std::round(expectedX) &&
+						std::round(pos.y) == std::round(expectedY))
+					{
+						return true; // exact tile already has an object
+					}
 				}
 			}
-		}
 
-		return false;
-	};
+			return false;
+		};
 
 	// For each row
 	for (int r = 0; r < static_cast<int>(gs.gameMap.size()); ++r)
@@ -1297,138 +1306,163 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 			switch (id)
 			{
 				// Player (spawn only if no player exists)
-				case 1:
+			case 1:
+			{
+				if (gs.layers[LAYER_IDX_PLAYER].empty())
 				{
-					if (gs.layers[LAYER_IDX_PLAYER].empty())
-					{
-						auto player = std::make_unique<Player>(res);
-						player->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-						gs.layers[LAYER_IDX_PLAYER].push_back(std::move(player));
-					}
+					auto player = std::make_unique<Player>(res);
+					player->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					gs.layers[LAYER_IDX_PLAYER].push_back(std::move(player));
+				}
 
+				break;
+			}
+
+			// Monster
+			case 2:
+			{
+				auto monster = std::make_unique<Monster>(res);
+				monster->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+				gs.layers[LAYER_IDX_MONSTER].push_back(std::move(monster));
+
+				break;
+			}
+
+			// Second player
+			case 3:
+			{
+				break;
+			}
+
+			// Starting portal
+			case 4:
+			{
+				auto portal = std::make_unique<GameObject>();
+
+				portal->setType(ObjectType::startportal);      // or endportal
+				//portal->setImageSize({ START_PORTAL_SIZE, START_PORTAL_SIZE });
+				portal->setTexture(res.startPortal);           // texture from Resources
+				portal->setAnimations(res.startPortalAnim);     // add animation
+				portal->setCurrentAnimation(0);                // start at frame 0
+				portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+
+				gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
+
+				break;
+			}
+
+			// Ending portal
+			case 5:
+			{
+				auto portal = std::make_unique<GameObject>();
+
+				portal->setType(ObjectType::endportal);      // or endportal
+				portal->setImageSize({ END_PORTAL_SIZE, END_PORTAL_SIZE });
+				portal->setTexture(res.endPortal);           // texture from Resources
+				portal->setAnimations(res.endPortalAnim);     // add animation
+				portal->setCurrentAnimation(0);                // start at frame 0
+				portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+				portal->clearCollider();
+				portal->addCollider(END_PORTAL_COLLISION);
+
+				gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
+
+				break;
+			}
+
+			default:
+			{
+				// Floor Tiles
+				if (id >= 6 && id <= 50)
+				{
+					auto& floor = gs.currentBiome.floor.at(id);
+
+					// Debug
+					cout << "Tile ID " << id << " texture ptr: " << floor.getTexture() << endl;
+
+					auto obs = std::make_unique<Level>(floor);
+					obs->setTexture(floor.getTexture());
+
+					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+					FLOOR_TILES++;
 					break;
 				}
 
-				// Monster
-				case 2:
+				// Tripped obstacles
+				else if (id >= 51 && id <= 100)
 				{
-					auto monster = std::make_unique<Monster>(res);
-					monster->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					gs.layers[LAYER_IDX_MONSTER].push_back(std::move(monster));
+					auto& tripped = gs.currentBiome.tripped.at(id);
 
-					break;
-				}
-
-				// Second player
-				case 3:
-				{
-					break;
-				}
-
-				// Starting portal
-				case 4:
-				{
-					auto portal = std::make_unique<GameObject>();
+					// Debug
+					cout << "Tile ID " << id << " texture ptr: " << tripped.getTexture() << endl;
 					
-					portal->setType(ObjectType::startportal);      // or endportal
-					//portal->setImageSize({ START_PORTAL_SIZE, START_PORTAL_SIZE });
-					portal->setTexture(res.startPortal);           // texture from Resources
-					portal->setAnimations(res.startPortalAnim);     // add animation
-					portal->setCurrentAnimation(0);                // start at frame 0
-					portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					
-					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
-					
+					auto obs = std::make_unique<Obstacle>(tripped);
+					obs->setTexture(tripped.getTexture());
+
+					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+					OBSTACLES++;
 					break;
 				}
 
-				// Ending portal
-				case 5:
+				// Wall obstacles
+				else if (id >= 101 && id <= 150)
 				{
-					auto portal = std::make_unique<GameObject>();
+					auto& wall = gs.currentBiome.wall.at(id);
 
-					portal->setType(ObjectType::endportal);      // or endportal
-					portal->setImageSize({ END_PORTAL_SIZE, END_PORTAL_SIZE });
-					portal->setTexture(res.endPortal);           // texture from Resources
-					portal->setAnimations(res.endPortalAnim);     // add animation
-					portal->setCurrentAnimation(0);                // start at frame 0
-					portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					portal->clearCollider();
-					portal->addCollider(END_PORTAL_COLLISION);
+					// Debug
+					cout << "Tile ID " << id << " texture ptr: " << wall.getTexture() << endl;
 
-					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
+					auto obs = std::make_unique<Obstacle>(wall);
+					obs->setTexture(wall.getTexture());
 
+					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+					OBSTACLES++;
 					break;
 				}
 
-				default:
+				// Burnt obstacles
+				else if (id >= 151 && id <= 200)
 				{
-					// Floor Tiles
-					if (id >= 6 && id <= 50)
-					{
-						auto& floor = gs.currentBiome.floor.at(id);
-						auto obs = std::make_unique<Level>(floor);
-						obs->setTexture(floor.getTexture());
-						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-						FLOOR_TILES++;
-						break;
-					}
+					auto& burnt = gs.currentBiome.burnt.at(id);
 
-					// Tripped obstacles
-					else if (id >= 51 && id <= 100)
-					{
-						auto& tripped = gs.currentBiome.tripped.at(id);
-						auto obs = std::make_unique<Obstacle>(tripped);
-						obs->setTexture(tripped.getTexture());
-						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-						OBSTACLES++;
-						break;
-					}
+					// Debug
+					cout << "Tile ID " << id << " texture ptr: " << burnt.getTexture() << endl;
+					
+					auto obs = std::make_unique<Obstacle>(burnt);
+					obs->setTexture(burnt.getTexture());
 
-					// Wall obstacles
-					else if (id >= 101 && id <= 150)
-					{
-						auto& wall = gs.currentBiome.wall.at(id);
-						auto obs = std::make_unique<Obstacle>(wall);
-						obs->setTexture(wall.getTexture());
-						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-						OBSTACLES++;
-						break;
-					}
-
-					// Burnt obstacles
-					else if (id >= 151 && id <= 200)
-					{
-						auto& burnt = gs.currentBiome.burnt.at(id);
-						auto obs = std::make_unique<Obstacle>(burnt);
-						obs->setTexture(burnt.getTexture());
-						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-						OBSTACLES++;
-						break;
-					}
-
-					// Spike obstacles
-					else if (id >= 201 && id <= 250)
-					{
-						auto& spike = gs.currentBiome.spike.at(id);
-						auto obs = std::make_unique<Obstacle>(spike);
-						obs->setTexture(spike.getTexture());
-						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-						OBSTACLES++;
-						break;
-					}
-
-					// Others
-					else
-					{
-						break;
-					}
+					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+					OBSTACLES++;
+					break;
 				}
+
+				// Spike obstacles
+				else if (id >= 201 && id <= 250)
+				{
+					auto& spike = gs.currentBiome.spike.at(id);
+
+					// Debug
+					cout << "Tile ID " << id << " texture ptr: " << spike.getTexture() << endl;
+					
+					auto obs = std::make_unique<Obstacle>(spike);
+					obs->setTexture(spike.getTexture());
+
+					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+					OBSTACLES++;
+					break;
+				}
+
+				// Others
+				else
+				{
+					break;
+				}
+			}
 			}
 		}
 	}
@@ -1440,7 +1474,7 @@ void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float x
 	{
 		return;
 	}
-	
+
 	// Get texture size safely
 	float texW, texH;
 	SDL_GetTextureSize(texture, &texW, &texH);

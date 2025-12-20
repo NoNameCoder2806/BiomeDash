@@ -56,11 +56,11 @@ struct Resources
     // ----- III/ STARTING PORTAL ANIMATIONS -----
     std::vector<Animation> startPortalAnim;
     SDL_Texture* startPortal = nullptr;
-    
+
     // ----- IV / ENDING PORTAL ANIMATIONS -----
     std::vector<Animation> endPortalAnim;
     SDL_Texture* endPortal = nullptr;
-    
+
     // ----- V/ BACKGROUNDS -----
     SDL_Texture* background = nullptr;
     std::vector<SDL_Texture*> parallaxBackgrounds;
@@ -75,7 +75,7 @@ struct Resources
     // Helper function to load a texture from file
     SDL_Texture* loadTexture(SDL_Renderer* renderer, const std::string& filepath)
     {
-        //std::cout << "----- Loading from path " << filepath << " -----" << std::endl;
+        std::cout << "----- Loading from path " << filepath << " -----" << std::endl;
         SDL_Texture* tex = IMG_LoadTexture(renderer, filepath.c_str());
 
         if (tex == nullptr)
@@ -85,13 +85,15 @@ struct Resources
 
         SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_NEAREST); // Nearest neighbor scaling
         textures.push_back(tex);                              // Store for cleanup
-        
+
         return tex;
     }
 
     // Create one-off textures for tiles based on their id
     SDL_Texture* getTileTexture(SDL_Renderer* renderer, const std::string& biomeName, int id)
     {
+        std::cout << "ID Count: " << tileTextures.count(id) << std::endl;
+
         // If the textures haven't existed in the map, we add it to the map
         if (tileTextures.count(id) == 0)
         {
@@ -99,8 +101,8 @@ struct Resources
             SDL_Texture* tex = IMG_LoadTexture(renderer, path.c_str());
 
             // Debug print
-            //std::cout << "Loading tile ID " << id << " from path: " << path << std::endl;
-            
+            std::cout << "Loading tile ID " << id << " from path: " << path << std::endl;
+
             if (tex == nullptr)
             {
                 std::cout << "Cannot open: " << path << std::endl;
@@ -132,7 +134,7 @@ struct Resources
         playerAnims[ANIM_PLAYER_SPEEDING] = Animation(8, 1.0f, true);
         playerAnims[ANIM_PLAYER_CAUGHT] = Animation(8, 1.0f, true);
 
-        playerIdle = loadTexture(state.renderer, "data/textures/characters/" + playerName +  "/idle.png");
+        playerIdle = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/idle.png");
         playerRun = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/run.png");
         playerJump = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/jump.png");
         playerSlide = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/slide.png");
@@ -149,7 +151,7 @@ struct Resources
         monsterAnims[ANIM_MONSTER_IDLE] = Animation(8, 1.0f, true);   // 8 frames over 1 second
         monsterAnims[ANIM_MONSTER_CHASE] = Animation(8, 1.0f, true);
         monsterAnims[ANIM_MONSTER_DESTROY] = Animation(18, 2.0f, true);
-        
+
         monsterIdle = loadTexture(state.renderer, "data/textures/monsters/" + monsterName + "/default_monster_idle.png");
         monsterChase = loadTexture(state.renderer, "data/textures/monsters/" + monsterName + "/default_monster_chasing.png");
         monsterDestroy = loadTexture(state.renderer, "");
@@ -188,6 +190,52 @@ struct Resources
         }
     }
 
+    // Reset the resources based on the next biome
+    void reset(SDLState& state, std::string biomeName, std::string parallaxBackgrounds)
+    {
+        // Destroy old background
+        if (background) SDL_DestroyTexture(background);
+
+        // Load background 
+        background = loadTexture(state.renderer, "data/textures/background/" + biomeName + "/" + biomeName + ".png");
+
+        // Destroy old parallax backgrounds
+        for (SDL_Texture* tex : this->parallaxBackgrounds)
+            SDL_DestroyTexture(tex);
+        this->parallaxBackgrounds.clear();;
+
+        // Load parallax backgrounds
+        for (int i = 1; i <= std::stoi(parallaxBackgrounds); i++)
+        {
+            std::string path = "data/textures/background/" + biomeName + "/"
+                + biomeName + "_" + std::to_string(i) + ".png";
+
+            SDL_Texture* tex = loadTexture(state.renderer, path);
+            if (tex)
+            {
+                this->parallaxBackgrounds.push_back(tex);
+                std::cout << "Loaded successfully: " << path << std::endl;
+            }
+            else
+            {
+                std::cout << "Failed to load parallax background: " << path << std::endl;
+            }
+        }
+
+        std::cout << "Resources reset success!" << std::endl;
+    }
+
+    // Clear Tiles
+    void clearTiles()
+    {
+        // Destroy all the tile textures
+        for (auto& [id, tex] : tileTextures)
+        {
+            SDL_DestroyTexture(tex);
+        }
+        tileTextures.clear();
+    }
+
     // Cleans up all textures from memory when the game closes
     void unload()
     {
@@ -198,7 +246,8 @@ struct Resources
         textures.clear();
 
         // Destroy cached tile textures
-        for (auto& [id, tex] : tileTextures) {
+        for (auto& [id, tex] : tileTextures)
+        {
             SDL_DestroyTexture(tex);
         }
         tileTextures.clear();

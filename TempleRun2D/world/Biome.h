@@ -112,6 +112,9 @@ struct Biome {
 
     void loadBiome(std::string name)
     {
+        // Clear all the previous textures
+        clearTextures();
+
         // Clear all the previous objects in the maps
         tripped = {};
         wall = {};
@@ -225,33 +228,36 @@ struct Biome {
                 std::cout << "  Spike count: " << spike.size() << "\n";
                 std::cout << "  Burnt count: " << burnt.size() << "\n";
 
-                return;
+                break;
             }
         }
     }
 
     void loadTextures(Resources& res, SDL_Renderer* renderer) 
     {
+        // Clear all the previous textures
+        clearTextures();
+
         // Load all the textures
         for (auto& [id, obj] : tripped) 
         {
             std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
-            obj.setTexture(res.loadTexture(renderer, "data/textures/biomes/" + name + "/" + std::to_string(id) + ".png"));
+            obj.setTexture(res.getTileTexture(renderer, name, id));
         }
         for (auto& [id, obj] : wall) 
         {
             std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
-            obj.setTexture(res.loadTexture(renderer, "data/textures/biomes/" + name + "/" + std::to_string(id) + ".png"));
+            obj.setTexture(res.getTileTexture(renderer, name, id));
         }
         for (auto& [id, obj] : burnt) 
         {
             std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
-            obj.setTexture(res.loadTexture(renderer, "data/textures/biomes/" + name + "/" + std::to_string(id) + ".png"));
+            obj.setTexture(res.getTileTexture(renderer, name, id));
         }
         for (auto& [id, obj] : floor) 
         {
             std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
-            obj.setTexture(res.loadTexture(renderer, "data/textures/biomes/" + name + "/" + std::to_string(id) + ".png"));
+            obj.setTexture(res.getTileTexture(renderer, name, id));
         }
     }
 
