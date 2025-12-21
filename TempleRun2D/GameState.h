@@ -75,9 +75,11 @@ struct GameState
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0},
+			{2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0},
 			{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 		};
+
+		std::cout << "Current Biome: " << currentBiome.name << std::endl;
 
 		loadedLeftCol = 0;
 		loadedRightCol = gameMap.at(0).size() - 1;
@@ -107,19 +109,6 @@ struct GameState
 	void resetGameState(const SDLState& state, const std::string& biomeName = "Transition")
 	{
 		std::cout << "Reseting Game State..." << std::endl;
-
-		// Clear dynamic layers
-		//layers[LAYER_IDX_OBSTACLES].clear();
-		//layers[LAYER_IDX_LEVEL].clear();  // only if level tiles should reset
-
-		// Free up memory of dynamic layers before creating new objects
-		/*layers[LAYER_IDX_OBSTACLES].clear();
-		layers[LAYER_IDX_OBSTACLES].shrink_to_fit();
-		std::cout << "Obstacle Layer: " << layers[LAYER_IDX_OBSTACLES].size() << std::endl;
-
-		layers[LAYER_IDX_LEVEL].clear();
-		layers[LAYER_IDX_LEVEL].shrink_to_fit();
-		std::cout << "Level Layer: " << layers[LAYER_IDX_LEVEL].size() << std::endl;*/
 
 		// Reset the map
 		resetMapForBiome(biomeName);
@@ -200,16 +189,16 @@ struct GameState
 		}
 
 		// Display the new Map
-		//std::cout << "New Map: " << std::endl;
+		std::cout << "New Map: " << std::endl;
 
-		//for (size_t row = 0; row < gameMap.size(); ++row)
-		//{
-		//	for (size_t col = 0; col < gameMap[row].size(); ++col)
-		//	{
-		//		std::cout << gameMap[row][col] << " ";
-		//	}
-		//	std::cout << std::endl; // Move to the next row
-		//}
+		for (size_t row = 0; row < gameMap.size(); ++row)
+		{
+			for (size_t col = 0; col < gameMap[row].size(); ++col)
+			{
+				std::cout << gameMap[row][col] << " ";
+			}
+			std::cout << std::endl; // Move to the next row
+		}
 	}
 
 	void updateBiome(std::string biomeName)
@@ -367,6 +356,11 @@ struct GameState
 						row.push_back(5);
 					}
 				}
+
+				// Debug print
+				/*std::cout << "Floor tile IDs: ";
+				for (short id : floorTiles) std::cout << id << " ";
+				std::cout << std::endl;*/
 
 				return row;
 			};

@@ -113,11 +113,11 @@ int main(int argc, char* argv[])
 	// Load the current textures of the biome
 	game.currentBiome.loadTextures(res, sdl.renderer);
 
+	// Start the map size at 0
+	CURRENT_MAP_SIZE = 0;
+
 	// Create the game tiles
 	manageTiles(sdl, game, res, false);
-
-	// Store the current map size
-	CURRENT_MAP_SIZE = game.gameMap.at(0).size();
 
 	// Store the time into prevTime
 	uint64_t prevTime = SDL_GetTicks();
@@ -316,9 +316,6 @@ int main(int argc, char* argv[])
 
 		manageTiles(sdl, game, res, true);
 
-		// Store the current map size
-		CURRENT_MAP_SIZE = game.gameMap.at(0).size();
-
 		// Print total number of objects
 		//countObjectsWithTexture(game);
 
@@ -335,11 +332,24 @@ int main(int argc, char* argv[])
 		// Draw the parallax backgrounds
 		int layerCount = stoi(game.currentBiome.parallaxBackgrounds);
 
+		cout << "Current number of parallax backgrounds: " << res.parallaxBackgrounds.size() << endl;
+
+		// Check the number of scroll positions and resize if necessary
+		if (scrollPositions.size() != res.parallaxBackgrounds.size())
+		{
+			scrollPositions.resize(res.parallaxBackgrounds.size());
+		}
+
+		// Draw each parallax background
 		for (int i = 0; i < layerCount; i++)
 		{
+			cout << "Loading layer " << i + 1 << endl;
+			cout << "Ptr: " << res.parallaxBackgrounds[i] << endl;
+
 			float scrollFactor = 0.75f * (i + 1) / layerCount;
 
 			drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i], game.player().getVelocity().x, scrollPositions[i], scrollFactor, deltaTime);
+			cout << "Success!!!" << endl;
 		}
 
 		// Draw all objects
@@ -439,8 +449,8 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 		{
 			// Then we need to generate one from the normal biomes
 			int idx = gs.randomInt(0, gs.unusedBiomes.size() - 1);
-			//nextBiome = gs.unusedBiomes[idx];
-			nextBiome = "Swamp";
+			nextBiome = gs.unusedBiomes[idx];
+			//nextBiome = "Swamp";
 			gs.unusedBiomes.erase(gs.unusedBiomes.begin() + idx);  // remove it so it's not picked again
 
 			cout << "Next biome: " << nextBiome << endl;
@@ -476,9 +486,6 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 	// Rebuild the game map
 	CURRENT_MAP_SIZE = 0;
 	manageTiles(state, gs, res, false);
-
-	// Store the current map size
-	CURRENT_MAP_SIZE = gs.gameMap.at(0).size();
 
 	cout << "Done creating tiles!" << endl;
 }
@@ -1250,17 +1257,17 @@ bool checkGrounded(const GameObject& player, const std::vector<std::unique_ptr<G
 
 void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUpdate)
 {
-	int startCol = 0;
+	int startCol = CURRENT_MAP_SIZE;
 
-	// If we are in update mode, we're only adding new tile to the last column (with chunk overlap)
-	if (isUpdate)
-	{
-		startCol = gs.loadedRightCol;
-		if (startCol < 0)
-		{
-			startCol = 0;
-		}
-	}
+	//// If we are in update mode, we're only adding new tile to the last column (with chunk overlap)
+	//if (isUpdate)
+	//{
+	//	startCol = CURRENT_MAP_SIZE;
+	//	if (startCol < 0)
+	//	{
+	//		startCol = 0;
+	//	}
+	//}
 
 	// If map width hasn't changed, nothing to do
 	if (CURRENT_MAP_SIZE == gs.gameMap.at(0).size())
@@ -1296,173 +1303,194 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 		// For each element of the new column range
 		for (int c = startCol; c < static_cast<int>(gs.gameMap.at(r).size()); ++c)
 		{
-			// Skip tiles that were already spawned (prevents duplicates at same (r, c))
-			if (tileAlreadySpawned(r, c))
+			// Check to see if this column is already spawned
+			if (c < CURRENT_MAP_SIZE && c != 0)
 			{
 				continue;
+			}
+
+			// Debug
+			// If this is the last row
+			if (r == static_cast<int>(gs.gameMap.size()) - 1)
+			{
+				// Increment the map size
+				CURRENT_MAP_SIZE++;
+				cout << "Loaded Column: " << CURRENT_MAP_SIZE - 1 << endl;
 			}
 
 			int id = gs.gameMap.at(r).at(c);
 			switch (id)
 			{
 				// Player (spawn only if no player exists)
-			case 1:
-			{
-				if (gs.layers[LAYER_IDX_PLAYER].empty())
+				case 1:
 				{
-					auto player = std::make_unique<Player>(res);
-					player->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					gs.layers[LAYER_IDX_PLAYER].push_back(std::move(player));
-				}
+					if (gs.layers[LAYER_IDX_PLAYER].empty())
+					{
+						auto player = std::make_unique<Player>(res);
+						player->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+						gs.layers[LAYER_IDX_PLAYER].push_back(std::move(player));
+					}
 
-				break;
-			}
-
-			// Monster
-			case 2:
-			{
-				auto monster = std::make_unique<Monster>(res);
-				monster->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-				gs.layers[LAYER_IDX_MONSTER].push_back(std::move(monster));
-
-				break;
-			}
-
-			// Second player
-			case 3:
-			{
-				break;
-			}
-
-			// Starting portal
-			case 4:
-			{
-				auto portal = std::make_unique<GameObject>();
-
-				portal->setType(ObjectType::startportal);      // or endportal
-				//portal->setImageSize({ START_PORTAL_SIZE, START_PORTAL_SIZE });
-				portal->setTexture(res.startPortal);           // texture from Resources
-				portal->setAnimations(res.startPortalAnim);     // add animation
-				portal->setCurrentAnimation(0);                // start at frame 0
-				portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-
-				gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
-
-				break;
-			}
-
-			// Ending portal
-			case 5:
-			{
-				auto portal = std::make_unique<GameObject>();
-
-				portal->setType(ObjectType::endportal);      // or endportal
-				portal->setImageSize({ END_PORTAL_SIZE, END_PORTAL_SIZE });
-				portal->setTexture(res.endPortal);           // texture from Resources
-				portal->setAnimations(res.endPortalAnim);     // add animation
-				portal->setCurrentAnimation(0);                // start at frame 0
-				portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-				portal->clearCollider();
-				portal->addCollider(END_PORTAL_COLLISION);
-
-				gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
-
-				break;
-			}
-
-			default:
-			{
-				// Floor Tiles
-				if (id >= 6 && id <= 50)
-				{
-					auto& floor = gs.currentBiome.floor.at(id);
-
-					// Debug
-					cout << "Tile ID " << id << " texture ptr: " << floor.getTexture() << endl;
-
-					auto obs = std::make_unique<Level>(floor);
-					obs->setTexture(floor.getTexture());
-
-					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-					FLOOR_TILES++;
 					break;
 				}
 
-				// Tripped obstacles
-				else if (id >= 51 && id <= 100)
+				// Monster
+				case 2:
 				{
-					auto& tripped = gs.currentBiome.tripped.at(id);
+					auto monster = std::make_unique<Monster>(res);
+					monster->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					gs.layers[LAYER_IDX_MONSTER].push_back(std::move(monster));
+					std::cout << "Spawned monster at row " << r << " col " << c
+						<< " pos (" << c * TILE_SIZE << ", " << state.logH - (MAP_ROWS - r - 1) * TILE_SIZE << ")\n";
 
-					// Debug
-					cout << "Tile ID " << id << " texture ptr: " << tripped.getTexture() << endl;
+					break;
+				}
+
+				// Second player
+				case 3:
+				{
+					break;
+				}
+
+				// Starting portal
+				case 4:
+				{
+					auto portal = std::make_unique<GameObject>();
+
+					portal->setType(ObjectType::startportal);      // or endportal
+					//portal->setImageSize({ START_PORTAL_SIZE, START_PORTAL_SIZE });
+					portal->setTexture(res.startPortal);           // texture from Resources
+					portal->setAnimations(res.startPortalAnim);     // add animation
+					portal->setCurrentAnimation(0);                // start at frame 0
+					portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
+
+					break;
+				}
+
+				// Ending portal
+				case 5:
+				{
+					auto portal = std::make_unique<GameObject>();
+
+					portal->setType(ObjectType::endportal);      // or endportal
+					portal->setImageSize({ END_PORTAL_SIZE, END_PORTAL_SIZE });
+					portal->setTexture(res.endPortal);           // texture from Resources
+					portal->setAnimations(res.endPortalAnim);     // add animation
+					portal->setCurrentAnimation(0);                // start at frame 0
+					portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					portal->clearCollider();
+					portal->addCollider(END_PORTAL_COLLISION);
+
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
+
+					break;
+				}
+
+				default:
+				{
+					// Floor Tiles
+					if (id >= 6 && id <= 50)
+					{
+						auto& floor = gs.currentBiome.floor.at(id);
+
+						// Debug
+						cout << "Tile ID " << id << " texture ptr: " << floor.getTexture() << endl;
+
+						auto obs = std::make_unique<Level>(floor);
+						//obs->setTexture(floor.getTexture());
+						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);
+
+						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+						FLOOR_TILES++;
+						break;
+					}
+
+					// Tripped obstacles
+					else if (id >= 51 && id <= 100)
+					{
+						auto& tripped = gs.currentBiome.tripped.at(id);
+
+						// Debug
+						cout << "Tile ID " << id << " texture ptr: " << tripped.getTexture() << endl;
 					
-					auto obs = std::make_unique<Obstacle>(tripped);
-					obs->setTexture(tripped.getTexture());
+						auto obs = std::make_unique<Obstacle>(tripped);
+						//obs->setTexture(tripped.getTexture());
+						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);
 
-					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-					OBSTACLES++;
-					break;
-				}
+						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+						OBSTACLES++;
+						break;
+					}
 
-				// Wall obstacles
-				else if (id >= 101 && id <= 150)
-				{
-					auto& wall = gs.currentBiome.wall.at(id);
+					// Wall obstacles
+					else if (id >= 101 && id <= 150)
+					{
+						auto& wall = gs.currentBiome.wall.at(id);
 
-					// Debug
-					cout << "Tile ID " << id << " texture ptr: " << wall.getTexture() << endl;
+						// Debug
+						cout << "Tile ID " << id << " texture ptr: " << wall.getTexture() << endl;
 
-					auto obs = std::make_unique<Obstacle>(wall);
-					obs->setTexture(wall.getTexture());
+						auto obs = std::make_unique<Obstacle>(wall);
+						//obs->setTexture(wall.getTexture());
+						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);
 
-					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-					OBSTACLES++;
-					break;
-				}
+						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+						OBSTACLES++;
+						break;
+					}
 
-				// Burnt obstacles
-				else if (id >= 151 && id <= 200)
-				{
-					auto& burnt = gs.currentBiome.burnt.at(id);
+					// Burnt obstacles
+					else if (id >= 151 && id <= 200)
+					{
+						auto& burnt = gs.currentBiome.burnt.at(id);
 
-					// Debug
-					cout << "Tile ID " << id << " texture ptr: " << burnt.getTexture() << endl;
+						// Debug
+						cout << "Tile ID " << id << " texture ptr: " << burnt.getTexture() << endl;
 					
-					auto obs = std::make_unique<Obstacle>(burnt);
-					obs->setTexture(burnt.getTexture());
+						auto obs = std::make_unique<Obstacle>(burnt);
+						//obs->setTexture(burnt.getTexture());
+						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);
 
-					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-					OBSTACLES++;
-					break;
-				}
+						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+						OBSTACLES++;
+						break;
+					}
 
-				// Spike obstacles
-				else if (id >= 201 && id <= 250)
-				{
-					auto& spike = gs.currentBiome.spike.at(id);
+					// Spike obstacles
+					else if (id >= 201 && id <= 250)
+					{
+						auto& spike = gs.currentBiome.spike.at(id);
 
-					// Debug
-					cout << "Tile ID " << id << " texture ptr: " << spike.getTexture() << endl;
+						// Debug
+						cout << "Tile ID " << id << " texture ptr: " << spike.getTexture() << endl;
 					
-					auto obs = std::make_unique<Obstacle>(spike);
-					obs->setTexture(spike.getTexture());
+						auto obs = std::make_unique<Obstacle>(spike);
+						//obs->setTexture(spike.getTexture());
+						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);
 
-					obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
-					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
-					OBSTACLES++;
-					break;
-				}
+						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
+						OBSTACLES++;
+						break;
+					}
 
-				// Others
-				else
-				{
-					break;
+					// Others
+					else
+					{
+						break;
+					}
 				}
-			}
 			}
 		}
 	}

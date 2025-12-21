@@ -112,9 +112,6 @@ struct Biome {
 
     void loadBiome(std::string name)
     {
-        // Clear all the previous textures
-        clearTextures();
-
         // Clear all the previous objects in the maps
         tripped = {};
         wall = {};
@@ -172,6 +169,15 @@ struct Biome {
                 parallaxBackgrounds = line.substr(20);
             }
 
+            // Floor tiles
+            if (line.find("[floor]") == 0)
+            {
+                while (std::getline(fin, line) && line != "")
+                {
+                    readFloorTiles(line);
+                }
+            }
+
             // Tripped obstacles
             if (line.find("[tripped]") == 0)
             {
@@ -208,15 +214,6 @@ struct Biome {
                 }
             }
 
-            // Floor tiles
-            if (line.find("[floor]") == 0)
-            {
-                while (std::getline(fin, line) && line != "")
-                {
-                    readFloorTiles(line);
-                }
-            }
-
             // Check whether this is the ending line
             if (line == "end")
             {
@@ -239,25 +236,64 @@ struct Biome {
         clearTextures();
 
         // Load all the textures
+        // Floor tiles
+        for (auto& [id, obj] : floor)
+        {
+            std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
+            obj.setTexture(res.getTileTexture(renderer, name, id));
+
+            if (!obj.getTexture())
+            {
+                std::cout << "FAILED texture for ID " << id << "\n";
+            }
+        }
+
+        // Tripped obstacles
         for (auto& [id, obj] : tripped) 
         {
             std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
             obj.setTexture(res.getTileTexture(renderer, name, id));
+
+            if (!obj.getTexture())
+            {
+                std::cout << "FAILED texture for ID " << id << "\n";
+            }
         }
+
+        // Wall obstacles
         for (auto& [id, obj] : wall) 
         {
             std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
             obj.setTexture(res.getTileTexture(renderer, name, id));
+
+            if (!obj.getTexture())
+            {
+                std::cout << "FAILED texture for ID " << id << "\n";
+            }
         }
+
+        // Burnt obstacles
         for (auto& [id, obj] : burnt) 
         {
             std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
             obj.setTexture(res.getTileTexture(renderer, name, id));
+
+            if (!obj.getTexture())
+            {
+                std::cout << "FAILED texture for ID " << id << "\n";
+            }
         }
-        for (auto& [id, obj] : floor) 
+
+        // Spike obstacles
+        for (auto& [id, obj] : spike)
         {
             std::cout << "ID: " << id << ", texture path: " << "data/textures/biomes/" << name << "/" << std::to_string(id) << ".png" << std::endl;
             obj.setTexture(res.getTileTexture(renderer, name, id));
+
+            if (!obj.getTexture())
+            {
+                std::cout << "FAILED texture for ID " << id << "\n";
+            }
         }
     }
 

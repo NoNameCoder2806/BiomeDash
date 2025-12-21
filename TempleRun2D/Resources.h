@@ -99,6 +99,10 @@ struct Resources
         {
             std::string path = "data/textures/biomes/" + biomeName + "/" + std::to_string(id) + ".png";
             SDL_Texture* tex = IMG_LoadTexture(renderer, path.c_str());
+            
+            std::cout << "[TEXTURE LOAD] ID=" << id
+                << " ptr=" << static_cast<void*>(tex)
+                << std::endl;
 
             // Debug print
             std::cout << "Loading tile ID " << id << " from path: " << path << std::endl;
@@ -201,8 +205,12 @@ struct Resources
 
         // Destroy old parallax backgrounds
         for (SDL_Texture* tex : this->parallaxBackgrounds)
+        {
             SDL_DestroyTexture(tex);
-        this->parallaxBackgrounds.clear();;
+        }
+        this->parallaxBackgrounds.clear();
+
+
 
         // Load parallax backgrounds
         for (int i = 1; i <= std::stoi(parallaxBackgrounds); i++)
@@ -215,12 +223,16 @@ struct Resources
             {
                 this->parallaxBackgrounds.push_back(tex);
                 std::cout << "Loaded successfully: " << path << std::endl;
+                std::cout << "New count: " << this->parallaxBackgrounds.size() << std::endl;
             }
             else
             {
                 std::cout << "Failed to load parallax background: " << path << std::endl;
             }
         }
+
+        // Debug
+        std::cout << "Total number of backgrounds loaded: " << std::stoi(parallaxBackgrounds) << std::endl;
 
         std::cout << "Resources reset success!" << std::endl;
     }
