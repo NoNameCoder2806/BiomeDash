@@ -164,9 +164,9 @@ struct Resources
         monsterNotVisible = loadTexture(state.renderer, "");
 
         // ----- III/ Starting Portal's animations -----
-        // startPortalAnim.resize(1);
-        // startPortalAnim[0] = Animation(8, 1.0f, false);
-        // startPortal = loadTexture(state.renderer, "data/textures/portals/startPortal");
+        startPortalAnim.resize(1);
+        startPortalAnim[0] = Animation(12, 1.5f, true);
+        startPortal = loadTexture(state.renderer, "data/textures/portals/start_portal.png");
 
         // ----- IV/ Ending Portal's animations -----
         endPortalAnim.resize(1);
@@ -212,8 +212,6 @@ struct Resources
             SDL_DestroyTexture(tex);
         }
         this->parallaxBackgrounds.clear();
-
-
 
         // Load parallax backgrounds
         for (int i = 1; i <= std::stoi(parallaxBackgrounds); i++)

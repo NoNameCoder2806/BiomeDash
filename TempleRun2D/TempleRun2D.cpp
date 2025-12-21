@@ -37,6 +37,7 @@ using namespace std;
 const int PLAYER_SIZE = 32;
 const int MONSTER_SIZE = 128;
 const int END_PORTAL_SIZE = 128;
+const int START_PORTAL_SIZE = 64;
 const int TILE_SIZE = 32;
 const int MAP_ROWS = 10;
 const int MAP_COLS = 15;
@@ -50,7 +51,6 @@ const SDL_FRect BURNT_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect DIED_COLLISION = { 7, 0, 16, 100 };
 const SDL_FRect START_PORTAL_COLLISION = { 0, 0, 0, 0 };
-
 const SDL_FRect END_PORTAL_COLLISION = { 50, 0, 28, 128 };
 //const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
 
@@ -587,6 +587,28 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 
 		// Render the object's texture
 		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
+	}
+	else if (obj.getType() == ObjectType::startportal)
+	{
+		SDL_FRect src
+		{
+			.x = srcX,
+			.y = 0,
+			.w = obj.getImageSize().x,
+			.h = obj.getImageSize().y
+		};
+
+		SDL_FRect dst    // Destination 
+		{
+			.x = obj.getPosition().x + obj.getImageOffset().x - gs.mapViewport.x,
+			.y = obj.getPosition().y + obj.getImageOffset().y - TILE_SIZE,
+			.w = START_PORTAL_SIZE,
+			.h = START_PORTAL_SIZE
+		};
+
+		// Render the object's texture
+		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
+
 	}
 	else    // Obstacles, Floor Tiles 
 	{
@@ -1356,14 +1378,19 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				// Starting portal
 				case 4:
 				{
+					cout << "Spawned starting portal!" << endl;
+					cout << "Ptr: " << res.startPortal << endl;
+
 					auto portal = std::make_unique<GameObject>();
 
 					portal->setType(ObjectType::startportal);      // or endportal
-					//portal->setImageSize({ START_PORTAL_SIZE, START_PORTAL_SIZE });
+					portal->setImageSize({ START_PORTAL_SIZE, START_PORTAL_SIZE });
 					portal->setTexture(res.startPortal);           // texture from Resources
 					portal->setAnimations(res.startPortalAnim);     // add animation
 					portal->setCurrentAnimation(0);                // start at frame 0
 					portal->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					portal->clearCollider();
+					portal->addCollider(START_PORTAL_COLLISION);
 
 					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
 
