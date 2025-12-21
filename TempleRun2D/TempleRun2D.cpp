@@ -474,7 +474,8 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 	// Reset the resources
 	res.reset(state, gs.currentBiome.name, gs.currentBiome.parallaxBackgrounds);
 
-	cout << "Confirm!" << endl;
+	// Clear the Level layer and Destroy the portal
+	gs.layers[LAYER_IDX_LEVEL].clear();
 
 	// Rebuild the game map
 	CURRENT_MAP_SIZE = 0;
