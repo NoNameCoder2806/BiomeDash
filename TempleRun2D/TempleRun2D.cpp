@@ -138,9 +138,6 @@ int main(int argc, char* argv[])
 		// Check whether the game needs to transition / change biome
 		if (game.needTransition)
 		{
-			cout << " - Transitioning... " << endl;
-			cout << " - Current biome: " << game.currentBiome.name << endl;
-
 			// Call the function to reset all the textures and game state
 			resetForNewBiome(sdl, game, res);
 
@@ -332,8 +329,6 @@ int main(int argc, char* argv[])
 		// Draw the parallax backgrounds
 		int layerCount = stoi(game.currentBiome.parallaxBackgrounds);
 
-		cout << "Current number of parallax backgrounds: " << res.parallaxBackgrounds.size() << endl;
-
 		// Check the number of scroll positions and resize if necessary
 		if (scrollPositions.size() != res.parallaxBackgrounds.size())
 		{
@@ -343,13 +338,11 @@ int main(int argc, char* argv[])
 		// Draw each parallax background
 		for (int i = 0; i < layerCount; i++)
 		{
-			cout << "Loading layer " << i + 1 << endl;
-			cout << "Ptr: " << res.parallaxBackgrounds[i] << endl;
-
+			// Calculate the scroll factor
 			float scrollFactor = 0.75f * (i + 1) / layerCount;
 
+			// Draw the background
 			drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i], game.player().getVelocity().x, scrollPositions[i], scrollFactor, deltaTime);
-			cout << "Success!!!" << endl;
 		}
 
 		// Draw all objects
@@ -486,6 +479,22 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 	// Rebuild the game map
 	CURRENT_MAP_SIZE = 0;
 	manageTiles(state, gs, res, false);
+
+	// Starting positions
+	glm::vec2 playerStartPos(state.logW / 2.0f, state.logH / 2.0f + 32.0f);
+	glm::vec2 monsterStartPos(state.logW / 2.0f - 10.25 * TILE_SIZE, 32.0f * 9 - 14.0f);
+
+	// Reset player position
+	if (!gs.layers[LAYER_IDX_PLAYER].empty())
+	{
+		gs.player().setPosition(playerStartPos);
+	}
+
+	// Reset monster position
+	if (!gs.layers[LAYER_IDX_MONSTER].empty())
+	{
+		gs.monster().setPosition(monsterStartPos);
+	}
 
 	cout << "Done creating tiles!" << endl;
 }
@@ -1259,16 +1268,6 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 {
 	int startCol = CURRENT_MAP_SIZE;
 
-	//// If we are in update mode, we're only adding new tile to the last column (with chunk overlap)
-	//if (isUpdate)
-	//{
-	//	startCol = CURRENT_MAP_SIZE;
-	//	if (startCol < 0)
-	//	{
-	//		startCol = 0;
-	//	}
-	//}
-
 	// If map width hasn't changed, nothing to do
 	if (CURRENT_MAP_SIZE == gs.gameMap.at(0).size())
 	{
@@ -1309,13 +1308,14 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				continue;
 			}
 
-			// Debug
 			// If this is the last row
 			if (r == static_cast<int>(gs.gameMap.size()) - 1)
 			{
 				// Increment the map size
 				CURRENT_MAP_SIZE++;
-				cout << "Loaded Column: " << CURRENT_MAP_SIZE - 1 << endl;
+				
+				// Debug: print the columns that are loaded
+				//cout << "Loaded Column: " << CURRENT_MAP_SIZE - 1 << endl;
 			}
 
 			int id = gs.gameMap.at(r).at(c);
@@ -1394,14 +1394,10 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					if (id >= 6 && id <= 50)
 					{
 						auto& floor = gs.currentBiome.floor.at(id);
-
-						// Debug
-						cout << "Tile ID " << id << " texture ptr: " << floor.getTexture() << endl;
-
 						auto obs = std::make_unique<Level>(floor);
-						//obs->setTexture(floor.getTexture());
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(floor.getTexture());
+						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);*/
 
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
@@ -1413,14 +1409,10 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					else if (id >= 51 && id <= 100)
 					{
 						auto& tripped = gs.currentBiome.tripped.at(id);
-
-						// Debug
-						cout << "Tile ID " << id << " texture ptr: " << tripped.getTexture() << endl;
-					
 						auto obs = std::make_unique<Obstacle>(tripped);
-						//obs->setTexture(tripped.getTexture());
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(tripped.getTexture());
+						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);*/
 
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
@@ -1432,10 +1424,6 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					else if (id >= 101 && id <= 150)
 					{
 						auto& wall = gs.currentBiome.wall.at(id);
-
-						// Debug
-						cout << "Tile ID " << id << " texture ptr: " << wall.getTexture() << endl;
-
 						auto obs = std::make_unique<Obstacle>(wall);
 						//obs->setTexture(wall.getTexture());
 						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
@@ -1451,14 +1439,10 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					else if (id >= 151 && id <= 200)
 					{
 						auto& burnt = gs.currentBiome.burnt.at(id);
-
-						// Debug
-						cout << "Tile ID " << id << " texture ptr: " << burnt.getTexture() << endl;
-					
 						auto obs = std::make_unique<Obstacle>(burnt);
-						//obs->setTexture(burnt.getTexture());
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(burnt.getTexture());
+						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);*/
 
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
@@ -1470,14 +1454,10 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					else if (id >= 201 && id <= 250)
 					{
 						auto& spike = gs.currentBiome.spike.at(id);
-
-						// Debug
-						cout << "Tile ID " << id << " texture ptr: " << spike.getTexture() << endl;
-					
 						auto obs = std::make_unique<Obstacle>(spike);
-						//obs->setTexture(spike.getTexture());
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(spike.getTexture());
+						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
+						obs->setTexture(tex);*/
 
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));

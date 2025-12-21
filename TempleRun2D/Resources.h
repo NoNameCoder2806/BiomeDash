@@ -75,7 +75,8 @@ struct Resources
     // Helper function to load a texture from file
     SDL_Texture* loadTexture(SDL_Renderer* renderer, const std::string& filepath)
     {
-        std::cout << "----- Loading from path " << filepath << " -----" << std::endl;
+        // Debug: path
+        //std::cout << "----- Loading from path " << filepath << " -----" << std::endl;
         SDL_Texture* tex = IMG_LoadTexture(renderer, filepath.c_str());
 
         if (tex == nullptr)
@@ -92,7 +93,8 @@ struct Resources
     // Create one-off textures for tiles based on their id
     SDL_Texture* getTileTexture(SDL_Renderer* renderer, const std::string& biomeName, int id)
     {
-        std::cout << "ID Count: " << tileTextures.count(id) << std::endl;
+        // Debug: ID 
+        //std::cout << "ID Count: " << tileTextures.count(id) << std::endl;
 
         // If the textures haven't existed in the map, we add it to the map
         if (tileTextures.count(id) == 0)
@@ -100,12 +102,11 @@ struct Resources
             std::string path = "data/textures/biomes/" + biomeName + "/" + std::to_string(id) + ".png";
             SDL_Texture* tex = IMG_LoadTexture(renderer, path.c_str());
             
-            std::cout << "[TEXTURE LOAD] ID=" << id
-                << " ptr=" << static_cast<void*>(tex)
-                << std::endl;
+            //std::cout << "[TEXTURE LOAD] ID=" << id << " ptr=" << static_cast<void*>(tex);
+            //std::cout << std::endl;
 
             // Debug print
-            std::cout << "Loading tile ID " << id << " from path: " << path << std::endl;
+            //std::cout << "Loading tile ID " << id << " from path: " << path << std::endl;
 
             if (tex == nullptr)
             {
@@ -185,7 +186,9 @@ struct Resources
             if (tex)
             {
                 this->parallaxBackgrounds.push_back(tex);
-                std::cout << "Loaded successfully: " << path << std::endl;
+                
+                // Debug: success message
+                //std::cout << "Loaded successfully: " << path << std::endl;
             }
             else
             {
@@ -222,8 +225,6 @@ struct Resources
             if (tex)
             {
                 this->parallaxBackgrounds.push_back(tex);
-                std::cout << "Loaded successfully: " << path << std::endl;
-                std::cout << "New count: " << this->parallaxBackgrounds.size() << std::endl;
             }
             else
             {
@@ -232,9 +233,8 @@ struct Resources
         }
 
         // Debug
-        std::cout << "Total number of backgrounds loaded: " << std::stoi(parallaxBackgrounds) << std::endl;
-
-        std::cout << "Resources reset success!" << std::endl;
+        //std::cout << "Total number of backgrounds loaded: " << std::stoi(parallaxBackgrounds) << std::endl;
+        //std::cout << "Resources reset success!" << std::endl;
     }
 
     // Clear Tiles

@@ -67,26 +67,20 @@ struct GameState
 		currentBiome.name = biomeName;
 		
 		gameMap = {
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0},
-			{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 		};
-
-		std::cout << "Current Biome: " << currentBiome.name << std::endl;
 
 		loadedLeftCol = 0;
 		loadedRightCol = gameMap.at(0).size() - 1;
-
-		std::cout << currentBiome.name << std::endl;
-		std::cout << gameMap.at(0).size() << std::endl;
-		std::cout << loadedRightCol << std::endl;
 
 		currentTile = 5;
 		lastChunkEmpty = false;
@@ -108,33 +102,11 @@ struct GameState
 
 	void resetGameState(const SDLState& state, const std::string& biomeName = "Transition")
 	{
-		std::cout << "Reseting Game State..." << std::endl;
-
 		// Reset the map
 		resetMapForBiome(biomeName);
 
-		std::cout << "Reseted Map!" << std::endl;
-
-		// Starting positions
-		glm::vec2 playerStartPos(state.logW / 2.0f, state.logH / 2.0f + 32.0f);
-		glm::vec2 monsterStartPos(0, 32.0f * 9 - 18.0f);
-
-		// Reset player
-		if (!layers[LAYER_IDX_PLAYER].empty())
-		{
-			player().setPosition(playerStartPos);
-		}
-
-		// Reset monster
-		if (!layers[LAYER_IDX_MONSTER].empty())
-		{
-			monster().setPosition(monsterStartPos);
-		}
-
 		// Reload biome
 		updateBiome(biomeName);
-
-		std::cout << "Reloaded Biome!" << std::endl;
 
 		// Reset map tracking
 		loadedLeftCol = 0;
@@ -155,7 +127,6 @@ struct GameState
 		// Change the map
 		if (currentBiome.name == "Transition")
 		{
-			std::cout << "Using the Transtion map!" << std::endl;
 			gameMap = {
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -165,13 +136,12 @@ struct GameState
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 			};
 		}
 		else
 		{
-			std::cout << "Using the Normal map!" << std::endl;
 			gameMap = {
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -184,26 +154,23 @@ struct GameState
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 			};
-
-			std::cout << "Used the Normal Map!!!" << std::endl;
 		}
 
-		// Display the new Map
-		std::cout << "New Map: " << std::endl;
+		// Debug: isplay the new Map
+		//std::cout << "New Map: " << std::endl;
 
-		for (size_t row = 0; row < gameMap.size(); ++row)
-		{
-			for (size_t col = 0; col < gameMap[row].size(); ++col)
-			{
-				std::cout << gameMap[row][col] << " ";
-			}
-			std::cout << std::endl; // Move to the next row
-		}
+		//for (size_t row = 0; row < gameMap.size(); ++row)
+		//{
+		//	for (size_t col = 0; col < gameMap[row].size(); ++col)
+		//	{
+		//		std::cout << gameMap[row][col] << " ";
+		//	}
+		//	std::cout << std::endl; // Move to the next row
+		//}
 	}
 
 	void updateBiome(std::string biomeName)
 	{
-		std::cout << "Updating Biome... " << std::endl;
 		currentBiome.loadBiome(biomeName);
 	}
 
@@ -544,10 +511,8 @@ struct GameState
 		SDL_RenderDebugText(state.renderer, 165, 5, std::format("----- Game -----").c_str());
 		SDL_RenderDebugText(state.renderer, 165, 25, std::format("Current Tile: {}", currentTile).c_str());
 		SDL_RenderDebugText(state.renderer, 165, 45, std::format("Distance: {:.0f} px", player().getPosition().x - 320).c_str());
-		SDL_RenderDebugText(state.renderer, 165, 65, std::format("Left: {}", loadedLeftCol).c_str());
-		SDL_RenderDebugText(state.renderer, 165, 85, std::format("Right: {}", loadedRightCol).c_str());
-		SDL_RenderDebugText(state.renderer, 165, 105, std::format("Current Biome: {}", currentBiome.name).c_str());
-		SDL_RenderDebugText(state.renderer, 165, 125, std::format("Background: {}", currentBiome.background).c_str());
+		SDL_RenderDebugText(state.renderer, 165, 65, std::format("Monster X-position: {:.0f}", monster().getPosition().x).c_str());
+		SDL_RenderDebugText(state.renderer, 165, 85, std::format("Monster Y-position: {:.0f}", monster().getPosition().y).c_str());
 	}
 
 	void displaySectionBarrier(SDLState& state)
