@@ -46,6 +46,7 @@ struct GameState
 	Biome currentBiome;
 
 	bool needTransition;
+	bool portalGenerated;
 
 	const std::vector<std::string> biomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay" };
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
@@ -65,7 +66,7 @@ struct GameState
 
 		// Set the biome according to the name
 		currentBiome.name = biomeName;
-		
+
 		gameMap = {
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -88,11 +89,22 @@ struct GameState
 		currentBiome.loadBiome(currentBiome.name);
 
 		needTransition = false;
+		portalGenerated = false;
 	}
 
 	Player& player()                  // The player() function quickly returns
 	{                                     // a reference to the player object.
 		return static_cast<Player&>(*layers[LAYER_IDX_PLAYER][0]);
+	}
+
+	int biomeCount()
+	{
+		return biomeList.size() - unusedBiomes.size() + 1;
+	}
+
+	float getScore()
+	{
+		return player().getPosition().x - 320;
 	}
 
 	Monster& monster()
@@ -117,6 +129,9 @@ struct GameState
 		// Reset camera/scroll
 		mapViewport.x = 0;
 		backgroundScroll = 0.f;
+
+		// Reset the portal flag
+		portalGenerated = false;
 	}
 
 	void resetMapForBiome(const std::string& biomeName)
@@ -182,7 +197,8 @@ struct GameState
 		}
 	}
 
-	int randomInt(int min, int max) {
+	int randomInt(int min, int max)
+	{
 		static std::random_device rd;    // seed
 		static std::mt19937 gen(rd());   // Mersenne Twister engine
 		std::uniform_int_distribution<> dist(min, max);
@@ -207,8 +223,23 @@ struct GameState
 		// If this is a Transition biome, we don't generate obstacles
 		if (currentBiome.name == "Transition")
 		{
-			// Generate a chunk with 0 obstacles
-			//generateObstacleChunk(0);
+			return;
+		}
+
+		// If the portal is generated
+		if (portalGenerated)
+		{
+			// Then we only generated empty chunks
+			generateObstacleChunk(0);
+
+			return;
+		}
+
+		// If the score / distance is above 2500px
+		if (getScore() >= 2500)
+		{
+			// Generate an obstacle chunk that has a portal
+			generateObstacleChunk(-1);
 
 			return;
 		}
@@ -332,19 +363,38 @@ struct GameState
 				return row;
 			};
 
-		if (obstaclesCount == 0)
+		if (obstaclesCount == -1)
+		{
+			// Portal generation
+			obstacleChunk = {
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 5, 0, 0},
+				generateFloorRow()
+			};
+
+			// Set the flag to true
+			portalGenerated = true;
+		}
+		else if (obstaclesCount == 0)
 		{
 			obstacleChunk = {
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					{0, 0, 0, 0, 0},
-					generateFloorRow()
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0},
+				generateFloorRow()
 			};
 		}
 		else if (obstaclesCount == 1)

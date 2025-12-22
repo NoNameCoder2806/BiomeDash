@@ -409,9 +409,19 @@ int main(int argc, char* argv[])
 			game.player().addCollider(INVINCIBLE_COLLISION);
 		}
 
+		// Dark blue: #173F6C
+		SDL_SetRenderDrawColor(sdl.renderer, 23, 63, 108, 255);
+
 		// Display FPS
 		std::string fpsText = std::format("FPS: {:.1f}", fps);
 		SDL_RenderDebugText(sdl.renderer, 5, 5, fpsText.c_str());
+
+		// Display the game score and the number of biomes completed
+		string scoreText = format("Score: {:.1f}", game.getScore());
+		SDL_RenderDebugText(sdl.renderer, 165, 5, scoreText.c_str());
+
+		// White color
+		SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
 
 		// Render the current game frame
 		SDL_RenderPresent(sdl.renderer);
