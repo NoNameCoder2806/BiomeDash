@@ -501,13 +501,27 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 		gs.player().setPosition(playerStartPos);
 	}
 
-	// Reset monster position
-	if (!gs.layers[LAYER_IDX_MONSTER].empty())
+	// Check the biome name
+	if (gs.currentBiome.name == "Transition")
 	{
-		gs.monster().setPosition(monsterStartPos);
+		// If this is a transition biome, we need to hide the monster
+		if (!gs.layers[LAYER_IDX_MONSTER].empty())
+		{
+			monsterStartPos = glm::vec2(state.logW / 2.0f - 12 * TILE_SIZE, 32.0f * 9 - 14.0f);
+			gs.monster().setPosition(monsterStartPos);
+		}
+	}
+	else
+	{ 
+		// Reset monster position
+		if (!gs.layers[LAYER_IDX_MONSTER].empty())
+		{
+			gs.monster().setPosition(monsterStartPos);
+		}
 	}
 
-	cout << "Done creating tiles!" << endl;
+	// Debug
+	//cout << "Done creating tiles!" << endl;
 }
 
 //void countObjectsWithTexture(const GameState& game)

@@ -7,8 +7,8 @@
 
 // Constants
 const float GRAVITY = 700.0f;
-const float JUMP_FORCE = -320.0f;
-const float SLIDE_PULL = 320.0f;
+const float JUMP_FORCE = -350.0f;
+const float SLIDE_PULL = 350.0f;
 
 // ----- PLAYER STATES -----
 enum class PlayerState
