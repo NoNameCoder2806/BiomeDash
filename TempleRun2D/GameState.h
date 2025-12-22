@@ -105,7 +105,7 @@ struct GameState
 
 	float getScore()
 	{
-		return player().getPosition().x - 320;
+		return player().getPosition().x - 265;
 	}
 
 	Monster& monster()
@@ -143,6 +143,11 @@ struct GameState
 		// Change the map
 		if (currentBiome.name == "Transition")
 		{
+			// Check to see if the player has completed all the biomes
+			if (unusedBiomes.size() == 0)
+			{
+
+			}
 			gameMap = {
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

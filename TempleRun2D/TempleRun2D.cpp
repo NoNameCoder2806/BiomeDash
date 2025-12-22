@@ -52,8 +52,7 @@ const SDL_FRect BURNT_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect DIED_COLLISION = { 7, 0, 16, 100 };
 const SDL_FRect START_PORTAL_COLLISION = { 0, 0, 0, 0 };
-const SDL_FRect END_PORTAL_COLLISION = { 50, 0, 28, 128 };
-//const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
+const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
 
 // Count number of tiles spawned
 static int TOTAL_TILE = 0;
@@ -1536,8 +1535,10 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 
 void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float xVelocity, float& scrollPos, float scrollFactor, float deltaTime)
 {
+	// If the texture is null
 	if (!texture)
 	{
+		// We exit
 		return;
 	}
 
