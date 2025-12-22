@@ -29,7 +29,7 @@ private:
     float slideDuration = 2.0f;
     float trippedDuration = 1.0f;
 
-    float speed = 75.0f;
+    float speed = 150.0f;
     float boostMeter = 0.0f; // Progress from 0.0 to 1.0
     bool active = false;      // True if boost is ready
     bool alive = true;
@@ -41,7 +41,7 @@ private:
 
 public:
     // Constructor
-    Player(const Resources& res) : state(PlayerState::idle), speed(75.0f), slideDuration(2.0f), trippedDuration(1.0f),
+    Player(const Resources& res) : state(PlayerState::idle), speed(150.0f), slideDuration(2.0f), trippedDuration(1.0f),
                                 boostMeter(0.0f), active(false), jumpRequested(false), slideRequested(false)
     {
         setType(ObjectType::player);
@@ -287,19 +287,19 @@ public:
             case PlayerState::jumping:
             case PlayerState::sliding:
             {
-                moveAmount = 150.0f;
+                moveAmount = getSpeed();
                 break;
             }
 
             case PlayerState::tripped:
             {
-                moveAmount = 75.0f;
+                moveAmount = getSpeed() / 2.0f;
                 break;
             }
 
             case PlayerState::speeding:
             {
-                moveAmount = 200.0f;
+                moveAmount = getSpeed() + 50.0f;
                 break;
             }
 

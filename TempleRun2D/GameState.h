@@ -19,6 +19,7 @@ const size_t LAYER_IDX_MONSTER = 1;
 const size_t LAYER_IDX_OBSTACLES = 2;       // Index for obstacle background tiles
 const size_t LAYER_IDX_LEVEL = 3;           // Index for the level tiles and walls of the map
 const std::string TRANSITION_BIOME = "";
+const int MINIMAL_SCORE = 3000;
 
 struct GameState
 {
@@ -48,7 +49,7 @@ struct GameState
 	bool needTransition;
 	bool portalGenerated;
 
-	const std::vector<std::string> biomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay" };
+	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
 
 	GameState(const SDLState& state, std::string biomeName = "Swamp") : playerIndex(1)
@@ -236,8 +237,11 @@ struct GameState
 		}
 
 		// If the score / distance is above 2500px
-		if (getScore() >= 2500)
+		if (getScore() >= MINIMAL_SCORE)
 		{
+			// Generate an empty chunk
+			generateObstacleChunk(0);
+
 			// Generate an obstacle chunk that has a portal
 			generateObstacleChunk(-1);
 

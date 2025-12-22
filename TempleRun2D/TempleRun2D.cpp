@@ -43,6 +43,7 @@ const int MAP_ROWS = 10;
 const int MAP_COLS = 15;
 const int CHUNK_SIZE = 5;
 const int TILE_PRELOAD_AHEAD = 5;
+const float ORIGINAL_SPEED = 150.0f;
 
 // Collision boxes
 const SDL_FRect RUN_COLLISION = { 7, 5, 16, 27 };
@@ -519,6 +520,11 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 			gs.monster().setPosition(monsterStartPos);
 		}
 	}
+
+	// Reset the player and monster's speed
+	float newSpeed = ORIGINAL_SPEED + (gs.biomeList.size() - gs.unusedBiomes.size() - 1) * 0.1f * ORIGINAL_SPEED;
+	gs.player().setSpeed(newSpeed);
+	gs.monster().setSpeed(newSpeed);
 
 	// Debug
 	//cout << "Done creating tiles!" << endl;

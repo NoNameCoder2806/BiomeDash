@@ -21,7 +21,7 @@ private:
 
 public:
     // Constructor
-    Monster(const Resources& res) : state(MonsterState::idle), speed(75.0f), chaseTimer(0), active(false)
+    Monster(const Resources& res) : state(MonsterState::idle), speed(150.0f), chaseTimer(0), active(false)
     {
         setType(ObjectType::monster);
         setPosition(glm::vec2(0));
@@ -126,7 +126,7 @@ public:
             case MonsterState::destroying:
             case MonsterState::notVisible:
             {
-                moveAmount = 150.0f;
+                moveAmount = getSpeed();
                 break;
             }
 
