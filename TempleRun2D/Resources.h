@@ -62,8 +62,12 @@ struct Resources
     SDL_Texture* endPortal = nullptr;
 
     // ----- V/ COMMANDER ANIMATIONS -----
+    const int ANIM_COMMANDER = 0;
+    const int ANIM_COMMANDER_REVERSED = 1;
+
     std::vector<Animation> commanderAnim;
     SDL_Texture* commander = nullptr;
+    SDL_Texture* commander_reversed = nullptr;
 
     // ----- VI/ BACKGROUNDS -----
     SDL_Texture* background = nullptr;
@@ -178,9 +182,12 @@ struct Resources
         endPortal = loadTexture(state.renderer, "data/textures/portals/end_portal.png");
 
         // ----- V/ Commander's animations -----
-        commanderAnim.resize(1);
-        commanderAnim[0] = Animation(1, 1.0f, true);
+        commanderAnim.resize(2);
+        commanderAnim[ANIM_COMMANDER] = Animation(1, 1.0f, true);
+        commanderAnim[ANIM_COMMANDER_REVERSED] = Animation(1, 1.0f, true);
+
         commander = loadTexture(state.renderer, "data/textures/characters/commander/commander.png");
+        commander_reversed = loadTexture(state.renderer, "data/textures/characters/commander/commander_reversed.png");
 
         // Load background 
         background = loadTexture(state.renderer, "data/textures/background/" + biomeName + "/" + biomeName + ".png");

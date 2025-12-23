@@ -65,8 +65,9 @@ const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect DIED_COLLISION = { 7, 0, 16, 100 };
 const SDL_FRect START_PORTAL_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
+const SDL_FRect COMMANDER_COLLISION = { -50, -96, 28, 128 };
 
-// Count number of tiles spawned
+// Static variables
 static int TOTAL_TILE = 0;
 static int OBSTACLES = 0;
 static int FLOOR_TILES = 0;
@@ -468,7 +469,9 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 			//nextBiome = "Swamp";
 			gs.unusedBiomes.erase(gs.unusedBiomes.begin() + idx);  // remove it so it's not picked again
 
+			// Debug
 			cout << "Next biome: " << nextBiome << endl;
+			cout << "Remaining: " << gs.unusedBiomes.size() << endl;
 		}
 		// Otherwise
 		else
@@ -759,231 +762,250 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 	switch (obj.getType())
 	{
 		// ----- I/ PLAYER -----
-	case ObjectType::player:
-	{
-		Player& player = static_cast<Player&>(obj);
-
-		if (!player.isAlive())
+		case ObjectType::player:
 		{
-			// still allow processing of certain death states (caught, bleed, etc)
+			Player& player = static_cast<Player&>(obj);
+
+			if (!player.isAlive())
+			{
+				// still allow processing of certain death states (caught, bleed, etc)
+				switch (player.getState())
+				{
+				case PlayerState::caught:
+				case PlayerState::burnt:
+				case PlayerState::bleed:
+				case PlayerState::knocked:
+				case PlayerState::falling:
+					break;
+				default:
+					return;
+				}
+			}
+
 			switch (player.getState())
 			{
-			case PlayerState::caught:
-			case PlayerState::burnt:
-			case PlayerState::bleed:
-			case PlayerState::knocked:
-			case PlayerState::falling:
-				break;
-			default:
-				return;
-			}
-		}
-
-		switch (player.getState())
-		{
-		case PlayerState::idle:
-		{
-			player.setTexture(res.playerIdle);
-			player.setCurrentAnimation(res.ANIM_PLAYER_IDLE);
-			player.clearCollider();
-			player.addCollider(RUN_COLLISION);
-			glm::vec2 v = obj.getVelocity();
-			v.y = 0;
-			player.setVelocity(v);
-			player.setAlive(true);
-
-			break;
-		}
-
-		case PlayerState::running:
-		{
-			player.setTexture(res.playerRun);
-			player.setCurrentAnimation(res.ANIM_PLAYER_RUN);
-			player.clearCollider();
-			player.addCollider(RUN_COLLISION);
-			player.setAlive(true);
-
-			// Reset the sliding animation
-			player.getAnimations().at(res.ANIM_PLAYER_SLIDE).getTimer().reset();
-
-			PLAYING = true;
-
-			break;
-		}
-
-		case PlayerState::jumping:
-		{
-			player.setTexture(res.playerJump);
-			player.setCurrentAnimation(res.ANIM_PLAYER_JUMP);
-			player.clearCollider();
-			player.addCollider(RUN_COLLISION);
-			player.setAlive(true);
-
-			// Reset the sliding animation
-			player.getAnimations().at(res.ANIM_PLAYER_SLIDE).getTimer().reset();
-
-			break;
-		}
-
-		case PlayerState::sliding:
-		{
-			player.setTexture(res.playerSlide);
-			player.setCurrentAnimation(res.ANIM_PLAYER_SLIDE);
-			player.clearCollider();
-			player.addCollider(SLIDE_COLLISION);
-			player.setAlive(true);
-
-			break;
-		}
-
-		case PlayerState::tripped:
-		{
-			player.setTexture(res.playerTripped);
-			player.setCurrentAnimation(res.ANIM_PLAYER_TRIPPED);
-			player.clearCollider();
-			player.addCollider(RUN_COLLISION);
-			player.setAlive(true);
-
-			break;
-		}
-
-		case PlayerState::knocked:
-		{
-			player.setTexture(res.playerKnocked);
-			player.setCurrentAnimation(res.ANIM_PLAYER_KNOCKED);
-			player.clearCollider();
-			player.addCollider(DIED_COLLISION);
-			player.setAlive(false);
-
-			// Mark this animation as non-looping
-			player.getAnimations().at(res.ANIM_PLAYER_KNOCKED).setLoop(false);
-
-			PLAYING = false;
-
-			break;
-		}
-
-		case PlayerState::burnt:
-		{
-			player.setTexture(res.playerBurnt);
-			player.setCurrentAnimation(res.ANIM_PLAYER_BURNT);
-			player.clearCollider();
-			player.addCollider(BURNT_COLLISION);
-			player.setAlive(false);
-
-			// Mark this animation as non-looping
-			player.getAnimations().at(res.ANIM_PLAYER_BURNT).setLoop(false);
-
-			PLAYING = false;
-
-			break;
-		}
-
-		case PlayerState::bleed:
-		{
-			player.setTexture(res.playerBleed);
-			player.setCurrentAnimation(res.ANIM_PLAYER_BLEED);
-			player.clearCollider();
-			player.addCollider(DIED_COLLISION);
-			player.setAlive(false);
-
-			// Mark the animation as non-looping
-			player.getAnimations().at(res.ANIM_PLAYER_BLEED).setLoop(false);
-
-			PLAYING = false;
-
-			break;
-		}
-
-		case PlayerState::falling:
-		{
-			player.setTexture(res.playerFalling);
-			player.setCurrentAnimation(res.ANIM_PLAYER_FALLING);
-			player.setAlive(false);
-
-			PLAYING = false;
-
-			break;
-		}
-
-		case PlayerState::speeding:
-		{
-			player.setTexture(res.playerSpeeding);
-			player.setCurrentAnimation(res.ANIM_PLAYER_SPEEDING);
-			player.clearCollider();
-			player.addCollider(RUN_COLLISION);
-			player.setAlive(true);
-
-			break;
-		}
-
-		case PlayerState::caught:
-		{
-			player.setTexture(res.playerCaught);
-			player.setCurrentAnimation(res.ANIM_PLAYER_CAUGHT);
-			player.clearCollider();
-			player.addCollider(DIED_COLLISION);
-			player.setAlive(false);
-			PLAYING = false;
-
-			// Mark the animation as non-looping
-			player.getAnimations().at(res.ANIM_PLAYER_CAUGHT).setLoop(false);
-
-			break;
-		}
-		}
-
-		break;
-	}
-	// ----- II/ MONSTER -----
-	case ObjectType::monster:
-	{
-		Monster& monster = static_cast<Monster&>(obj);
-
-		switch (monster.getState())
-		{
-		case MonsterState::idle:
-		{
-			obj.setTexture(res.monsterIdle);
-			obj.setCurrentAnimation(res.ANIM_MONSTER_IDLE);
-
-			if (PLAYING)
+			case PlayerState::idle:
 			{
-				monster.setState(MonsterState::chasing);
+				player.setTexture(res.playerIdle);
+				player.setCurrentAnimation(res.ANIM_PLAYER_IDLE);
+				player.clearCollider();
+				player.addCollider(RUN_COLLISION);
+				glm::vec2 v = obj.getVelocity();
+				v.y = 0;
+				player.setVelocity(v);
+				player.setAlive(true);
+
+				break;
+			}
+
+			case PlayerState::running:
+			{
+				player.setTexture(res.playerRun);
+				player.setCurrentAnimation(res.ANIM_PLAYER_RUN);
+				player.clearCollider();
+				player.addCollider(RUN_COLLISION);
+				player.setAlive(true);
+
+				// Reset the sliding animation
+				player.getAnimations().at(res.ANIM_PLAYER_SLIDE).getTimer().reset();
+
+				PLAYING = true;
+
+				break;
+			}
+
+			case PlayerState::jumping:
+			{
+				player.setTexture(res.playerJump);
+				player.setCurrentAnimation(res.ANIM_PLAYER_JUMP);
+				player.clearCollider();
+				player.addCollider(RUN_COLLISION);
+				player.setAlive(true);
+
+				// Reset the sliding animation
+				player.getAnimations().at(res.ANIM_PLAYER_SLIDE).getTimer().reset();
+
+				break;
+			}
+
+			case PlayerState::sliding:
+			{
+				player.setTexture(res.playerSlide);
+				player.setCurrentAnimation(res.ANIM_PLAYER_SLIDE);
+				player.clearCollider();
+				player.addCollider(SLIDE_COLLISION);
+				player.setAlive(true);
+
+				break;
+			}
+
+			case PlayerState::tripped:
+			{
+				player.setTexture(res.playerTripped);
+				player.setCurrentAnimation(res.ANIM_PLAYER_TRIPPED);
+				player.clearCollider();
+				player.addCollider(RUN_COLLISION);
+				player.setAlive(true);
+
+				break;
+			}
+
+			case PlayerState::knocked:
+			{
+				player.setTexture(res.playerKnocked);
+				player.setCurrentAnimation(res.ANIM_PLAYER_KNOCKED);
+				player.clearCollider();
+				player.addCollider(DIED_COLLISION);
+				player.setAlive(false);
+
+				// Mark this animation as non-looping
+				player.getAnimations().at(res.ANIM_PLAYER_KNOCKED).setLoop(false);
+
+				PLAYING = false;
+
+				break;
+			}
+
+			case PlayerState::burnt:
+			{
+				player.setTexture(res.playerBurnt);
+				player.setCurrentAnimation(res.ANIM_PLAYER_BURNT);
+				player.clearCollider();
+				player.addCollider(BURNT_COLLISION);
+				player.setAlive(false);
+
+				// Mark this animation as non-looping
+				player.getAnimations().at(res.ANIM_PLAYER_BURNT).setLoop(false);
+
+				PLAYING = false;
+
+				break;
+			}
+
+			case PlayerState::bleed:
+			{
+				player.setTexture(res.playerBleed);
+				player.setCurrentAnimation(res.ANIM_PLAYER_BLEED);
+				player.clearCollider();
+				player.addCollider(DIED_COLLISION);
+				player.setAlive(false);
+
+				// Mark the animation as non-looping
+				player.getAnimations().at(res.ANIM_PLAYER_BLEED).setLoop(false);
+
+				PLAYING = false;
+
+				break;
+			}
+
+			case PlayerState::falling:
+			{
+				player.setTexture(res.playerFalling);
+				player.setCurrentAnimation(res.ANIM_PLAYER_FALLING);
+				player.setAlive(false);
+
+				PLAYING = false;
+
+				break;
+			}
+
+			case PlayerState::speeding:
+			{
+				player.setTexture(res.playerSpeeding);
+				player.setCurrentAnimation(res.ANIM_PLAYER_SPEEDING);
+				player.clearCollider();
+				player.addCollider(RUN_COLLISION);
+				player.setAlive(true);
+
+				break;
+			}
+
+			case PlayerState::caught:
+			{
+				player.setTexture(res.playerCaught);
+				player.setCurrentAnimation(res.ANIM_PLAYER_CAUGHT);
+				player.clearCollider();
+				player.addCollider(DIED_COLLISION);
+				player.setAlive(false);
+				PLAYING = false;
+
+				// Mark the animation as non-looping
+				player.getAnimations().at(res.ANIM_PLAYER_CAUGHT).setLoop(false);
+
+				break;
+			}
 			}
 
 			break;
 		}
-
-		case MonsterState::chasing:
+		// ----- II/ MONSTER -----
+		case ObjectType::monster:
 		{
-			monster.setTexture(res.monsterChase);
-			monster.setCurrentAnimation(res.ANIM_MONSTER_CHASE);
+			Monster& monster = static_cast<Monster&>(obj);
 
-			monster.setSpeedMultiplier(gs.player().getSpeedMultiplier());
+			switch (monster.getState())
+			{
+			case MonsterState::idle:
+			{
+				obj.setTexture(res.monsterIdle);
+				obj.setCurrentAnimation(res.ANIM_MONSTER_IDLE);
+
+				if (PLAYING)
+				{
+					monster.setState(MonsterState::chasing);
+				}
+
+				break;
+			}
+
+			case MonsterState::chasing:
+			{
+				monster.setTexture(res.monsterChase);
+				monster.setCurrentAnimation(res.ANIM_MONSTER_CHASE);
+
+				monster.setSpeedMultiplier(gs.player().getSpeedMultiplier());
+
+				break;
+			}
+
+			case MonsterState::killing:
+			{
+				monster.setTexture(res.monsterKill);
+				monster.setCurrentAnimation(res.ANIM_MONSTER_KILL);
+
+				break;
+			}
+			}
 
 			break;
 		}
-
-		case MonsterState::killing:
+		// ----- III/ END PORTAL -----
+		case ObjectType::endportal:
 		{
-			monster.setTexture(res.monsterKill);
-			monster.setCurrentAnimation(res.ANIM_MONSTER_KILL);
+			obj.setTexture(res.endPortal);
+			obj.setCurrentAnimation(0);
 
 			break;
 		}
+		// ----- IV/ COMMANDER -----
+		case ObjectType::commander:
+		{
+			// If the object collides with the player
+			if (obj.isGrounded())
+			{
+				// Reverse the animation and texture
+				obj.setTexture(res.commander_reversed);
+				obj.setCurrentAnimation(res.ANIM_COMMANDER_REVERSED);
+
+				// Remove the monster after the game is won
+				gs.layers[LAYER_IDX_MONSTER].clear();
+			}
+
+			// Note: we use the grounded boolean member to check 
+			// whether the player has collided with the commander
+
+			break;
 		}
-
-		break;
-	}
-	// ----- III/ END PORTAL -----
-	case ObjectType::endportal:
-	{
-		obj.setTexture(res.endPortal);
-		obj.setCurrentAnimation(0);
-
-		break;
-	}
 	}
 }
 
@@ -1095,6 +1117,7 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 
 				Monster& monster = static_cast<Monster&>(objB);
 
+				// Set monster state to killing
 				monster.setState(MonsterState::killing);
 
 				break;
@@ -1227,10 +1250,29 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 			// End portal
 			case ObjectType::endportal:
 			{
-				cout << "Reached Portal" << endl;
+				// Debug
+				//cout << "Reached Portal" << endl;
 
 				// Set the needTransition flag to true
 				gs.needTransition = true;
+
+				break;
+			}
+			// Commander
+			case ObjectType::commander:
+			{
+				// Debug
+				//cout << "Reached the Commander" << endl;
+
+				// Set player state to idle
+				player.setState(PlayerState::idle);
+				
+				// Reverse the animation of the commander
+				Level& commander = static_cast<Level&>(objB);
+
+				// Set the commander to be grounded, meaning that 
+				// the player has collided with the commander
+				commander.setGrounded(true);
 
 				break;
 			}
@@ -1263,50 +1305,50 @@ void handleKeyInput(const SDLState& state, GameState& gs, GameObject& obj, SDL_S
 
 	switch (player.getState())
 	{
-	case PlayerState::idle:
-	{
-		if (key == SDL_SCANCODE_D || key == SDL_SCANCODE_RIGHT)
+		case PlayerState::idle:
 		{
-			player.setState(PlayerState::running);
+			if (key == SDL_SCANCODE_D || key == SDL_SCANCODE_RIGHT)
+			{
+				player.setState(PlayerState::running);
+			}
+
+			break;
 		}
 
-		break;
-	}
-
-	case PlayerState::running:
-	{
-		if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP || key == SDL_SCANCODE_LSHIFT)
+		case PlayerState::running:
 		{
-			player.setJumpBufferTime(player.getJumpBufferDuration());
+			if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP || key == SDL_SCANCODE_LSHIFT)
+			{
+				player.setJumpBufferTime(player.getJumpBufferDuration());
+			}
+
+			if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_LCTRL)
+			{
+				player.setSlideRequested(true);
+			}
+
+			break;
 		}
 
-		if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_LCTRL)
+		case PlayerState::jumping:
 		{
-			player.setSlideRequested(true);
+			if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_LCTRL)
+			{
+				player.setSlideRequested(true);
+			}
+
+			break;
 		}
 
-		break;
-	}
-
-	case PlayerState::jumping:
-	{
-		if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_LCTRL)
+		case PlayerState::sliding:
 		{
-			player.setSlideRequested(true);
+			if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP || key == SDL_SCANCODE_LSHIFT)
+			{
+				player.setJumpBufferTime(player.getJumpBufferDuration());
+			}
+
+			break;
 		}
-
-		break;
-	}
-
-	case PlayerState::sliding:
-	{
-		if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP || key == SDL_SCANCODE_LSHIFT)
-		{
-			player.setJumpBufferTime(player.getJumpBufferDuration());
-		}
-
-		break;
-	}
 	}
 }
 
@@ -1443,8 +1485,9 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				// Starting portal
 				case START_PORTAL_INDEX:
 				{
-					cout << "Spawned starting portal!" << endl;
-					cout << "Ptr: " << res.startPortal << endl;
+					// Debug
+					/*cout << "Spawned starting portal!" << endl;
+					cout << "Ptr: " << res.startPortal << endl;*/
 
 					auto portal = std::make_unique<GameObject>();
 
@@ -1493,7 +1536,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					commander->setCurrentAnimation(0);
 					commander->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 					commander->clearCollider();
-					commander->addCollider({ 0, 0, 0, 0 });
+					commander->addCollider(COMMANDER_COLLISION);
 
 					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(commander));
 
