@@ -34,10 +34,22 @@
 using namespace std;
 
 // Constants
+// Game tiles / characters index
+const int PLAYER_INDEX = 1;
+const int MONSTER_INDEX = 2;
+const int SECOND_PLAYER_INDEX = 3;
+const int START_PORTAL_INDEX = 4;
+const int END_PORTAL_INDEX = 5;
+const int ORB_INDEX = 999;
+const int COMMANDER_INDEX = 1000;
+
+// Sizes
 const int PLAYER_SIZE = 32;
 const int MONSTER_SIZE = 128;
 const int END_PORTAL_SIZE = 128;
 const int START_PORTAL_SIZE = 64;
+const int COMMANDER_HEIGHT = 37;
+const int COMMANDER_WIDTH = 19;
 const int TILE_SIZE = 32;
 const int MAP_ROWS = 10;
 const int MAP_COLS = 15;
@@ -639,16 +651,40 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
 
 	}
+	else if (obj.getType() == ObjectType::commander)
+	{
+		SDL_FRect src
+		{
+			.x = srcX,
+			.y = 0,
+			.w = obj.getImageSize().x,
+			.h = obj.getImageSize().y
+		};
+
+		SDL_FRect dst    // Destination 
+		{
+			.x = obj.getPosition().x + obj.getImageOffset().x - gs.mapViewport.x,
+			.y = obj.getPosition().y + obj.getImageOffset().y - COMMANDER_HEIGHT,
+			.w = COMMANDER_WIDTH,
+			.h = COMMANDER_HEIGHT
+		};
+
+		// Render the object's texture
+		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
+
+	}
 	else    // Obstacles, Floor Tiles 
 	{
-		SDL_FRect src{
+		SDL_FRect src
+		{
 			.x = 0,
 			.y = 0,
 			.w = obj.getImageSize().x,
 			.h = obj.getImageSize().y
 		};
 
-		SDL_FRect dst{
+		SDL_FRect dst
+		{
 			.x = obj.getPosition().x + obj.getImageOffset().x - gs.mapViewport.x,
 			.y = obj.getPosition().y + obj.getImageOffset().y - TILE_SIZE,
 			.w = obj.getImageSize().x,
@@ -1374,7 +1410,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 			switch (id)
 			{
 				// Player (spawn only if no player exists)
-				case 1:
+				case PLAYER_INDEX:
 				{
 					if (gs.layers[LAYER_IDX_PLAYER].empty())
 					{
@@ -1387,7 +1423,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				}
 
 				// Monster
-				case 2:
+				case MONSTER_INDEX:
 				{
 					auto monster = std::make_unique<Monster>(res);
 					monster->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
@@ -1399,13 +1435,13 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				}
 
 				// Second player
-				case 3:
+				case SECOND_PLAYER_INDEX:
 				{
 					break;
 				}
 
 				// Starting portal
-				case 4:
+				case START_PORTAL_INDEX:
 				{
 					cout << "Spawned starting portal!" << endl;
 					cout << "Ptr: " << res.startPortal << endl;
@@ -1427,7 +1463,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				}
 
 				// Ending portal
-				case 5:
+				case END_PORTAL_INDEX:
 				{
 					auto portal = std::make_unique<GameObject>();
 
@@ -1441,6 +1477,25 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					portal->addCollider(END_PORTAL_COLLISION);
 
 					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
+
+					break;
+				}
+
+				// Commander
+				case COMMANDER_INDEX:
+				{
+					auto commander = std::make_unique<GameObject>();
+
+					commander->setType(ObjectType::commander);
+					commander->setImageSize({ COMMANDER_WIDTH, COMMANDER_HEIGHT });
+					commander->setTexture(res.commander);
+					commander->setAnimations(res.commanderAnim);
+					commander->setCurrentAnimation(0);
+					commander->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					commander->clearCollider();
+					commander->addCollider({ 0, 0, 0, 0 });
+
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(commander));
 
 					break;
 				}

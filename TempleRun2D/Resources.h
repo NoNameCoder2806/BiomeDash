@@ -61,7 +61,11 @@ struct Resources
     std::vector<Animation> endPortalAnim;
     SDL_Texture* endPortal = nullptr;
 
-    // ----- V/ BACKGROUNDS -----
+    // ----- V/ COMMANDER ANIMATIONS -----
+    std::vector<Animation> commanderAnim;
+    SDL_Texture* commander = nullptr;
+
+    // ----- VI/ BACKGROUNDS -----
     SDL_Texture* background = nullptr;
     std::vector<SDL_Texture*> parallaxBackgrounds;
 
@@ -172,6 +176,11 @@ struct Resources
         endPortalAnim.resize(1);
         endPortalAnim[0] = Animation(7, 1.0f, true);
         endPortal = loadTexture(state.renderer, "data/textures/portals/end_portal.png");
+
+        // ----- V/ Commander's animations -----
+        commanderAnim.resize(1);
+        commanderAnim[0] = Animation(1, 1.0f, true);
+        commander = loadTexture(state.renderer, "data/textures/characters/commander/commander.png");
 
         // Load background 
         background = loadTexture(state.renderer, "data/textures/background/" + biomeName + "/" + biomeName + ".png");
