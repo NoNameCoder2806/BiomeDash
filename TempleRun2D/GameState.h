@@ -19,7 +19,7 @@ const size_t LAYER_IDX_MONSTER = 2;
 const size_t LAYER_IDX_OBSTACLES = 1;       // Index for obstacle background tiles
 const size_t LAYER_IDX_LEVEL = 0;           // Index for the level tiles and walls of the map
 const std::string TRANSITION_BIOME = "";
-const int MINIMAL_SCORE = 00;
+const int MINIMAL_SCORE = 1000;
 
 // ----- SCREEN STATES -----
 enum class ScreenState

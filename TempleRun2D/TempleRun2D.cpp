@@ -76,6 +76,10 @@ static bool BIOME_UPDATE = true;
 static int CURRENT_MAP_SIZE = 0;
 
 // Function prototypes
+void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
+	vector<float>& scrollPositions, uint64_t& prevTime,
+	float& fps, int& frames, uint64_t& fpsLastTime, bool& running);
+
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res);
 
 //void countObjectsWithTexture(const GameState& game);
@@ -148,302 +152,8 @@ int main(int argc, char* argv[])
 	bool running = true;
 	while (running)
 	{
-		// Check whether the game needs to transition / change biome
-		if (game.needTransition)
-		{
-			// Call the function to reset all the textures and game state
-			resetForNewBiome(sdl, game, res);
-			
-			// Reset the flag
-			game.needTransition = false;
-		 
-		    // Skip this frame
-			continue;
-		}
-
-		uint64_t nowTime = SDL_GetTicks();
-		float deltaTime = (float)(nowTime - prevTime) / 1000;    // Convert to seconds
-
-		// Increment the frame count
-		frames++;
-		uint64_t fpsNow = SDL_GetTicks();
-		if (fpsNow - fpsLastTime >= 1000)
-		{
-			fps = frames * 1000.0f / (fpsNow - fpsLastTime);
-			frames = 0;
-			fpsLastTime = fpsNow;
-		}
-
-		// Event polling loop
-		SDL_Event e;
-		while (SDL_PollEvent(&e))
-		{
-			switch (e.type)
-			{
-				case SDL_EVENT_QUIT:
-				{
-					running = false;
-
-					break;
-				}
-
-				case SDL_EVENT_WINDOW_RESIZED:
-				{
-					sdl.width = e.window.data1;
-					sdl.height = e.window.data2;
-
-					break;
-				}
-
-				case SDL_EVENT_KEY_DOWN:
-				{
-					handleKeyInput(sdl, game, game.player(), e.key.scancode, true);
-
-					break;
-				}
-
-				case SDL_EVENT_KEY_UP:
-				{
-					handleKeyInput(sdl, game, game.player(), e.key.scancode, false);
-
-					// Full screen
-					if (e.key.scancode == SDL_SCANCODE_F11)
-					{
-						sdl.fullscreen = !sdl.fullscreen;
-						SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
-						sdl.width = 1920;
-						sdl.height = 1080;
-					}
-
-					// Debug mode
-					if (e.key.scancode == SDL_SCANCODE_F10)
-					{
-						game.debugMode = !game.debugMode;
-					}
-
-					// Invincibility mode
-					if (e.key.scancode == SDL_SCANCODE_G)
-					{
-						game.invincibleMode = !game.invincibleMode;
-					}
-
-					break;
-				}
-			}
-		}
-
-		for (auto& layer : game.layers)
-		{
-			for (auto& obj : layer)
-			{
-				updateObject(sdl, game, res, *obj, deltaTime);
-
-				if (obj->getType() == ObjectType::player || obj->getType() == ObjectType::monster)
-				{
-					// Pass it into updateMovement
-					obj->updateMovement(deltaTime);
-				}
-
-				if (obj->getCurrentAnimation() != -1)
-				{
-					obj->getAnimations().at(obj->getCurrentAnimation()).step(deltaTime);
-				}
-			}
-		}
-
-		// Handle collision
-		bool foundGround = false;
-
-		for (auto& objPtr : game.layers[LAYER_IDX_PLAYER])
-		{
-			GameObject& obj = *objPtr;  // Dereference the unique pointer
-
-			// No need to loop through the collision boxes because player only has 1
-			// Player world rect
-			SDL_FRect pc = obj.getCollider().at(0);
-			SDL_FRect pWorld{
-				obj.getPosition().x + pc.x,
-				obj.getPosition().y + pc.y,
-				pc.w,
-				pc.h
-			};
-
-			// Player-centered collision window (big margin to be safe)
-			SDL_FRect cwin{
-				pWorld.x - 256.0f,
-				pWorld.y - 256.0f,
-				pWorld.w + 512.0f,
-				pWorld.h + 512.0f
-			};
-
-			auto processLayer = [&](auto& layer)
-				{
-					for (auto& objBPtr : layer)
-					{
-						GameObject& objB = *objBPtr;    // Dereference the unique pointer
-
-						// Loop through all the collision boxes
-						for (int i = 0; i < objB.getCollider().size(); i++)
-						{
-							SDL_FRect cc = objB.getCollider().at(i);
-							SDL_FRect bWorld{
-								objB.getPosition().x + cc.x,
-								objB.getPosition().y + cc.y,
-								cc.w,
-								cc.h
-							};
-
-							// Fast reject against the player-centered window (all in world coords)
-							if (bWorld.x + bWorld.w < cwin.x)    continue;
-							if (bWorld.x > cwin.x + cwin.w)      continue;
-							if (bWorld.y + bWorld.h < cwin.y)    continue;
-							if (bWorld.y > cwin.y + cwin.h)      continue;
-
-							checkCollision(sdl, game, res, obj, objB, deltaTime);
-						}
-					}
-				};
-
-			processLayer(game.layers[LAYER_IDX_MONSTER]);
-			processLayer(game.layers[LAYER_IDX_OBSTACLES]);
-			processLayer(game.layers[LAYER_IDX_LEVEL]);
-		}
-
-		// Update grounded status
-		for (auto& player : game.layers[LAYER_IDX_PLAYER])
-		{
-			bool grounded = player->isGrounded();
-
-			std::string debugText = std::format("Grounded: {}", grounded ? "true" : "false");
-
-			SDL_RenderDebugText(sdl.renderer, 5, 105, debugText.c_str());
-
-			(*player).setGrounded(checkGrounded(*player, game.layers[LAYER_IDX_LEVEL]));
-		}
-
-		// Calculate viewport position
-		game.mapViewport.x = (game.player().getPosition().x + TILE_SIZE / 2) - game.mapViewport.w / 2;
-
-		game.updateCurrentTile();
-		game.updateMap();
-
-		manageTiles(sdl, game, res, true);
-
-		// Print total number of objects
-		//countObjectsWithTexture(game);
-
-		// Cleanup offscreen objects
-		cleanupOffscreenObjects(game);
-
-		// Draw the background black
-		SDL_SetRenderDrawColor(sdl.renderer, 128, 0, 128, 255);   // Dark purple
-		SDL_RenderClear(sdl.renderer);
-
-		// Draw background
-		SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
-
-		// Draw the parallax backgrounds
-		int layerCount = stoi(game.currentBiome.parallaxBackgrounds);
-
-		// Check the number of scroll positions and resize if necessary
-		if (scrollPositions.size() != res.parallaxBackgrounds.size())
-		{
-			scrollPositions.resize(res.parallaxBackgrounds.size());
-		}
-
-		// Draw each parallax background
-		for (int i = 0; i < layerCount; i++)
-		{
-			// Calculate the scroll factor
-			float scrollFactor = 0.75f * (i + 1) / layerCount;
-
-			// Draw the background
-			drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i], game.player().getVelocity().x, scrollPositions[i], scrollFactor, deltaTime);
-		}
-
-		// Draw all objects
-		for (auto& layer : game.layers)
-		{
-			for (auto& objPtr : layer)
-			{
-				bool visible = false;
-
-				GameObject& obj = *objPtr;
-
-				for (const auto& localCollider : obj.getCollider()) // vector of SDL_FRect
-				{
-					SDL_FRect worldCollider{
-						obj.getPosition().x + localCollider.x,
-						obj.getPosition().y + localCollider.y - TILE_SIZE, // bottom-left anchor fix
-						localCollider.w,
-						localCollider.h
-					};
-
-					float preloadMargin = TILE_SIZE * 2; // preload 2 tiles ahead
-
-					// If any collider is inside the viewport, mark object visible
-					if (!(worldCollider.x + worldCollider.w < game.mapViewport.x - preloadMargin ||
-						worldCollider.x > game.mapViewport.x + game.mapViewport.w + preloadMargin ||
-						worldCollider.y + worldCollider.h < game.mapViewport.y - preloadMargin ||
-						worldCollider.y > game.mapViewport.y + game.mapViewport.h + preloadMargin))
-					{
-						visible = true;
-						break; // no need to check the rest
-					}
-				}
-
-				if (!visible) continue; // skip drawing this object entirely
-
-				drawObject(sdl, game, obj, deltaTime);
-			}
-		}
-
-		// Display debug information
-		SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
-
-		// Debug mode
-		if (game.debugMode)
-		{
-			// Display the player information
-			game.displayPlayerInformation(sdl);
-
-			// Display game information
-			game.displayGameInformation(sdl);
-
-			// Display the barrier
-			game.displaySectionBarrier(sdl);
-
-			// Display the PLAYING status
-			std::string playingText = std::format("PLAYING: {}", PLAYING ? "true" : "false");
-			//SDL_RenderDebugText(sdl.renderer, 5, 165, playingText.c_str());  // Adjust y-coordinate if needed
-		}
-
-		// Invincible mode
-		if (game.invincibleMode)
-		{
-			game.player().clearCollider();
-			game.player().addCollider(INVINCIBLE_COLLISION);
-		}
-
-		// Dark blue: #173F6C
-		SDL_SetRenderDrawColor(sdl.renderer, 23, 63, 108, 255);
-
-		// Display FPS
-		std::string fpsText = std::format("FPS: {:.1f}", fps);
-		SDL_RenderDebugText(sdl.renderer, 5, 5, fpsText.c_str());
-
-		// Display the game score and the number of biomes completed
-		string scoreText = format("Score: {:.1f}", game.getScore());
-		SDL_RenderDebugText(sdl.renderer, 165, 5, scoreText.c_str());
-
-		// White color
-		SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
-
-		// Render the current game frame
-		SDL_RenderPresent(sdl.renderer);
-
-		// Assign nowTime to prevTime to update the time
-		prevTime = nowTime;
+		// Call the function
+		runPlayingFrame(sdl, game, res, scrollPositions, prevTime, fps, frames, fpsLastTime, running);
 	}
 
 	// Clean up and destroy all the memories and resources used 
@@ -451,6 +161,312 @@ int main(int argc, char* argv[])
 	sdl.cleanup();
 
 	return 0;
+}
+
+// Function implementations
+void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
+	vector<float>& scrollPositions, uint64_t& prevTime,
+	float& fps, int& frames, uint64_t& fpsLastTime, bool& running)
+{
+	// Paste **everything** from your current main loop **after the "while(running)" line**
+	// Remove the "while(running)" part itself
+
+	// Check whether the game needs to transition / change biome
+	if (game.needTransition)
+	{
+		// Call the function to reset all the textures and game state
+		resetForNewBiome(sdl, game, res);
+
+		// Reset the flag
+		game.needTransition = false;
+
+		// Skip this frame
+		return;
+	}
+
+	uint64_t nowTime = SDL_GetTicks();
+	float deltaTime = (float)(nowTime - prevTime) / 1000;    // Convert to seconds
+
+	// Increment the frame count
+	frames++;
+	uint64_t fpsNow = SDL_GetTicks();
+	if (fpsNow - fpsLastTime >= 1000)
+	{
+		fps = frames * 1000.0f / (fpsNow - fpsLastTime);
+		frames = 0;
+		fpsLastTime = fpsNow;
+	}
+
+	// Event polling loop
+	SDL_Event e;
+	while (SDL_PollEvent(&e))
+	{
+		switch (e.type)
+		{
+		case SDL_EVENT_QUIT:
+		{
+			running = false;
+
+			break;
+		}
+
+		case SDL_EVENT_WINDOW_RESIZED:
+		{
+			sdl.width = e.window.data1;
+			sdl.height = e.window.data2;
+
+			break;
+		}
+
+		case SDL_EVENT_KEY_DOWN:
+		{
+			handleKeyInput(sdl, game, game.player(), e.key.scancode, true);
+
+			break;
+		}
+
+		case SDL_EVENT_KEY_UP:
+		{
+			handleKeyInput(sdl, game, game.player(), e.key.scancode, false);
+
+			// Full screen
+			if (e.key.scancode == SDL_SCANCODE_F11)
+			{
+				sdl.fullscreen = !sdl.fullscreen;
+				SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
+				sdl.width = 1920;
+				sdl.height = 1080;
+			}
+
+			// Debug mode
+			if (e.key.scancode == SDL_SCANCODE_F10)
+			{
+				game.debugMode = !game.debugMode;
+			}
+
+			// Invincibility mode
+			if (e.key.scancode == SDL_SCANCODE_G)
+			{
+				game.invincibleMode = !game.invincibleMode;
+			}
+
+			break;
+		}
+		}
+	}
+
+	for (auto& layer : game.layers)
+	{
+		for (auto& obj : layer)
+		{
+			updateObject(sdl, game, res, *obj, deltaTime);
+
+			if (obj->getType() == ObjectType::player || obj->getType() == ObjectType::monster)
+			{
+				// Pass it into updateMovement
+				obj->updateMovement(deltaTime);
+			}
+
+			if (obj->getCurrentAnimation() != -1)
+			{
+				obj->getAnimations().at(obj->getCurrentAnimation()).step(deltaTime);
+			}
+		}
+	}
+
+	// Handle collision
+	bool foundGround = false;
+
+	for (auto& objPtr : game.layers[LAYER_IDX_PLAYER])
+	{
+		GameObject& obj = *objPtr;  // Dereference the unique pointer
+
+		// No need to loop through the collision boxes because player only has 1
+		// Player world rect
+		SDL_FRect pc = obj.getCollider().at(0);
+		SDL_FRect pWorld{
+			obj.getPosition().x + pc.x,
+			obj.getPosition().y + pc.y,
+			pc.w,
+			pc.h
+		};
+
+		// Player-centered collision window (big margin to be safe)
+		SDL_FRect cwin{
+			pWorld.x - 256.0f,
+			pWorld.y - 256.0f,
+			pWorld.w + 512.0f,
+			pWorld.h + 512.0f
+		};
+
+		auto processLayer = [&](auto& layer)
+			{
+				for (auto& objBPtr : layer)
+				{
+					GameObject& objB = *objBPtr;    // Dereference the unique pointer
+
+					// Loop through all the collision boxes
+					for (int i = 0; i < objB.getCollider().size(); i++)
+					{
+						SDL_FRect cc = objB.getCollider().at(i);
+						SDL_FRect bWorld{
+							objB.getPosition().x + cc.x,
+							objB.getPosition().y + cc.y,
+							cc.w,
+							cc.h
+						};
+
+						// Fast reject against the player-centered window (all in world coords)
+						if (bWorld.x + bWorld.w < cwin.x)    continue;
+						if (bWorld.x > cwin.x + cwin.w)      continue;
+						if (bWorld.y + bWorld.h < cwin.y)    continue;
+						if (bWorld.y > cwin.y + cwin.h)      continue;
+
+						checkCollision(sdl, game, res, obj, objB, deltaTime);
+					}
+				}
+			};
+
+		processLayer(game.layers[LAYER_IDX_MONSTER]);
+		processLayer(game.layers[LAYER_IDX_OBSTACLES]);
+		processLayer(game.layers[LAYER_IDX_LEVEL]);
+	}
+
+	// Update grounded status
+	for (auto& player : game.layers[LAYER_IDX_PLAYER])
+	{
+		bool grounded = player->isGrounded();
+
+		std::string debugText = std::format("Grounded: {}", grounded ? "true" : "false");
+
+		SDL_RenderDebugText(sdl.renderer, 5, 105, debugText.c_str());
+
+		(*player).setGrounded(checkGrounded(*player, game.layers[LAYER_IDX_LEVEL]));
+	}
+
+	// Calculate viewport position
+	game.mapViewport.x = (game.player().getPosition().x + TILE_SIZE / 2) - game.mapViewport.w / 2;
+
+	game.updateCurrentTile();
+	game.updateMap();
+
+	manageTiles(sdl, game, res, true);
+
+	// Print total number of objects
+	//countObjectsWithTexture(game);
+
+	// Cleanup offscreen objects
+	cleanupOffscreenObjects(game);
+
+	// Draw the background black
+	SDL_SetRenderDrawColor(sdl.renderer, 128, 0, 128, 255);   // Dark purple
+	SDL_RenderClear(sdl.renderer);
+
+	// Draw background
+	SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
+
+	// Draw the parallax backgrounds
+	int layerCount = stoi(game.currentBiome.parallaxBackgrounds);
+
+	// Check the number of scroll positions and resize if necessary
+	if (scrollPositions.size() != res.parallaxBackgrounds.size())
+	{
+		scrollPositions.resize(res.parallaxBackgrounds.size());
+	}
+
+	// Draw each parallax background
+	for (int i = 0; i < layerCount; i++)
+	{
+		// Calculate the scroll factor
+		float scrollFactor = 0.75f * (i + 1) / layerCount;
+
+		// Draw the background
+		drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i], game.player().getVelocity().x, scrollPositions[i], scrollFactor, deltaTime);
+	}
+
+	// Draw all objects
+	for (auto& layer : game.layers)
+	{
+		for (auto& objPtr : layer)
+		{
+			bool visible = false;
+
+			GameObject& obj = *objPtr;
+
+			for (const auto& localCollider : obj.getCollider()) // vector of SDL_FRect
+			{
+				SDL_FRect worldCollider{
+					obj.getPosition().x + localCollider.x,
+					obj.getPosition().y + localCollider.y - TILE_SIZE, // bottom-left anchor fix
+					localCollider.w,
+					localCollider.h
+				};
+
+				float preloadMargin = TILE_SIZE * 2; // preload 2 tiles ahead
+
+				// If any collider is inside the viewport, mark object visible
+				if (!(worldCollider.x + worldCollider.w < game.mapViewport.x - preloadMargin ||
+					worldCollider.x > game.mapViewport.x + game.mapViewport.w + preloadMargin ||
+					worldCollider.y + worldCollider.h < game.mapViewport.y - preloadMargin ||
+					worldCollider.y > game.mapViewport.y + game.mapViewport.h + preloadMargin))
+				{
+					visible = true;
+					break; // no need to check the rest
+				}
+			}
+
+			if (!visible) continue; // skip drawing this object entirely
+
+			drawObject(sdl, game, obj, deltaTime);
+		}
+	}
+
+	// Display debug information
+	SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
+
+	// Debug mode
+	if (game.debugMode)
+	{
+		// Display the player information
+		game.displayPlayerInformation(sdl);
+
+		// Display game information
+		game.displayGameInformation(sdl);
+
+		// Display the barrier
+		game.displaySectionBarrier(sdl);
+
+		// Display the PLAYING status
+		std::string playingText = std::format("PLAYING: {}", PLAYING ? "true" : "false");
+		//SDL_RenderDebugText(sdl.renderer, 5, 165, playingText.c_str());  // Adjust y-coordinate if needed
+	}
+
+	// Invincible mode
+	if (game.invincibleMode)
+	{
+		game.player().clearCollider();
+		game.player().addCollider(INVINCIBLE_COLLISION);
+	}
+
+	// Dark blue: #173F6C
+	SDL_SetRenderDrawColor(sdl.renderer, 23, 63, 108, 255);
+
+	// Display FPS
+	string fpsText = std::format("FPS: {:.1f}", fps);
+	SDL_RenderDebugText(sdl.renderer, 5, 5, fpsText.c_str());
+
+	// Display the game score and the number of biomes completed
+	string scoreText = format("Score: {:.1f}", game.getScore());
+	SDL_RenderDebugText(sdl.renderer, 165, 5, scoreText.c_str());
+
+	// White color
+	SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
+
+	// Render the current game frame
+	SDL_RenderPresent(sdl.renderer);
+
+	// Assign nowTime to prevTime to update the time
+	prevTime = nowTime;
 }
 
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
