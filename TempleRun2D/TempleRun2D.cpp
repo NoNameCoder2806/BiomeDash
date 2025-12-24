@@ -153,9 +153,12 @@ int main(int argc, char* argv[])
 		{
 			// Call the function to reset all the textures and game state
 			resetForNewBiome(sdl, game, res);
-
+			
 			// Reset the flag
 			game.needTransition = false;
+		 
+		    // Skip this frame
+			continue;
 		}
 
 		uint64_t nowTime = SDL_GetTicks();
