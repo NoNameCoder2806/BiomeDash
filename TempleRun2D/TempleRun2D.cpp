@@ -353,6 +353,16 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	// Paste **everything** from your current main loop **after the "while(running)" line**
 	// Remove the "while(running)" part itself
 
+	// Check if the world is ready
+	if (!game.worldReady)
+	{
+		// Debug message
+		cout << "World not ready!" << endl;
+		
+		// Exit the function
+		return;
+	}
+
 	// Check whether the game needs to transition / change biome
 	if (game.needTransition)
 	{
@@ -654,6 +664,8 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 {
 	cout << "Reseting the resources and game state" << endl;
+	// Set the world ready flag to false
+	gs.worldReady = false;
 
 	// Generate a new biome name
 	string nextBiome;
@@ -740,6 +752,9 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 	float newSpeed = ORIGINAL_SPEED + (gs.biomeList.size() - gs.unusedBiomes.size() - 1) * 0.1f * ORIGINAL_SPEED;
 	gs.player().setSpeed(newSpeed);
 	gs.monster().setSpeed(newSpeed);
+
+	// Reset the flag back to true
+	gs.worldReady = true;
 
 	// Debug
 	//cout << "Done creating tiles!" << endl;

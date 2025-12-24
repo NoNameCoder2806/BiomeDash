@@ -56,6 +56,8 @@ struct GameState
 	bool needTransition;
 	bool portalGenerated;
 
+	bool worldReady = true;
+
 	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
 
@@ -245,7 +247,7 @@ struct GameState
 			generateMap();
 		}
 
-		if (currentTile - 5 > loadedLeftCol && currentTile - 5 > 0)
+		if (currentTile - 25 > loadedLeftCol && currentTile - 25 > 0)
 		{
 			deleteTiles();
 		}
