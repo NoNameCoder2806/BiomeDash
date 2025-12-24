@@ -13,7 +13,7 @@ const float SLIDE_PULL = 350.0f;
 // ----- PLAYER STATES -----
 enum class PlayerState
 {
-    idle, running, jumping, sliding, tripped, knocked, burnt, falling, bleed, speeding, caught
+    idle, running, jumping, sliding, tripped, knocked, burnt, falling, bleed, speeding, caught, won
 };
 
 // ----- PLAYER CLASS ----- 
@@ -278,6 +278,7 @@ public:
             case PlayerState::burnt:
             case PlayerState::bleed:
             case PlayerState::caught:
+            case PlayerState::won:
             {
                 moveAmount = 0.0f;
                 break;

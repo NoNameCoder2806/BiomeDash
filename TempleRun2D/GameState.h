@@ -517,61 +517,66 @@ struct GameState
 
 		switch (p.getState())
 		{
-		case PlayerState::idle: // PlayerState::idle
-		{
-			strState = "idle";
-			break;
-		}
-		case PlayerState::running: // PlayerState::running
-		{
-			strState = "running";
-			break;
-		}
-		case  PlayerState::jumping: // PlayerState::jumping
-		{
-			strState = "jumping";
-			break;
-		}
-		case PlayerState::sliding: // PlayerState::sliding
-		{
-			strState = "sliding";
-			break;
-		}
-		case PlayerState::tripped: // PlayerState::tripped
-		{
-			strState = "tripped";
-			break;
-		}
-		case PlayerState::knocked: // PlayerState::knocked
-		{
-			strState = "knocked";
-			break;
-		}
-		case PlayerState::burnt: // PlayerState::burnt
-		{
-			strState = "burnt";
-			break;
-		}
-		case PlayerState::speeding: // PlayerState::speeding
-		{
-			strState = "speeding";
-			break;
-		}
-		case PlayerState::falling: // PlayerState::falling
-		{
-			strState = "falling";
-			break;
-		}
-		case PlayerState::caught: // PlayerState::caught
-		{
-			strState = "caught";
-			break;
-		}
-		case PlayerState::bleed: // PlayerState::bleed
-		{
-			strState = "bleed";
-			break;
-		}
+			case PlayerState::idle: // PlayerState::idle
+			{
+				strState = "idle";
+				break;
+			}
+			case PlayerState::running: // PlayerState::running
+			{
+				strState = "running";
+				break;
+			}
+			case  PlayerState::jumping: // PlayerState::jumping
+			{
+				strState = "jumping";
+				break;
+			}
+			case PlayerState::sliding: // PlayerState::sliding
+			{
+				strState = "sliding";
+				break;
+			}
+			case PlayerState::tripped: // PlayerState::tripped
+			{
+				strState = "tripped";
+				break;
+			}
+			case PlayerState::knocked: // PlayerState::knocked
+			{
+				strState = "knocked";
+				break;
+			}
+			case PlayerState::burnt: // PlayerState::burnt
+			{
+				strState = "burnt";
+				break;
+			}
+			case PlayerState::speeding: // PlayerState::speeding
+			{
+				strState = "speeding";
+				break;
+			}
+			case PlayerState::falling: // PlayerState::falling
+			{
+				strState = "falling";
+				break;
+			}
+			case PlayerState::caught: // PlayerState::caught
+			{
+				strState = "caught";
+				break;
+			}
+			case PlayerState::bleed: // PlayerState::bleed
+			{
+				strState = "bleed";
+				break;
+			}
+			case PlayerState::won:  // PlayerState::won
+			{
+				strState = "won";
+				break;
+			}
 		}
 		SDL_RenderDebugText(state.renderer, 5, 5, std::format("----- Player -----").c_str());
 		SDL_RenderDebugText(state.renderer, 5, 25, std::format("State: {}\n", strState).c_str());

@@ -1264,8 +1264,12 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 				// Debug
 				//cout << "Reached the Commander" << endl;
 
-				// Set player state to idle
-				player.setState(PlayerState::idle);
+				// Set player state to won
+				player.setState(PlayerState::won);
+
+				// Ste the texture and animation to the idle one
+				player.setTexture(res.playerIdle);
+				player.setCurrentAnimation(res.ANIM_PLAYER_IDLE);
 				
 				// Reverse the animation of the commander
 				Level& commander = static_cast<Level&>(objB);
