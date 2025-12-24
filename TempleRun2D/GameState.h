@@ -21,6 +21,13 @@ const size_t LAYER_IDX_LEVEL = 0;           // Index for the level tiles and wal
 const std::string TRANSITION_BIOME = "";
 const int MINIMAL_SCORE = 00;
 
+// ----- SCREEN STATES -----
+enum class ScreenState
+{
+	home, playing, pause, gameOver
+};
+
+// ----- GAMESTATE STRUCT -----
 struct GameState
 {
 	//GameObject player;                    // Player game object
@@ -51,6 +58,8 @@ struct GameState
 
 	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
+
+	ScreenState screen;
 
 	GameState(const SDLState& state, std::string biomeName = "Swamp") : playerIndex(1)
 	{
@@ -91,6 +100,8 @@ struct GameState
 
 		needTransition = false;
 		portalGenerated = false;
+
+		screen = ScreenState::home;
 	}
 
 	Player& player()                  // The player() function quickly returns
