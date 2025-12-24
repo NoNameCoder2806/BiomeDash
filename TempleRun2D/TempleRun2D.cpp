@@ -40,6 +40,7 @@ const int MONSTER_INDEX = 2;
 const int SECOND_PLAYER_INDEX = 3;
 const int START_PORTAL_INDEX = 4;
 const int END_PORTAL_INDEX = 5;
+const int START_TEXT_INDEX = 998;
 const int ORB_INDEX = 999;
 const int COMMANDER_INDEX = 1000;
 
@@ -292,6 +293,19 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 			drawObject(sdl, game, obj, deltaTime);
 		}
 	}
+
+	// Convert player world position to screen position
+	float px = game.player().getPosition().x - game.mapViewport.x;
+	float py = game.player().getPosition().y - game.mapViewport.y;
+
+	// Draw text slightly above the player's head
+	/*SDL_SetRenderDrawColor(sdl.renderer, 0, 0, 0, 255); // black text
+	SDL_RenderDebugText(
+		sdl.renderer,
+		(int)(px - 50),   // center horizontally
+		(int)(py + 60),   // above head
+		"Press > to start"
+	);*/
 
 	// Draw menu options
 	SDL_RenderDebugText(sdl.renderer, 400, 500, "Press RIGHT or RETURN to start");
@@ -863,6 +877,19 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 		SDL_RenderTexture(state.renderer, obj.getTexture(), &src, &dst);
 
 	}
+	else if (obj.getType() == ObjectType::text)
+	{
+		float scrollFactor = 0.75f; // tweak this if you want it to scroll slightly slower/faster
+
+		float xScreen = (obj.getPosition().x - gs.mapViewport.x) * scrollFactor;
+		float yScreen = obj.getPosition().y - gs.mapViewport.y / 3.0f;
+
+		// Set draw color to black (R,G,B,A)
+		SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, 255);
+
+		// Render the black
+		SDL_RenderDebugText(state.renderer, xScreen, yScreen, "Press > to start");
+	}
 	else    // Obstacles, Floor Tiles 
 	{
 		SDL_FRect src
@@ -916,7 +943,7 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 
 void cleanupOffscreenObjects(GameState& gs)
 {
-	float marginBehind = 300.0f; // how far behind the player to keep objects
+	float marginBehind = 500.0f; // how far behind the player to keep objects
 	float playerX = gs.player().getPosition().x;
 
 	for (auto& layer : gs.layers)
@@ -1711,6 +1738,21 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					portal->addCollider(END_PORTAL_COLLISION);
 
 					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(portal));
+
+					break;
+				}
+
+				// Starting text
+				case START_TEXT_INDEX:
+				{
+					auto text = std::make_unique<GameObject>();
+
+					text->setType(ObjectType::text);      // or endportal
+					text->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					text->clearCollider();
+					text->addCollider({ 0, 0, 0, 0 });
+
+					gs.layers[LAYER_IDX_LEVEL].push_back(std::move(text));
 
 					break;
 				}

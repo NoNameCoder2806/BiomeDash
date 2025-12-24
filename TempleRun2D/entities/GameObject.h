@@ -11,7 +11,7 @@
 // ----- OBJECT TYPES -----
 enum class ObjectType
 {
-    player, monster, level, startportal, endportal, commander, obstacle, boost
+    player, monster, level, startportal, endportal, commander, obstacle, boost, text
 };
 
 // ----- GAMEOBJECT CLASS -----
