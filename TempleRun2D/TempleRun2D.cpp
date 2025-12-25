@@ -679,7 +679,7 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 			// Then we need to generate one from the normal biomes
 			int idx = gs.randomInt(0, gs.unusedBiomes.size() - 1);
 			nextBiome = gs.unusedBiomes[idx];
-			//nextBiome = "Swamp";
+			//nextBiome = "Power_Station";
 			gs.unusedBiomes.erase(gs.unusedBiomes.begin() + idx);  // remove it so it's not picked again
 
 			// Debug

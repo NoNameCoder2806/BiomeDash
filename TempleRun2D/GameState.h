@@ -19,7 +19,7 @@ const size_t LAYER_IDX_MONSTER = 2;
 const size_t LAYER_IDX_OBSTACLES = 1;       // Index for obstacle background tiles
 const size_t LAYER_IDX_LEVEL = 0;           // Index for the level tiles and walls of the map
 const std::string TRANSITION_BIOME = "";
-const int MINIMAL_SCORE = 1000;
+const int MINIMAL_SCORE = 10000;
 
 // ----- SCREEN STATES -----
 enum class ScreenState
@@ -58,8 +58,8 @@ struct GameState
 
 	bool worldReady = true;
 
-	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
-	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay" };
+	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station"};
+	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station"};
 
 	ScreenState screen;
 
