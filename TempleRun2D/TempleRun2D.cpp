@@ -1594,7 +1594,7 @@ bool checkGrounded(const GameObject& player, const std::vector<std::unique_ptr<G
 	float playerBottom = player.getPosition().y + playerCollider.y + playerCollider.h;
 
 	// Small tolerance for float comparisons
-	const float tolerance = 5.0f;
+	const float tolerance = 2.0f;
 
 	for (const auto& tile : levelTiles)
 	{
