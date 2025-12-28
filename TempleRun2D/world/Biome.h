@@ -125,6 +125,9 @@ struct Biome {
         // Create the path based on the Biome name
         std::string path = "data/biomes/" + name + ".txt";
 
+        // Debug
+        std::cout << "Data file: " << path << std::endl;
+
         // Open the file
         std::ifstream fin;
         fin.open(path);

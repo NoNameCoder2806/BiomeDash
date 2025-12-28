@@ -132,7 +132,14 @@ int main(int argc, char* argv[])
 	Resources res;          // Create a Resources object
 	res.load(sdl, "default_character", "default_monster", game.currentBiome.name, game.currentBiome.parallaxBackgrounds);          // Load our player and monster
 
+	// Preload the biomes
+	game.preloadBiomes(res, sdl);
+
+	// Set a new name for the biome
+	game.currentBiome.name = "Transition";
+
 	// Load the current textures of the biome
+	game.updateBiome(game.currentBiome.name);
 	game.currentBiome.loadTextures(res, sdl.renderer);
 
 	// Start the map size at 0
@@ -162,6 +169,9 @@ int main(int argc, char* argv[])
 		{
 			case ScreenState::home:
 			{
+				// Debug
+				//cout << "Entered Home Screen" << endl;
+
 				runHomeScreen(sdl, game.screen, game, res, scrollPositions, prevTime); // update currentScreen if user starts game
 				break;
 			}
@@ -271,7 +281,14 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 	// Draw parallax backgrounds
 	int layerCount = std::stoi(game.currentBiome.parallaxBackgrounds);
 	if (scrollPositions.size() != res.parallaxBackgrounds.size())
+	{
 		scrollPositions.resize(res.parallaxBackgrounds.size(), 0.0f);
+	}
+
+	// Debug
+	//cout << "Layers: " << layerCount << endl;
+	//cout << "Biome: " << game.currentBiome.name << endl;
+	//cout << "Backgrounds: " << game.currentBiome.parallaxBackgrounds << endl;
 
 	for (int i = 0; i < layerCount; i++)
 	{

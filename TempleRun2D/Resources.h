@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <unordered_map>
