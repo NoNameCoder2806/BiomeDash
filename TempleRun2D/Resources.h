@@ -77,7 +77,7 @@ struct Resources
     std::vector<SDL_Texture*> textures;  // Keeps track of all loaded textures (for cleanup)
 
     // A map to keep track of all the textures
-    std::unordered_map<int, SDL_Texture*> tileTextures;
+    std::unordered_map<std::string, SDL_Texture*> tileTextures;
 
     SDL_Texture* texFloor = nullptr;
 
@@ -102,11 +102,14 @@ struct Resources
     // Create one-off textures for tiles based on their id
     SDL_Texture* getTileTexture(SDL_Renderer* renderer, const std::string& biomeName, int id)
     {
+        // Use a string as a key
+        std::string key = biomeName + "_" + std::to_string(id);
+
         // Debug: ID 
         //std::cout << "ID Count: " << tileTextures.count(id) << std::endl;
 
         // If the textures haven't existed in the map, we add it to the map
-        if (tileTextures.count(id) == 0)
+        if (tileTextures.count(key) == 0)
         {
             std::string path = "data/textures/biomes/" + biomeName + "/" + std::to_string(id) + ".png";
             SDL_Texture* tex = IMG_LoadTexture(renderer, path.c_str());
@@ -124,11 +127,11 @@ struct Resources
             }
 
             SDL_SetTextureScaleMode(tex, SDL_SCALEMODE_NEAREST);
-            tileTextures[id] = tex;
+            tileTextures[key] = tex;
         }
 
         // Otherwise, we return it if it is in the map
-        return tileTextures[id];
+        return tileTextures[key];
     }
 
     // Loads all textures and animations into memory

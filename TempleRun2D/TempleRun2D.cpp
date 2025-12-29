@@ -30,7 +30,7 @@
 #include <array>
 #include <string>
 #include <format>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 
@@ -78,7 +78,7 @@ static bool BIOME_UPDATE = true;
 static int CURRENT_MAP_SIZE = 0;
 
 // All biomes' textures
-static map<string, Biome> biomeTexturesMap;
+static unordered_map<string, Biome> biomeTexturesMap;
 
 // Function prototypes
 void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
@@ -145,39 +145,48 @@ int main(int argc, char* argv[])
 	game.currentBiome->loadTextures(res, sdl.renderer); // actually load images to GPU
 
 	// Iterate through all the biomes and load the textures
-	for (std::string name : game.biomeList)
+	for (std::string name : game.fullBiomeList)
 	{
-		// Change the name of the current biome
-		game.currentBiome->name = name;
+		// Create a temporary Biome object
+		Biome temp;
+		temp.name = name;
 
 		// Debug 
 		cout << "Preloading " << name << endl;
 
 		// Read and load all the textures
-		game.currentBiome->loadBiome(name);          // parse the text file
-		game.currentBiome->loadTextures(res, sdl.renderer); // actually load images to GPU
+		temp.loadBiome(name);          // parse the text file
+		temp.loadTextures(res, sdl.renderer); // actually load images to GPU
 		
 		// Debug
 		cout << "Creating the objects..." << endl;
 
 		// Call manageTiles() to create the objects
-		manageTiles(sdl, game, res, false);
+		//manageTiles(sdl, game, res, false);
 
 		// Clear the tiles
 		//game.currentBiome->clearTextures();
+
+		// Insert the biome to the map
+		biomeTexturesMap[temp.name] = move(temp);
+
+		// Debug right after insertion
+		auto& debugBiome = biomeTexturesMap[name];
+		for (auto& [id, obj] : debugBiome.floor)
+		{
+			std::cout << "Biome " << name << " Floor Tile ID " << id
+				<< " | Texture pointer: " << obj.getTexture() << std::endl;
+		}
 	}
 	
 	//game.preloadBiomes(res, sdl);
 
-	// Adding the monster to the game
-	game.gameMap = game.normalMap;
-
 	// Set a new name for the biome
-	game.currentBiome->name = "Transition";
+	game.currentBiome = &biomeTexturesMap["Transition"];
 
 	// Load the current textures of the biome
-	game.updateBiome(game.currentBiome->name);
-	game.currentBiome->loadTextures(res, sdl.renderer);
+	//game.updateBiome(game.currentBiome->name);
+	//game.currentBiome->loadTextures(res, sdl.renderer);
 
 	// Start the map size at 0
 	CURRENT_MAP_SIZE = 0;
@@ -620,9 +629,19 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 		scrollPositions.resize(res.parallaxBackgrounds.size());
 	}
 
+	// Debug
+	/*cout << "Current size: " << res.parallaxBackgrounds.size() << endl;
+	cout << "Layers: " << layerCount << endl;
+	cout << "Current Biome: " << game.currentBiome->name << endl;
+	cout << "Number of Layers: " << game.currentBiome->parallaxBackgrounds << endl;
+	*/
+
 	// Draw each parallax background
 	for (int i = 0; i < layerCount; i++)
 	{
+		// Debug
+		//cout << "+ Loading: " << i << endl;
+
 		// Calculate the scroll factor
 		float scrollFactor = 0.75f * (i + 1) / layerCount;
 
@@ -755,13 +774,14 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 	}
 
 	// Clear the old tiles textures
-	res.clearTiles();
+	//res.clearTiles();
 	
-	// Reset the game state
+	// Reset the biome
+	gs.currentBiome = &biomeTexturesMap[nextBiome];
 	gs.resetGameState(state, nextBiome);
 
 	// Load the new biome textures
-	gs.currentBiome->loadTextures(res, state.renderer);
+	//gs.currentBiome->loadTextures(res, state.renderer);
 
 	// Reset the resources
 	res.reset(state, gs.currentBiome->name, gs.currentBiome->parallaxBackgrounds);
@@ -1736,6 +1756,13 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 			}
 
 			int id = gs.gameMap.at(r).at(c);
+
+			// Debug
+			if (id != 0)
+			{
+				cout << "Creating tile " << id << " for biome " << gs.currentBiome->name << endl;
+			}
+
 			switch (id)
 			{
 				// Player (spawn only if no player exists)

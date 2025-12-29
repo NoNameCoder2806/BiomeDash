@@ -36,7 +36,7 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 998, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{2, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 	};
 
@@ -104,7 +104,7 @@ void GameState::resetGameState(const SDLState& state, const std::string& biomeNa
 	resetMapForBiome(biomeName);
 
 	// Reload biome
-	updateBiome(biomeName);
+	//updateBiome(biomeName);
 
 	// Reset map tracking
 	loadedLeftCol = 0;
@@ -122,9 +122,6 @@ void GameState::resetGameState(const SDLState& state, const std::string& biomeNa
 
 void GameState::resetMapForBiome(const std::string& biomeName)
 {
-	// Update the biome name
-	currentBiome->name = biomeName;
-
 	// Change the map
 	if (currentBiome->name == "Transition")
 	{

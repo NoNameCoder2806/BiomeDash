@@ -16,6 +16,18 @@ private:
     LevelType levelType;    // Type of the level tile
     
 public:
+    // Default constructor
+    Level() : levelType(LevelType::floor)
+    {
+        setType(ObjectType::level);         // default type
+        setPosition(glm::vec2(0));          // default position
+        setVelocity(glm::vec2(0));          // default velocity
+        setTexture(nullptr);                // no texture yet
+        setImageSize({ 32, 32 });             // default tile size
+        setImageOffset({ 0, 0 });
+        clearCollider();                    // start with empty collider
+    }
+
     Level(const GameObject& obj) : levelType(LevelType::floor)
     {
         setType(obj.getType());
