@@ -15,7 +15,7 @@ enum class ObjectType
 };
 
 // ----- GAMEOBJECT CLASS -----
-class GameObject  // GameObject structure
+class GameObject
 {
 private:
     // Object type
