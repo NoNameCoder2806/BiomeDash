@@ -39,7 +39,37 @@ void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float x
 	SDL_RenderTextureTiled(renderer, texture, nullptr, 1, &dst);
 }
 
-// ----- II/ COUNTS OBJECTS -----
+// ----- II/ CLEAN UP OFFSCREEN OBJECTS -----
+void cleanupOffscreenObjects(GameState& gs)
+{
+	float marginBehind = 500.0f; // how far behind the player to keep objects
+	float playerX = gs.player().getPosition().x;
+
+	for (auto& layer : gs.layers)
+	{
+		layer.erase(
+			std::remove_if(layer.begin(), layer.end(),
+				[&](std::unique_ptr<GameObject>& obj)
+				{
+					const auto& colliders = obj->getCollider();
+					// Assume object is far behind until proven otherwise
+					for (const auto& col : colliders)
+					{
+						float rightEdge = obj->getPosition().x + col.x + col.w;
+						// If any collider is not far behind the player, keep it
+						if (rightEdge >= playerX - marginBehind)
+						{
+							return false;
+						}
+					}
+					return true; // all colliders are far behind
+				}),
+			layer.end()
+		);
+	}
+}
+
+// ----- III/ COUNTS OBJECTS -----
 //void countObjectsWithTexture(const GameState& game)
 //{
 //	int count = 0;

@@ -461,35 +461,6 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 	}
 }
 
-void cleanupOffscreenObjects(GameState& gs)
-{
-	float marginBehind = 500.0f; // how far behind the player to keep objects
-	float playerX = gs.player().getPosition().x;
-
-	for (auto& layer : gs.layers)
-	{
-		layer.erase(
-			std::remove_if(layer.begin(), layer.end(),
-				[&](std::unique_ptr<GameObject>& obj)
-				{
-					const auto& colliders = obj->getCollider();
-					// Assume object is far behind until proven otherwise
-					for (const auto& col : colliders)
-					{
-						float rightEdge = obj->getPosition().x + col.x + col.w;
-						// If any collider is not far behind the player, keep it
-						if (rightEdge >= playerX - marginBehind)
-						{
-							return false;
-						}
-					}
-					return true; // all colliders are far behind
-				}),
-			layer.end()
-		);
-	}
-}
-
 void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObject& obj, float deltaTime)
 {
 	// Check which type the object is
