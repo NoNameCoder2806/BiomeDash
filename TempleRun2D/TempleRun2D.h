@@ -89,7 +89,6 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 // ----- II/ GAME LOGIC -----
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res);
 void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float deltaTime);
-void cleanupOffscreenObjects(GameState& gs);
 void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObject& obj, float deltaTime);
 void checkCollision(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB, float deltaTime);
 void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB,
@@ -100,4 +99,5 @@ bool checkGrounded(const GameObject& player, const std::vector<std::unique_ptr<G
 
 // ----- III/ UTILITIES -----
 void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float xVelocity, float& scrollPos, float scrollFactor, float deltaTime);
+void cleanupOffscreenObjects(GameState& gs);
 //void countObjectsWithTexture(const GameState& game);

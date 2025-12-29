@@ -69,7 +69,7 @@ void cleanupOffscreenObjects(GameState& gs)
 	}
 }
 
-// ----- III/ COUNTS OBJECTS -----
+// ----- III/ COUNT OBJECTS -----
 //void countObjectsWithTexture(const GameState& game)
 //{
 //	int count = 0;
