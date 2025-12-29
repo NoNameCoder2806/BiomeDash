@@ -30,6 +30,7 @@
 #include <array>
 #include <string>
 #include <format>
+#include <map>
 
 using namespace std;
 
@@ -75,6 +76,9 @@ static int FLOOR_TILES = 0;
 static bool PLAYING = false;
 static bool BIOME_UPDATE = true;
 static int CURRENT_MAP_SIZE = 0;
+
+// All biomes' textures
+static map<string, Biome> biomeTexturesMap;
 
 // Function prototypes
 void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
@@ -133,7 +137,40 @@ int main(int argc, char* argv[])
 	res.load(sdl, "default_character", "default_monster", game.currentBiome.name, game.currentBiome.parallaxBackgrounds);          // Load our player and monster
 
 	// Preload the biomes
-	game.preloadBiomes(res, sdl);
+	// Load the Transition biome
+	game.currentBiome.name = "Transition";
+
+	// Read and load all the textures
+	game.currentBiome.loadBiome(game.currentBiome.name);          // parse the text file
+	game.currentBiome.loadTextures(res, sdl.renderer); // actually load images to GPU
+
+	// Iterate through all the biomes and load the textures
+	for (std::string name : game.biomeList)
+	{
+		// Change the name of the current biome
+		game.currentBiome.name = name;
+
+		// Debug 
+		cout << "Preloading " << name << endl;
+
+		// Read and load all the textures
+		game.currentBiome.loadBiome(name);          // parse the text file
+		game.currentBiome.loadTextures(res, sdl.renderer); // actually load images to GPU
+		
+		// Debug
+		cout << "Creating the objects..." << endl;
+
+		// Call manageTiles() to create the objects
+		manageTiles(sdl, game, res, false);
+
+		// Clear the tiles
+		game.currentBiome.clearTextures();
+	}
+	
+	//game.preloadBiomes(res, sdl);
+
+	// Adding the monster to the game
+	game.gameMap = game.normalMap;
 
 	// Set a new name for the biome
 	game.currentBiome.name = "Transition";
