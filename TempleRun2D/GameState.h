@@ -51,7 +51,7 @@ struct GameState
 
 	bool lastChunkEmpty;
 
-	Biome currentBiome;
+	Biome* currentBiome = nullptr;
 
 	bool needTransition;
 	bool portalGenerated;

@@ -132,30 +132,30 @@ int main(int argc, char* argv[])
 
 	// Create a GameState and Resources object
 	GameState game(sdl, "Transition");    // Create a GameState object
-	game.updateBiome(game.currentBiome.name);
+	game.updateBiome(game.currentBiome->name);
 	Resources res;          // Create a Resources object
-	res.load(sdl, "default_character", "default_monster", game.currentBiome.name, game.currentBiome.parallaxBackgrounds);          // Load our player and monster
+	res.load(sdl, "default_character", "default_monster", game.currentBiome->name, game.currentBiome->parallaxBackgrounds);          // Load our player and monster
 
 	// Preload the biomes
 	// Load the Transition biome
-	game.currentBiome.name = "Transition";
+	game.currentBiome->name = "Transition";
 
 	// Read and load all the textures
-	game.currentBiome.loadBiome(game.currentBiome.name);          // parse the text file
-	game.currentBiome.loadTextures(res, sdl.renderer); // actually load images to GPU
+	game.currentBiome->loadBiome(game.currentBiome->name);          // parse the text file
+	game.currentBiome->loadTextures(res, sdl.renderer); // actually load images to GPU
 
 	// Iterate through all the biomes and load the textures
 	for (std::string name : game.biomeList)
 	{
 		// Change the name of the current biome
-		game.currentBiome.name = name;
+		game.currentBiome->name = name;
 
 		// Debug 
 		cout << "Preloading " << name << endl;
 
 		// Read and load all the textures
-		game.currentBiome.loadBiome(name);          // parse the text file
-		game.currentBiome.loadTextures(res, sdl.renderer); // actually load images to GPU
+		game.currentBiome->loadBiome(name);          // parse the text file
+		game.currentBiome->loadTextures(res, sdl.renderer); // actually load images to GPU
 		
 		// Debug
 		cout << "Creating the objects..." << endl;
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
 		manageTiles(sdl, game, res, false);
 
 		// Clear the tiles
-		game.currentBiome.clearTextures();
+		//game.currentBiome->clearTextures();
 	}
 	
 	//game.preloadBiomes(res, sdl);
@@ -173,11 +173,11 @@ int main(int argc, char* argv[])
 	game.gameMap = game.normalMap;
 
 	// Set a new name for the biome
-	game.currentBiome.name = "Transition";
+	game.currentBiome->name = "Transition";
 
 	// Load the current textures of the biome
-	game.updateBiome(game.currentBiome.name);
-	game.currentBiome.loadTextures(res, sdl.renderer);
+	game.updateBiome(game.currentBiome->name);
+	game.currentBiome->loadTextures(res, sdl.renderer);
 
 	// Start the map size at 0
 	CURRENT_MAP_SIZE = 0;
@@ -316,7 +316,7 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 	SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
 
 	// Draw parallax backgrounds
-	int layerCount = std::stoi(game.currentBiome.parallaxBackgrounds);
+	int layerCount = std::stoi(game.currentBiome->parallaxBackgrounds);
 	if (scrollPositions.size() != res.parallaxBackgrounds.size())
 	{
 		scrollPositions.resize(res.parallaxBackgrounds.size(), 0.0f);
@@ -612,7 +612,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
 
 	// Draw the parallax backgrounds
-	int layerCount = stoi(game.currentBiome.parallaxBackgrounds);
+	int layerCount = stoi(game.currentBiome->parallaxBackgrounds);
 
 	// Check the number of scroll positions and resize if necessary
 	if (scrollPositions.size() != res.parallaxBackgrounds.size())
@@ -725,7 +725,7 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 	string nextBiome;
 
 	// If the current biome is a transition biome
-	if (gs.currentBiome.name == "Transition")
+	if (gs.currentBiome->name == "Transition")
 	{
 		// If there are more biomes to play
 		if (gs.unusedBiomes.size() > 0)
@@ -761,10 +761,10 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 	gs.resetGameState(state, nextBiome);
 
 	// Load the new biome textures
-	gs.currentBiome.loadTextures(res, state.renderer);
+	gs.currentBiome->loadTextures(res, state.renderer);
 
 	// Reset the resources
-	res.reset(state, gs.currentBiome.name, gs.currentBiome.parallaxBackgrounds);
+	res.reset(state, gs.currentBiome->name, gs.currentBiome->parallaxBackgrounds);
 
 	// Clear the Level layer and Destroy the portal
 	gs.layers[LAYER_IDX_LEVEL].clear();
@@ -784,7 +784,7 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 	}
 
 	// Check the biome name
-	if (gs.currentBiome.name == "Transition")
+	if (gs.currentBiome->name == "Transition")
 	{
 		// If this is a transition biome, we need to hide the monster
 		if (!gs.layers[LAYER_IDX_MONSTER].empty())
@@ -1850,7 +1850,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					// Floor Tiles
 					if (id >= 6 && id <= 50)
 					{
-						auto& floor = gs.currentBiome.floor.at(id);
+						auto& floor = gs.currentBiome->floor.at(id);
 						auto obs = std::make_unique<Level>(floor);
 						obs->setTexture(floor.getTexture());
 						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
@@ -1865,7 +1865,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					// Tripped obstacles
 					else if (id >= 51 && id <= 100)
 					{
-						auto& tripped = gs.currentBiome.tripped.at(id);
+						auto& tripped = gs.currentBiome->tripped.at(id);
 						auto obs = std::make_unique<Obstacle>(tripped);
 						obs->setTexture(tripped.getTexture());
 						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
@@ -1880,11 +1880,11 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					// Wall obstacles
 					else if (id >= 101 && id <= 150)
 					{
-						auto& wall = gs.currentBiome.wall.at(id);
+						auto& wall = gs.currentBiome->wall.at(id);
 						auto obs = std::make_unique<Obstacle>(wall);
-						//obs->setTexture(wall.getTexture());
-						SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
-						obs->setTexture(tex);
+						obs->setTexture(wall.getTexture());
+						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome->name, id);
+						obs->setTexture(tex);*/
 
 						obs->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						gs.layers[LAYER_IDX_LEVEL].push_back(std::move(obs));
@@ -1895,7 +1895,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					// Burnt obstacles
 					else if (id >= 151 && id <= 200)
 					{
-						auto& burnt = gs.currentBiome.burnt.at(id);
+						auto& burnt = gs.currentBiome->burnt.at(id);
 						auto obs = std::make_unique<Obstacle>(burnt);
 						obs->setTexture(burnt.getTexture());
 						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);
@@ -1910,7 +1910,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 					// Spike obstacles
 					else if (id >= 201 && id <= 250)
 					{
-						auto& spike = gs.currentBiome.spike.at(id);
+						auto& spike = gs.currentBiome->spike.at(id);
 						auto obs = std::make_unique<Obstacle>(spike);
 						obs->setTexture(spike.getTexture());
 						/*SDL_Texture* tex = res.getTileTexture(state.renderer, gs.currentBiome.name, id);

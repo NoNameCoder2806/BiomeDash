@@ -24,7 +24,8 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 	invincibleMode = false;
 
 	// Set the biome according to the name
-	currentBiome.name = biomeName;
+	currentBiome = new Biome;
+	currentBiome->name = biomeName;
 
 	gameMap = {
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -45,7 +46,7 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 	currentTile = 5;
 	lastChunkEmpty = false;
 
-	currentBiome.loadBiome(currentBiome.name);
+	currentBiome->loadBiome(currentBiome->name);
 
 	needTransition = false;
 	portalGenerated = false;
@@ -76,24 +77,24 @@ Monster& GameState::monster()
 void GameState::preloadBiomes(Resources& res, SDLState& state)
 {
 	// Load the Transition biome
-	currentBiome.name = "Transition";
+	currentBiome->name = "Transition";
 
 	// Read and load all the textures
-	currentBiome.loadBiome(currentBiome.name);          // parse the text file
-	currentBiome.loadTextures(res, state.renderer); // actually load images to GPU
+	currentBiome->loadBiome(currentBiome->name);          // parse the text file
+	currentBiome->loadTextures(res, state.renderer); // actually load images to GPU
 
 	// Iterate through all the biomes and load the textures
 	for (std::string name : biomeList)
 	{
 		// Change the name of the current biome
-		currentBiome.name = name;
+		currentBiome->name = name;
 
 		// Debug 
 		std::cout << "Preloading " << name << std::endl;
 
 		// Read and load all the textures
-		currentBiome.loadBiome(name);          // parse the text file
-		currentBiome.loadTextures(res, state.renderer); // actually load images to GPU
+		currentBiome->loadBiome(name);          // parse the text file
+		currentBiome->loadTextures(res, state.renderer); // actually load images to GPU
 	}
 }
 
@@ -122,10 +123,10 @@ void GameState::resetGameState(const SDLState& state, const std::string& biomeNa
 void GameState::resetMapForBiome(const std::string& biomeName)
 {
 	// Update the biome name
-	currentBiome.name = biomeName;
+	currentBiome->name = biomeName;
 
 	// Change the map
-	if (currentBiome.name == "Transition")
+	if (currentBiome->name == "Transition")
 	{
 		// Check to see if the player has completed all the biomes
 		if (unusedBiomes.size() == 0)
@@ -192,7 +193,7 @@ void GameState::resetMapForBiome(const std::string& biomeName)
 
 void GameState::updateBiome(std::string biomeName)
 {
-	currentBiome.loadBiome(biomeName);
+	currentBiome->loadBiome(biomeName);
 }
 
 void GameState::updateCurrentTile()
@@ -227,7 +228,7 @@ void GameState::updateMap()
 void GameState::generateMap()
 {
 	// If this is a Transition biome, we don't generate obstacles
-	if (currentBiome.name == "Transition")
+	if (currentBiome->name == "Transition")
 	{
 		return;
 	}
@@ -306,31 +307,31 @@ void GameState::generateObstacleChunk(int obstaclesCount)
 
 	// Get all the ids from the maps
 	// Tripped obstacles
-	for (auto& obj : currentBiome.tripped)
+	for (auto& obj : currentBiome->tripped)
 	{
 		obstaclesMaps.push_back(obj.first);
 	}
 
 	// Wall obstacles
-	for (auto& obj : currentBiome.wall)
+	for (auto& obj : currentBiome->wall)
 	{
 		obstaclesMaps.push_back(obj.first);
 	}
 
 	// Burnt obstacles 
-	for (auto& obj : currentBiome.burnt)
+	for (auto& obj : currentBiome->burnt)
 	{
 		obstaclesMaps.push_back(obj.first);
 	}
 
 	// Spike obstacles
-	for (auto& obj : currentBiome.spike)
+	for (auto& obj : currentBiome->spike)
 	{
 		obstaclesMaps.push_back(obj.first);
 	}
 
 	// Floor tiles 
-	for (auto& obj : currentBiome.floor)
+	for (auto& obj : currentBiome->floor)
 	{
 		floorTiles.push_back(obj.first);
 	}
