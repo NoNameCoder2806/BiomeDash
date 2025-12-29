@@ -170,13 +170,13 @@ int main(int argc, char* argv[])
 		// Insert the biome to the map
 		biomeTexturesMap[temp.name] = move(temp);
 
-		// Debug right after insertion
-		auto& debugBiome = biomeTexturesMap[name];
+		// Debug
+		/*auto& debugBiome = biomeTexturesMap[name];
 		for (auto& [id, obj] : debugBiome.floor)
 		{
 			std::cout << "Biome " << name << " Floor Tile ID " << id
 				<< " | Texture pointer: " << obj.getTexture() << std::endl;
-		}
+		}*/
 	}
 	
 	//game.preloadBiomes(res, sdl);
@@ -1760,7 +1760,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 			// Debug
 			if (id != 0)
 			{
-				cout << "Creating tile " << id << " for biome " << gs.currentBiome->name << endl;
+				//cout << "Creating tile " << id << " for biome " << gs.currentBiome->name << endl;
 			}
 
 			switch (id)
