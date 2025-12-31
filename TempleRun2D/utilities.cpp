@@ -9,7 +9,7 @@ void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float x
 	// If the texture is null
 	if (!texture)
 	{
-		// We exit
+		// Exit
 		return;
 	}
 

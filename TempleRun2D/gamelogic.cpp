@@ -227,7 +227,7 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 		float scrollFactor = 0.75f; // tweak this if you want it to scroll slightly slower/faster
 
 		float xScreen = (obj.getPosition().x - gs.mapViewport.x) * scrollFactor;
-		float yScreen = obj.getPosition().y - gs.mapViewport.y / 3.0f;
+		float yScreen = obj.getPosition().y - gs.mapViewport.y / 4.0f;
 
 		// Set draw color to black (R,G,B,A)
 		SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, 255);
