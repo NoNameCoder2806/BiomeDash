@@ -47,7 +47,8 @@ public:
     {
         if (!visible || !texture) return;
 
-        SDL_FRect dst{
+        SDL_FRect dst
+        {
             position.x,
             position.y,
             size.x,

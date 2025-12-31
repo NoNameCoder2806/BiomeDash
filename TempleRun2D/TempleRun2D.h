@@ -21,6 +21,7 @@
 #include "entities/Level.h"
 #include "entities/Obstacle.h"
 #include "entities/Boost.h"
+#include "entities/UIButton.h"
 
 // World
 #include "world/Biome.h"
@@ -74,6 +75,7 @@ extern int FLOOR_TILES;
 extern bool PLAYING;
 extern bool BIOME_UPDATE;
 extern int CURRENT_MAP_SIZE;
+extern std::vector<UIButton> buttons;
 
 // All biomes' textures
 extern std::unordered_map<std::string, Biome> biomeTexturesMap;
@@ -90,14 +92,16 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res);
 void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float deltaTime);
 void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObject& obj, float deltaTime);
+void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUpdate);
+void handleKeyInput(const SDLState& state, GameState& gs, GameObject& obj, SDL_Scancode key, bool keyDown);
+
+// ----- III/ COLLISION -----
 void checkCollision(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB, float deltaTime);
 void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB,
     SDL_FRect rectA, SDL_FRect rectB, SDL_FRect rectC, float deltaTime);
-void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUpdate);
-void handleKeyInput(const SDLState& state, GameState& gs, GameObject& obj, SDL_Scancode key, bool keyDown);
 bool checkGrounded(const GameObject& player, const std::vector<std::unique_ptr<GameObject>>& levelTiles);
 
-// ----- III/ UTILITIES -----
+// ----- IV/ UTILITIES -----
 void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float xVelocity, float& scrollPos, float scrollFactor, float deltaTime);
 void cleanupOffscreenObjects(GameState& gs);
 //void countObjectsWithTexture(const GameState& game);
