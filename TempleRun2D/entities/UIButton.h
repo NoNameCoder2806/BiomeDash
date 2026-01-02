@@ -102,6 +102,6 @@ public:
         SDL_RenderTexture(sdl.renderer, texToDraw, nullptr, &dst);
 
         // Debug
-        //std::cout << "Drew the " << name << " button at (" << dst.x << ", " << dst.y << ") size (" << dst.w << "x" << dst.h << ")" << std::endl;
+        std::cout << "Drew the " << name << " button at (" << dst.x << ", " << dst.y << ") size (" << dst.w << "x" << dst.h << ")" << std::endl;
     }
 };
