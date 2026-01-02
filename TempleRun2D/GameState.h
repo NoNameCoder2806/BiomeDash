@@ -13,6 +13,7 @@
 #include "world/Biome.h"
 
 #include "SDLState.h"
+#include "UIState.h"
 
 const size_t LAYER_IDX_PLAYER = 3;          // Index for the player layer in 'layers' array, including monster, player, ground tiles
 const size_t LAYER_IDX_MONSTER = 2;
@@ -46,17 +47,17 @@ struct GameState
 
 	int loadedLeftCol;    // Leftmost loaded column index
 	int loadedRightCol;   // Rightmost loaded column index (initially full 15 columns)
-
 	int currentTile;
-
 	bool lastChunkEmpty;
 
 	Biome* currentBiome = nullptr;
 
 	bool needTransition;
 	bool portalGenerated;
-
 	bool worldReady = true;
+
+	// UIState
+	UIState ui;
 
 	const std::vector<std::string> fullBiomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };

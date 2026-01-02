@@ -43,6 +43,16 @@ int main(int argc, char* argv[])
 	Resources res;          // Create a Resources object
 	res.load(sdl, "default_character", "default_monster", game.currentBiome->name, game.currentBiome->parallaxBackgrounds);          // Load our player and monster
 
+	// Set up the textures for the buttons
+	game.ui.setup(sdl.renderer, res);
+
+	// Directly modify the pause button's position
+	game.ui.pause.setPosition({ 160, 160 });
+	game.ui.pause.setSize({ 28, 28 });
+
+	// Render the buttons
+	game.ui.render(sdl.renderer, game.mapViewport);
+
 	// Preload the biomes
 	// Load the Transition biome
 	game.currentBiome->name = "Transition";

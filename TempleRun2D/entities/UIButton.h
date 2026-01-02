@@ -36,8 +36,8 @@ public:
     UIButton(SDL_Renderer* renderer, Resources& res, const std::string& n, glm::vec2 pos, glm::vec2 sz)
         : name(n), position(pos), size(sz)
     {
-        normalTexture = res.loadTexture(renderer, "assets/buttons/" + name + "_normal.png");
-        clickedTexture = res.loadTexture(renderer, "assets/buttons/" + name + "_clicked.png");
+        normalTexture = res.loadTexture(renderer, "data/textures/ui/" + name + "_normal.png");
+        clickedTexture = res.loadTexture(renderer, "data/textures/ui/" + name + "_clicked.png");
     }
 
     // Getters
@@ -67,7 +67,7 @@ public:
         clicked = mouseDown && isHovered(mx, my);
     }
 
-    void render(SDL_Renderer* renderer) const
+    void render(SDL_Renderer* renderer, const SDL_FRect& viewport) const
     {
         // If the button is not visible we don't need to draw it
         if (!visible) 
@@ -76,7 +76,13 @@ public:
         }
 
         // Get the position of the button
-        SDL_FRect dst{ position.x, position.y, size.x, size.y };
+        SDL_FRect dst
+        { 
+            .x = position.x - viewport.x,
+            .y = position.y,
+            .w = size.x,
+            .h = size.y 
+        };
 
         // Store the texture to draw
         SDL_Texture* texToDraw = nullptr;
@@ -93,5 +99,8 @@ public:
 
         // Draw the texture
         SDL_RenderTexture(renderer, texToDraw, nullptr, &dst);
+
+        // Debug
+        std::cout << "Drew the " << name << " button!" << std::endl;
     }
 };

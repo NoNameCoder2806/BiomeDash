@@ -125,11 +125,14 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 	);*/
 
 	// Draw menu options
-	SDL_RenderDebugText(sdl.renderer, 400, 500, "Press RIGHT or RETURN to start");
-	SDL_RenderDebugText(sdl.renderer, 400, 550, "Press C to change character");
-	SDL_RenderDebugText(sdl.renderer, 400, 600, "Press M to change monster");
-	SDL_RenderDebugText(sdl.renderer, 400, 650, "Press ESC to quit");
-	SDL_RenderDebugText(sdl.renderer, 400, 700, "Press F11 to toggle fullscreen");
+	//SDL_RenderDebugText(sdl.renderer, 400, 500, "Press RIGHT or RETURN to start");
+	//SDL_RenderDebugText(sdl.renderer, 400, 550, "Press C to change character");
+	//SDL_RenderDebugText(sdl.renderer, 400, 600, "Press M to change monster");
+	//SDL_RenderDebugText(sdl.renderer, 400, 650, "Press ESC to quit");
+	//SDL_RenderDebugText(sdl.renderer, 400, 700, "Press F11 to toggle fullscreen");
+
+	// Draw the pause button
+	game.ui.render(sdl.renderer, game.mapViewport);
 
 	// Present frame
 	SDL_RenderPresent(sdl.renderer);
@@ -453,6 +456,9 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 
 	// White color
 	SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
+
+	// Draw the pause button
+	game.ui.render(sdl.renderer, game.mapViewport);
 
 	// Render the current game frame
 	SDL_RenderPresent(sdl.renderer);
