@@ -132,7 +132,7 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 	//SDL_RenderDebugText(sdl.renderer, 400, 700, "Press F11 to toggle fullscreen");
 
 	// Draw the pause button
-	game.ui.render(sdl.renderer, game.mapViewport);
+	game.ui.render(sdl);
 
 	// Present frame
 	SDL_RenderPresent(sdl.renderer);
@@ -458,7 +458,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
 
 	// Draw the pause button
-	game.ui.render(sdl.renderer, game.mapViewport);
+	game.ui.render(sdl);
 
 	// Render the current game frame
 	SDL_RenderPresent(sdl.renderer);

@@ -41,11 +41,12 @@ struct UIState
 		pause = UIButton(renderer, res, "pause", { 320, 100 }, { 200, 80 });
 	}
 
-	void render(SDL_Renderer* renderer, const SDL_FRect& viewport) const
+	void render(const SDLState& state) const
 	{
 		// Debug
-		std::cout << "Reached the render function in UIState..." << std::endl;
+		//std::cout << "Reached the render function in UIState..." << std::endl;
 		
-		pause.render(renderer, viewport);
+		// Render all the buttons
+		pause.render(state);
 	}
 };

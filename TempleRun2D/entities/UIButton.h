@@ -67,40 +67,41 @@ public:
         clicked = mouseDown && isHovered(mx, my);
     }
 
-    void render(SDL_Renderer* renderer, const SDL_FRect& viewport) const
+    void render(const SDLState& sdl) const
     {
-        // If the button is not visible we don't need to draw it
-        if (!visible) 
+        // If the button is not visible, skip drawing
+        if (!visible)
         {
             return;
         }
 
-        // Get the position of the button
+        // Calculate scaling based on reference resolution (e.g., 1920x1080)
+        const float refWidth = 1920.0f;
+        const float refHeight = 1080.0f;
+
+        float scaleX = static_cast<float>(sdl.width) / refWidth;
+        float scaleY = static_cast<float>(sdl.height) / refHeight;
+
+        // Choose which texture to draw
+        SDL_Texture* texToDraw = clicked ? clickedTexture : normalTexture;
+
+        // Get the Textures width and height
+        float texWidth = 0;
+        float texHeight = 0;
+        SDL_GetTextureSize(texToDraw, &texWidth, &texHeight);
+
+        // Destination rect — use your set position directly
         SDL_FRect dst
-        { 
-            .x = position.x - viewport.x,
-            .y = position.y,
-            .w = size.x,
-            .h = size.y 
+        {
+            .x = position.x,           // don't scale the position
+            .y = position.y,           // don't scale the position
+            .w = texWidth * scaleX,    // scale the size
+            .h = texHeight * scaleY
         };
 
-        // Store the texture to draw
-        SDL_Texture* texToDraw = nullptr;
-
-        // Choose the correct texture to draw
-        if (clicked)
-        {
-            texToDraw = clickedTexture;
-        } 
-        else
-        {
-            texToDraw = normalTexture;
-        }
-
-        // Draw the texture
-        SDL_RenderTexture(renderer, texToDraw, nullptr, &dst);
+        SDL_RenderTexture(sdl.renderer, texToDraw, nullptr, &dst);
 
         // Debug
-        std::cout << "Drew the " << name << " button!" << std::endl;
+        //std::cout << "Drew the " << name << " button at (" << dst.x << ", " << dst.y << ") size (" << dst.w << "x" << dst.h << ")" << std::endl;
     }
 };
