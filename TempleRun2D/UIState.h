@@ -54,4 +54,10 @@ struct UIState
 		// Render all the buttons
 		pause.render(state);
 	}
+
+	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
+	{
+		// Check each buttons
+		pause.updateClicked(mouseX, mouseY, clicked, sdl);
+	}
 };

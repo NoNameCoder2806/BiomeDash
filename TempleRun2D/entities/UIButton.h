@@ -57,7 +57,7 @@ public:
     void setVisible(bool v) { visible = v; }
 
     // Helper functions
-    bool isHovered(int mouseX, int mouseY, const SDLState& sdl) const
+    bool isHovered(float mouseX, float mouseY, const SDLState& sdl) const
     {
         if (!visible) return false;
 
@@ -78,7 +78,7 @@ public:
             mouseY >= dstY && mouseY <= dstY + dstH;
     }
 
-    void updateClicked(int mouseX, int mouseY, bool mouseDown, const SDLState& sdl)
+    void updateClicked(float mouseX, float mouseY, bool mouseDown, const SDLState& sdl)
     {
         clicked = mouseDown && isHovered(mouseX, mouseY, sdl);
     }

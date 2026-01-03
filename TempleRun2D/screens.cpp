@@ -69,16 +69,26 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 	}
 
 	// UI Buttons logic update
-	/*int mouseX, mouseY;
+	float mouseX;
+	float mouseY;
+
+	// Get the mouse state
 	Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
-	bool leftPressed = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
-	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);*/
+
+	// Whether the mouse was left-clicked
+	bool leftPressed = mouseState & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
+	
+	// Update the UI Buttons
+	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
 
 	// Check which buttons were clicked and act immediately
-	/*if (game.ui.pauseButton.isClicked())
+	if (game.ui.pause.isClicked())
 	{
-		game.screen = ScreenState::pause;
-	}*/
+		// Debug
+		cout << "Switching to pause screen" << endl;
+
+		//game.screen = ScreenState::pause;
+	}
 
 	// Compute deltaTime like runPlayingFrame
 	uint64_t nowTime = SDL_GetTicks();
