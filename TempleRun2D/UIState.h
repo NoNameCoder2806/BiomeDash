@@ -4,6 +4,11 @@
 
 #include "entities/UIButton.h"
 
+// Constants
+const glm::vec2 PAUSE_SIZE({ 84, 84 });
+const glm::vec2 PAUSE_MARGIN({ 0.975, 0.05 });
+
+// UIState struct
 struct UIState
 {
 	// Main buttons
@@ -38,14 +43,14 @@ struct UIState
 	void setup(SDL_Renderer* renderer, Resources& res)
 	{
 		//play = UIButton(renderer, res, "play", { 100, 100 }, { 200, 80 });
-		pause = UIButton(renderer, res, "pause", { 320, 100 }, { 200, 80 });
+		pause = UIButton(renderer, res, "pause", PAUSE_SIZE, PAUSE_MARGIN);
 	}
 
 	void render(const SDLState& state) const
 	{
 		// Debug
 		//std::cout << "Reached the render function in UIState..." << std::endl;
-		
+
 		// Render all the buttons
 		pause.render(state);
 	}

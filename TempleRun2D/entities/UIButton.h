@@ -19,8 +19,8 @@ private:
     SDL_Texture* clickedTexture = nullptr;
 
     // Position and size
-    glm::vec2 position{ 0, 0 };   // SCREEN space
     glm::vec2 size{ 0, 0 };
+    glm::vec2 margin{ 0, 0 };
 
     // Whether the object is visible and clicked
     bool visible = true;
@@ -29,12 +29,14 @@ private:
 public:
     UIButton() = default;
 
-    UIButton(SDL_Texture* tex, glm::vec2 pos, glm::vec2 sz)
-        : normalTexture(tex), position(pos), size(sz) {
+    UIButton(SDL_Texture* tex, glm::vec2 sz, glm::vec2 mg)
+        : normalTexture(tex), size(sz), margin(mg)
+    {
+
     }
 
-    UIButton(SDL_Renderer* renderer, Resources& res, const std::string& n, glm::vec2 pos, glm::vec2 sz)
-        : name(n), position(pos), size(sz)
+    UIButton(SDL_Renderer* renderer, Resources& res, const std::string& n, glm::vec2 sz, glm::vec2 mg)
+        : name(n), size(sz), margin(mg)
     {
         normalTexture = res.loadTexture(renderer, "data/textures/ui/" + name + "_normal.png");
         clickedTexture = res.loadTexture(renderer, "data/textures/ui/" + name + "_clicked.png");
@@ -42,7 +44,7 @@ public:
 
     // Getters
     std::string getName() { return name; }
-    glm::vec2 getPosition() { return position; }
+    glm::vec2 getMargin() { return margin; }
     glm::vec2 getSize() { return size; }
     bool isVisible() { return visible; }
     bool isClicked() { return clicked; }
@@ -50,58 +52,76 @@ public:
     // Setters
     void setName(std::string n) { name = n; }
     void setTexture(SDL_Texture* tex) { normalTexture = tex; }
-    void setPosition(glm::vec2 pos) { position = pos; }
+    void setMargin(glm::vec2 mg) { margin = mg; }
     void setSize(glm::vec2 sz) { size = sz; }
     void setVisible(bool v) { visible = v; }
 
     // Helper functions
-    bool isHovered(float mx, float my) const
+    /*bool isHovered(float mx, float my) const
     {
         return visible &&
             mx >= position.x && mx <= position.x + size.x &&
             my >= position.y && my <= position.y + size.y;
-    }
+    }*/
 
-    void updateClicked(float mx, float my, bool mouseDown)
+    /*void updateClicked(float mx, float my, bool mouseDown)
     {
         clicked = mouseDown && isHovered(mx, my);
-    }
+    }*/
 
     void render(const SDLState& sdl) const
     {
-        // If the button is not visible, skip drawing
         if (!visible)
         {
             return;
         }
 
-        // Calculate scaling based on reference resolution (e.g., 1920x1080)
+        // Save world viewport
+        SDL_Rect oldViewport;
+        SDL_GetRenderViewport(sdl.renderer, &oldViewport);
+
+        // Debug
+        //std::cout << "Old viewport: x=" << oldViewport.x << ", y=" << oldViewport.y << ", w=" << oldViewport.w << ", h=" << oldViewport.h << std::endl;
+
+        // Switch to screen space
+        SDL_SetRenderViewport(sdl.renderer, nullptr);
+
+        // Scale size based on reference resolution
         const float refWidth = 1920.0f;
         const float refHeight = 1080.0f;
 
         float scaleX = static_cast<float>(sdl.width) / refWidth;
         float scaleY = static_cast<float>(sdl.height) / refHeight;
 
-        // Choose which texture to draw
-        SDL_Texture* texToDraw = clicked ? clickedTexture : normalTexture;
+        float dstW = size.x * scaleX;  // size in screen pixels
+        float dstH = size.y * scaleY;
 
-        // Get the Textures width and height
-        float texWidth = 0;
-        float texHeight = 0;
-        SDL_GetTextureSize(texToDraw, &texWidth, &texHeight);
+        float dstX = margin.x * (sdl.width - dstW);  // 0-1 margin
+        float dstY = margin.y * (sdl.height - dstH);
 
-        // Destination rect — use your set position directly
+        // Make sure it never goes off-screen
+        //if (dstX + dstW > sdl.width) dstX = sdl.width - dstW;
+        //if (dstY + dstH > sdl.height) dstY = sdl.height - dstH;
+
         SDL_FRect dst
         {
-            .x = position.x,           // don't scale the position
-            .y = position.y,           // don't scale the position
-            .w = texWidth * scaleX,    // scale the size
-            .h = texHeight * scaleY
+            .x = dstX,
+            .y = dstY,
+            .w = dstW,
+            .h = dstH
         };
 
+        SDL_Texture* texToDraw = clicked ? clickedTexture : normalTexture;
         SDL_RenderTexture(sdl.renderer, texToDraw, nullptr, &dst);
+        
+        // Restore world viewport
+        SDL_SetRenderViewport(sdl.renderer, &oldViewport);
 
         // Debug
-        std::cout << "Drew the " << name << " button at (" << dst.x << ", " << dst.y << ") size (" << dst.w << "x" << dst.h << ")" << std::endl;
+        //std::cout << "Button: " << name << std::endl;
+        //std::cout << "Size: " << dst.w << ", " << dst.h << std::endl;
+        //std::cout << "Margin: " << margin.x << ", " << margin.y << std::endl;
+        //std::cout << "Position: " << dstX << ", " << dstY << std::endl;
+        //std::cout << "Screen size: " << sdl.width << ", " << sdl.height << std::endl;
     }
 };

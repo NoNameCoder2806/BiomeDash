@@ -136,8 +136,14 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 	//SDL_RenderDebugText(sdl.renderer, 400, 650, "Press ESC to quit");
 	//SDL_RenderDebugText(sdl.renderer, 400, 700, "Press F11 to toggle fullscreen");
 
+	// Temporarily switch to “real pixels” for UI
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+
 	// Draw the pause button
 	game.ui.render(sdl);
+
+	// Restore logical presentation so everything else still uses your world scaling
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	// Present frame
 	SDL_RenderPresent(sdl.renderer);
@@ -462,8 +468,15 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	// White color
 	SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
 
+	// Temporarily switch to “real pixels” for UI
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+
 	// Draw the pause button
 	game.ui.render(sdl);
+
+	// Restore logical presentation so everything else still uses your world scaling
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
 
 	// Render the current game frame
 	SDL_RenderPresent(sdl.renderer);
