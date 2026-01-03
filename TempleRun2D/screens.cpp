@@ -6,6 +6,7 @@ using namespace std;
 // ----- HOME SCREEN -----
 void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	// Events update
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
@@ -66,6 +67,18 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 			sdl.height = e.window.data2;
 		}
 	}
+
+	// UI Buttons logic update
+	/*int mouseX, mouseY;
+	Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+	bool leftPressed = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
+	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);*/
+
+	// Check which buttons were clicked and act immediately
+	/*if (game.ui.pauseButton.isClicked())
+	{
+		game.screen = ScreenState::pause;
+	}*/
 
 	// Compute deltaTime like runPlayingFrame
 	uint64_t nowTime = SDL_GetTicks();

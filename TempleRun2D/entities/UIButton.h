@@ -57,17 +57,31 @@ public:
     void setVisible(bool v) { visible = v; }
 
     // Helper functions
-    /*bool isHovered(float mx, float my) const
+    bool isHovered(int mouseX, int mouseY, const SDLState& sdl) const
     {
-        return visible &&
-            mx >= position.x && mx <= position.x + size.x &&
-            my >= position.y && my <= position.y + size.y;
-    }*/
+        if (!visible) return false;
 
-    /*void updateClicked(float mx, float my, bool mouseDown)
+        // Scale size based on reference resolution
+        const float refWidth = 1920.0f;
+        const float refHeight = 1080.0f;
+        float scaleX = static_cast<float>(sdl.width) / refWidth;
+        float scaleY = static_cast<float>(sdl.height) / refHeight;
+
+        float dstW = size.x * scaleX;
+        float dstH = size.y * scaleY;
+
+        float dstX = margin.x * (sdl.width - dstW);
+        float dstY = margin.y * (sdl.height - dstH);
+
+        // Check if mouse is inside the rectangle
+        return mouseX >= dstX && mouseX <= dstX + dstW &&
+            mouseY >= dstY && mouseY <= dstY + dstH;
+    }
+
+    void updateClicked(int mouseX, int mouseY, bool mouseDown, const SDLState& sdl)
     {
-        clicked = mouseDown && isHovered(mx, my);
-    }*/
+        clicked = mouseDown && isHovered(mouseX, mouseY, sdl);
+    }
 
     void render(const SDLState& sdl) const
     {
