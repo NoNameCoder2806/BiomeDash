@@ -24,6 +24,7 @@ private:
 
     // Whether the object is visible and clicked
     bool visible = true;
+    bool clickable = true;
     bool clicked = false;
 
 public:
@@ -59,7 +60,11 @@ public:
     // Helper functions
     bool isHovered(float mouseX, float mouseY, const SDLState& sdl) const
     {
-        if (!visible) return false;
+        // If the button is not visible or not clickable, we return false
+        if (!visible || !clickable)
+        {
+            return false;
+        }
 
         // Scale size based on reference resolution
         const float refWidth = 1920.0f;
@@ -80,6 +85,12 @@ public:
 
     void updateClicked(float mouseX, float mouseY, bool mouseDown, const SDLState& sdl)
     {
+        // Exit if the button is not clickable
+        if (!clickable)
+        {
+            return;
+        }
+
         clicked = mouseDown && isHovered(mouseX, mouseY, sdl);
     }
 
