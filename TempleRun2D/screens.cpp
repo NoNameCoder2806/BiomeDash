@@ -195,17 +195,85 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	vector<float>& scrollPositions, uint64_t& prevTime,
 	float& fps, int& frames, uint64_t& fpsLastTime, bool& running)
 {
-	// Paste **everything** from your current main loop **after the "while(running)" line**
-	// Remove the "while(running)" part itself
-
-	// Check if the world is ready
-	if (!game.worldReady)
+	// Event polling loop
+	SDL_Event e;
+	while (SDL_PollEvent(&e))
 	{
-		// Debug message
-		cout << "World not ready!" << endl;
+		switch (e.type)
+		{
+			case SDL_EVENT_QUIT:
+			{
+				running = false;
 
-		// Exit the function
-		return;
+				break;
+			}
+
+			case SDL_EVENT_WINDOW_RESIZED:
+			{
+				sdl.width = e.window.data1;
+				sdl.height = e.window.data2;
+
+				break;
+			}
+
+			case SDL_EVENT_KEY_DOWN:
+			{
+				handleKeyInput(sdl, game, game.player(), e.key.scancode, true);
+
+				break;
+			}
+
+			case SDL_EVENT_KEY_UP:
+			{
+				handleKeyInput(sdl, game, game.player(), e.key.scancode, false);
+
+				// Full screen
+				if (e.key.scancode == SDL_SCANCODE_F11)
+				{
+					sdl.fullscreen = !sdl.fullscreen;
+					SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
+					sdl.width = 1920;
+					sdl.height = 1080;
+				}
+
+				// Debug mode
+				if (e.key.scancode == SDL_SCANCODE_F10)
+				{
+					game.debugMode = !game.debugMode;
+				}
+
+				// Invincibility mode
+				if (e.key.scancode == SDL_SCANCODE_G)
+				{
+					game.invincibleMode = !game.invincibleMode;
+				}
+
+				break;
+			}
+		}
+	}
+
+	// UI Buttons logic update
+	float mouseX;
+	float mouseY;
+
+	// Get the mouse state
+	Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+
+	// Whether the mouse was left-clicked
+	bool leftPressed = mouseState & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
+
+	// Update the UI Buttons
+	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
+
+	// Check which buttons were clicked and act immediately
+	// Pause Button
+	if (game.ui.pause.isClicked())
+	{
+		// Debug
+		cout << "Switching to pause screen" << endl;
+
+		//game.screen = ScreenState::pause;
 	}
 
 	// Check whether the game needs to transition / change biome
@@ -232,64 +300,6 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 		fps = frames * 1000.0f / (fpsNow - fpsLastTime);
 		frames = 0;
 		fpsLastTime = fpsNow;
-	}
-
-	// Event polling loop
-	SDL_Event e;
-	while (SDL_PollEvent(&e))
-	{
-		switch (e.type)
-		{
-		case SDL_EVENT_QUIT:
-		{
-			running = false;
-
-			break;
-		}
-
-		case SDL_EVENT_WINDOW_RESIZED:
-		{
-			sdl.width = e.window.data1;
-			sdl.height = e.window.data2;
-
-			break;
-		}
-
-		case SDL_EVENT_KEY_DOWN:
-		{
-			handleKeyInput(sdl, game, game.player(), e.key.scancode, true);
-
-			break;
-		}
-
-		case SDL_EVENT_KEY_UP:
-		{
-			handleKeyInput(sdl, game, game.player(), e.key.scancode, false);
-
-			// Full screen
-			if (e.key.scancode == SDL_SCANCODE_F11)
-			{
-				sdl.fullscreen = !sdl.fullscreen;
-				SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
-				sdl.width = 1920;
-				sdl.height = 1080;
-			}
-
-			// Debug mode
-			if (e.key.scancode == SDL_SCANCODE_F10)
-			{
-				game.debugMode = !game.debugMode;
-			}
-
-			// Invincibility mode
-			if (e.key.scancode == SDL_SCANCODE_G)
-			{
-				game.invincibleMode = !game.invincibleMode;
-			}
-
-			break;
-		}
-		}
 	}
 
 	for (auto& layer : game.layers)
