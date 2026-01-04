@@ -60,4 +60,12 @@ struct UIState
 		play.updateClicked(mouseX, mouseY, clicked, sdl);
 		pause.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
+
+	void switchToPlayState()
+	{
+		// Hide the Play Button
+		play.setVisible(false);
+
+		// Make the Avatar not clickable
+	}
 };

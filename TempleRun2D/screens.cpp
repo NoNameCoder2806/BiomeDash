@@ -82,12 +82,30 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
 
 	// Check which buttons were clicked and act immediately
+	// Pause Button
 	if (game.ui.pause.isClicked())
 	{
 		// Debug
 		cout << "Switching to pause screen" << endl;
 
 		//game.screen = ScreenState::pause;
+	}
+	
+	// Play Button
+	if (game.ui.play.isClicked())
+	{
+		// Change the ui state
+		game.ui.switchToPlayState();
+
+		currentScreen = ScreenState::playing;
+
+		// Set the player to the running state
+		game.player().setState(PlayerState::running);
+
+		// Set monster to chasing state
+		game.monster().setState(MonsterState::chasing);
+
+		return;
 	}
 
 	// Compute deltaTime like runPlayingFrame
