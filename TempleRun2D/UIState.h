@@ -5,6 +5,11 @@
 #include "entities/UIButton.h"
 
 // Constants
+// PLAY BUTTON
+const glm::vec2 PLAY_SIZE({ 260, 80 });
+const glm::vec2 PLAY_MARGIN({ 0.5, 0.65 });
+
+// PAUSE BUTTON
 const glm::vec2 PAUSE_SIZE({ 84, 84 });
 const glm::vec2 PAUSE_MARGIN({ 0.975, 0.05 });
 
@@ -12,7 +17,7 @@ const glm::vec2 PAUSE_MARGIN({ 0.975, 0.05 });
 struct UIState
 {
 	// Main buttons
-	//UIButton play;
+	UIButton play;
 	UIButton pause;
 
 	// Buttons in the Pause panel
@@ -30,19 +35,12 @@ struct UIState
 	// Default constructor
 	UIState()
 	{
-		// Play button
-		//play.setPosition({ 0, 0 });
-		//play.setSize({ 100, 50 });
-
-		// Pause button
-		//pause.setPosition({ 120, 0 });
-		//pause.setSize({ 100, 50 });
 	}
 
 	// Member function
 	void setup(SDL_Renderer* renderer, Resources& res)
 	{
-		//play = UIButton(renderer, res, "play", { 100, 100 }, { 200, 80 });
+		play = UIButton(renderer, res, "play", PLAY_SIZE, PLAY_MARGIN);
 		pause = UIButton(renderer, res, "pause", PAUSE_SIZE, PAUSE_MARGIN);
 	}
 
@@ -52,12 +50,14 @@ struct UIState
 		//std::cout << "Reached the render function in UIState..." << std::endl;
 
 		// Render all the buttons
+		play.render(state);
 		pause.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
 	{
 		// Check each buttons
+		play.updateClicked(mouseX, mouseY, clicked, sdl);
 		pause.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 };
