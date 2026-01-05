@@ -24,8 +24,8 @@ private:
 
     // Whether the object is visible and clicked
     bool visible = true;
-    bool clickable = true;
     bool clicked = false;
+    bool toggled = false;
 
 public:
     UIButton() = default;
@@ -49,6 +49,7 @@ public:
     glm::vec2 getSize() { return size; }
     bool isVisible() { return visible; }
     bool isClicked() { return clicked; }
+    bool isToggled() { return toggled; }
 
     // Setters
     void setName(std::string n) { name = n; }
@@ -56,6 +57,8 @@ public:
     void setMargin(glm::vec2 mg) { margin = mg; }
     void setSize(glm::vec2 sz) { size = sz; }
     void setVisible(bool v) { visible = v; }
+    void setClicked(bool c) { clicked = c; }
+    void setToggled(bool t) { toggled = t; }
 
     // Helper functions
     bool isHovered(float mouseX, float mouseY, const SDLState& sdl) const
@@ -107,12 +110,6 @@ public:
             return;
         }
 
-        // Debug
-        if (clicked)
-        {
-            //std::cout << "Button " << name << " is being rendered! (Clicked texture)" << std::endl;
-        }
-
         // Save world viewport
         SDL_Rect oldViewport;
         SDL_GetRenderViewport(sdl.renderer, &oldViewport);
@@ -150,7 +147,7 @@ public:
 
         // Select the right texture to render
         SDL_Texture* texToDraw = nullptr;
-        if (clicked)
+        if (clicked || toggled)
         {
             // Debug
             //std::cout << "Button: " << name << "Using the clicked texture!" << std::endl;
