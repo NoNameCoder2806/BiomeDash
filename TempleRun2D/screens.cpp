@@ -58,9 +58,6 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 				}
 				case SDL_SCANCODE_F11:
 				{
-					// Debug
-					std::cout << "The F11 Key is pressed!" << std::endl;
-
 					sdl.fullscreen = !sdl.fullscreen;
 					SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
 					// Optionally reset window dimensions after fullscreen toggle
@@ -597,13 +594,16 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 				}
 				case SDL_SCANCODE_ESCAPE:
 				{
-					exit(0);
+					// Switch to the home screen
+					game.ui.switchToHomeScreen();
+
+					// Change the Screen State
+					game.screen = ScreenState::home;
+
+					break;
 				}
 				case SDL_SCANCODE_F11:
 				{
-					// Debug
-					std::cout << "The F11 Key is pressed!" << std::endl;
-
 					sdl.fullscreen = !sdl.fullscreen;
 					SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
 					// Optionally reset window dimensions after fullscreen toggle

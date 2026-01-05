@@ -88,19 +88,13 @@ public:
 
     void updateClicked(float mouseX, float mouseY, bool mouseDown, const SDLState& sdl)
     {
-        // Exit if the button is not clickable
-        if (!clickable)
-        {
-            return;
-        }
-
         clicked = mouseDown && isHovered(mouseX, mouseY, sdl);
 
-        if (clicked)
+        /*if (clicked)
         {
             // Debug
-            std::cout << "Button " << name << " is clicked!" << std::endl;
-        }
+            //std::cout << "Button " << name << " is clicked!" << std::endl;
+        }*/
     }
 
     void render(const SDLState& sdl) const

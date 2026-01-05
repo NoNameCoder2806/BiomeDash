@@ -79,44 +79,49 @@ struct UIState
 
 	void switchToHomeScreen()
 	{
-		// Visible Buttons
+		// ----- PAUSE BUTTON -----
+		// Visible, not toggled
+		pause.setVisible(true);
+		pause.setToggled(false);
+
 		// ----- PLAY BUTTON -----
+		// Visible
 		play.setVisible(true);
 
-		// ----- PAUSE BUTTON -----
-		pause.setVisible(true);
-
-		// Buttons that are NOT Visible
 		// ----- PAUSE PANEL -----
+		// Not visible
 		pausePanel.setVisible(false);
 	}
 
 	void switchToPlayScreen()
 	{
-		// Visible Buttons
 		// ----- PAUSE BUTTON -----
+		// Visible, not toggled
 		pause.setVisible(true);
+		pause.setToggled(false);
 
-		// Buttons that are NOT Visible
 		// ----- PLAY BUTTON -----
+		// Not visible
 		play.setVisible(false);
 
 		// ----- PAUSE PANNEL -----
+		// Not visible
 		pausePanel.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
 	{
-		// Visible Buttons
-		// ----- PAUSE PANEL -----
-		pausePanel.setVisible(true);
+		// ----- PAUSE BUTTON -----
+		// Visible and toggled
+		pause.setVisible(true);
+		pause.setToggled(true);
 
-		// Buttons that are NOT Visible
 		// ----- PLAY BUTTON -----
+		// Not visible
 		play.setVisible(false);
 
-		// Mark toggled buttons
-		// ----- PAUSE BUTTON -----
-		pause.setToggled(true);
+		// ----- PAUSE PANEL -----
+		// Visible
+		pausePanel.setVisible(true);
 	}
 };
