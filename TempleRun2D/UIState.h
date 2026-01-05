@@ -15,7 +15,7 @@ const glm::vec2 PAUSE_SIZE({ 84, 84 });
 const glm::vec2 PAUSE_MARGIN({ 0.975, 0.05 });
 
 // PAUSE PANEL
-const glm::vec2 PAUSE_PANEL_SIZE({ 96, 72 });
+const glm::vec2 PAUSE_PANEL_SIZE({ 576, 432 });
 const glm::vec2 PAUSE_PANEL_MARGIN({ 0.5, 0.25 });
 
 // UIState struct
@@ -94,7 +94,7 @@ struct UIState
 	void switchToPlayScreen()
 	{
 		// Visible Buttons
-				// ----- PAUSE BUTTON -----
+		// ----- PAUSE BUTTON -----
 		pause.setVisible(true);
 
 		// Buttons that are NOT Visible
@@ -103,5 +103,12 @@ struct UIState
 
 		// ----- PAUSE PANNEL -----
 		pausePanel.setVisible(false);
+	}
+
+	void switchToHomePauseScreen()
+	{
+		// Visible Buttons
+		// ----- PAUSE PANEL -----
+		pausePanel.setVisible(true);
 	}
 };

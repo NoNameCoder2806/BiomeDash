@@ -110,7 +110,7 @@ public:
         // Debug
         if (clicked)
         {
-            std::cout << "Button " << name << " is being rendered! (Clicked texture)" << std::endl;
+            //std::cout << "Button " << name << " is being rendered! (Clicked texture)" << std::endl;
         }
 
         // Save world viewport
@@ -153,14 +153,14 @@ public:
         if (clicked)
         {
             // Debug
-            std::cout << "Button: " << name << "Using the clicked texture!" << std::endl;
+            //std::cout << "Button: " << name << "Using the clicked texture!" << std::endl;
             
             texToDraw = clickedTexture;
         }
         else
         {
             // Debug
-            std::cout << "Button: " << name << "Using the normal texture!" << std::endl;
+            //std::cout << "Button: " << name << "Using the normal texture!" << std::endl;
 
             texToDraw = normalTexture;
         }

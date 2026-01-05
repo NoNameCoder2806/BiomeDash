@@ -25,7 +25,7 @@ const int MINIMAL_SCORE = 2000;
 // ----- SCREEN STATES -----
 enum class ScreenState
 {
-	home, playing, pause, gameOver
+	home, playing, homePause, playingPause, gameOver
 };
 
 // ----- GAMESTATE STRUCT -----

@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 				// Debug
 				//cout << "Entered Home Screen" << endl;
 
-				runHomeScreen(sdl, game.screen, game, res, scrollPositions, prevTime); // update currentScreen if user starts game
+				runHomeScreen(sdl, game, res, scrollPositions, prevTime); // update currentScreen if user starts game
 				break;
 			}
 
@@ -142,9 +142,15 @@ int main(int argc, char* argv[])
 				break;
 			}
 
-			case ScreenState::pause:
+			case ScreenState::homePause:
 			{
-				//runPauseScreen(sdl, game.screen); // update currentScreen if user resumes or quits
+				runHomePauseScreen(sdl, game, res, scrollPositions, prevTime); // update currentScreen if user resumes or quits
+				break;
+			}
+
+			case ScreenState::playingPause:
+			{
+				//runPlayingPauseScreen(sdl, game.screen);  // Update screen
 				break;
 			}
 
