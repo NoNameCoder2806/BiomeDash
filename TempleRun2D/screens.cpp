@@ -48,7 +48,13 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 				}
 				case SDL_SCANCODE_ESCAPE:
 				{
-					exit(0);
+					// Switch the UI to the home pause screen
+					game.ui.switchToHomePauseScreen();
+
+					// Change the screen state
+					game.screen = ScreenState::homePause;
+
+					break;
 				}
 				case SDL_SCANCODE_F11:
 				{
