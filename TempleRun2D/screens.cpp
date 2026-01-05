@@ -81,7 +81,7 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 
 	// Whether the mouse was left-clicked
 	bool leftPressed = mouseState & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
-	
+
 	// Update the UI Buttons
 	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
 
@@ -94,8 +94,6 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 
 		// Change the screen state
 		//game.screen = ScreenState::pause;
-
-		return;
 	}
 	
 	// Play Button
@@ -112,8 +110,6 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 
 		// Set monster to chasing state
 		game.monster().setState(MonsterState::chasing);
-
-		return;
 	}
 
 	// Compute deltaTime like runPlayingFrame
@@ -188,7 +184,7 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 	// Temporarily switch to “real pixels” for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 
-	// Draw the pause button
+	// Draw the buttons
 	game.ui.render(sdl);
 
 	// Restore logical presentation so everything else still uses your world scaling
@@ -530,7 +526,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	// Temporarily switch to “real pixels” for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 
-	// Draw the pause button
+	// Draw the buttons
 	game.ui.render(sdl);
 
 	// Restore logical presentation so everything else still uses your world scaling

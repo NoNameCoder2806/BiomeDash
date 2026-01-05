@@ -61,7 +61,7 @@ public:
     bool isHovered(float mouseX, float mouseY, const SDLState& sdl) const
     {
         // If the button is not visible or not clickable, we return false
-        if (!visible || !clickable)
+        if (!visible)
         {
             return false;
         }
@@ -92,6 +92,12 @@ public:
         }
 
         clicked = mouseDown && isHovered(mouseX, mouseY, sdl);
+
+        if (clicked)
+        {
+            // Debug
+            std::cout << "Button " << name << " is clicked!" << std::endl;
+        }
     }
 
     void render(const SDLState& sdl) const
@@ -99,6 +105,12 @@ public:
         if (!visible)
         {
             return;
+        }
+
+        // Debug
+        if (clicked)
+        {
+            std::cout << "Button " << name << " is being rendered! (Clicked texture)" << std::endl;
         }
 
         // Save world viewport
@@ -136,7 +148,22 @@ public:
             .h = dstH
         };
 
-        SDL_Texture* texToDraw = clicked ? clickedTexture : normalTexture;
+        // Select the right texture to render
+        SDL_Texture* texToDraw = nullptr;
+        if (clicked)
+        {
+            // Debug
+            std::cout << "Button: " << name << "Using the clicked texture!" << std::endl;
+            
+            texToDraw = clickedTexture;
+        }
+        else
+        {
+            // Debug
+            std::cout << "Button: " << name << "Using the normal texture!" << std::endl;
+
+            texToDraw = normalTexture;
+        }
         SDL_RenderTexture(sdl.renderer, texToDraw, nullptr, &dst);
         
         // Restore world viewport
