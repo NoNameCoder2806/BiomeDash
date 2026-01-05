@@ -47,6 +47,9 @@ int main(int argc, char* argv[])
 	game.ui.setup(sdl.renderer, res);
 	game.ui.render(sdl);
 
+	// Load the home screen
+	game.ui.switchToHomeScreen();
+
 	// Preload the biomes
 	// Load the Transition biome
 	game.currentBiome->name = "Transition";

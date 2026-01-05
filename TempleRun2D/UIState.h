@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 
 #include "entities/UIButton.h"
+#include "GameState.h"
 
 // Constants
 // PLAY BUTTON
@@ -13,12 +14,19 @@ const glm::vec2 PLAY_MARGIN({ 0.5, 0.65 });
 const glm::vec2 PAUSE_SIZE({ 84, 84 });
 const glm::vec2 PAUSE_MARGIN({ 0.975, 0.05 });
 
+// PAUSE PANEL
+const glm::vec2 PAUSE_PANEL_SIZE({ 96, 72 });
+const glm::vec2 PAUSE_PANEL_MARGIN({ 0.5, 0.25 });
+
 // UIState struct
 struct UIState
 {
 	// Main buttons
 	UIButton play;
 	UIButton pause;
+
+	// Pause panel
+	UIButton pausePanel;
 
 	// Buttons in the Pause panel
 	//UIButton exit;
@@ -40,8 +48,12 @@ struct UIState
 	// Member function
 	void setup(SDL_Renderer* renderer, Resources& res)
 	{
+		// Play and Pause buttons
 		play = UIButton(renderer, res, "play", PLAY_SIZE, PLAY_MARGIN);
 		pause = UIButton(renderer, res, "pause", PAUSE_SIZE, PAUSE_MARGIN);
+		
+		// Pause pannel
+		pausePanel = UIButton(renderer, res, "pausePanel", PAUSE_PANEL_SIZE, PAUSE_PANEL_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -50,8 +62,12 @@ struct UIState
 		//std::cout << "Reached the render function in UIState..." << std::endl;
 
 		// Render all the buttons
+		// Play and Pause buttons
 		play.render(state);
 		pause.render(state);
+
+		// Pause panel
+		pausePanel.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -61,11 +77,31 @@ struct UIState
 		pause.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
-	void switchToPlayState()
+	void switchToHomeScreen()
 	{
-		// Hide the Play Button
+		// Visible Buttons
+		// ----- PLAY BUTTON -----
+		play.setVisible(true);
+
+		// ----- PAUSE BUTTON -----
+		pause.setVisible(true);
+
+		// Buttons that are NOT Visible
+		// ----- PAUSE PANEL -----
+		pausePanel.setVisible(false);
+	}
+
+	void switchToPlayScreen()
+	{
+		// Visible Buttons
+				// ----- PAUSE BUTTON -----
+		pause.setVisible(true);
+
+		// Buttons that are NOT Visible
+		// ----- PLAY BUTTON -----
 		play.setVisible(false);
 
-		// Make the Avatar not clickable
+		// ----- PAUSE PANNEL -----
+		pausePanel.setVisible(false);
 	}
 };

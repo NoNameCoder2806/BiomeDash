@@ -22,6 +22,10 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 				case SDL_SCANCODE_RIGHT:
 				case SDL_SCANCODE_D:
 				{
+					// Switch to the play screen
+					game.ui.switchToPlayScreen();
+
+					// Change the Screen State
 					currentScreen = ScreenState::playing;
 
 					// Set the player to the running state
@@ -88,15 +92,19 @@ void runHomeScreen(SDLState& sdl, ScreenState& currentScreen, GameState& game, R
 		// Debug
 		cout << "Switching to pause screen" << endl;
 
+		// Change the screen state
 		//game.screen = ScreenState::pause;
+
+		return;
 	}
 	
 	// Play Button
 	if (game.ui.play.isClicked())
 	{
-		// Change the ui state
-		game.ui.switchToPlayState();
+		// Switch the UI the play screen
+		game.ui.switchToPlayScreen();
 
+		// Change the screen state
 		currentScreen = ScreenState::playing;
 
 		// Set the player to the running state
