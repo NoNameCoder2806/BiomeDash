@@ -20,13 +20,15 @@ const glm::vec2 PAUSE_PANEL_MARGIN({ 0.5, 0.55 });
 
 // EXIT BUTTON
 const glm::vec2 EXIT_SIZE({ 260, 80 });
-const glm::vec2 EXIT_MARGIN({ 0.4075, 0.67 });
+const glm::vec2 EXIT_MARGIN({ 0.41, 0.67 });
 
 // HOME BUTTON
+const glm::vec2 HOME_SIZE({ 260, 80 });
+const glm::vec2 HOME_MARGIN({ 0.41, 0.67 });
 
 // CONTINUE BUTTON
 const glm::vec2 CONTINUE_SIZE({ 260, 80 });
-const glm::vec2 CONTINUE_MARGIN({ 0.5925, 0.67 });
+const glm::vec2 CONTINUE_MARGIN({ 0.59, 0.67 });
 
 // UIState struct
 struct UIState
@@ -40,7 +42,7 @@ struct UIState
 
 	// Buttons in the Pause panel
 	UIButton exit;
-	//UIButton home;
+	UIButton home;
 	UIButton continueGame;
 
 	// Top left avatar
@@ -67,7 +69,7 @@ struct UIState
 		
 		// Exit, Home, Continue buttons
 		exit = UIButton(renderer, res, "exit", EXIT_SIZE, EXIT_MARGIN);
-		//home = UIButton(renderer, res, "home", HOME_SIZE, HOME_MARGIN);
+		home = UIButton(renderer, res, "home", HOME_SIZE, HOME_MARGIN);
 		continueGame = UIButton(renderer, res, "continue", CONTINUE_SIZE, CONTINUE_MARGIN);
 	}
 
@@ -86,6 +88,7 @@ struct UIState
 
 		// Exit, Home and Continue buttons
 		exit.render(state);
+		home.render(state);
 		continueGame.render(state);
 	}
 
@@ -95,7 +98,7 @@ struct UIState
 		play.updateClicked(mouseX, mouseY, clicked, sdl);
 		pause.updateClicked(mouseX, mouseY, clicked, sdl);
 		exit.updateClicked(mouseX, mouseY, clicked, sdl);
-		//home.updateClicked(mouseX, mouseY, clicked, sdl);
+		home.updateClicked(mouseX, mouseY, clicked, sdl);
 		continueGame.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
@@ -119,6 +122,8 @@ struct UIState
 		exit.setVisible(false);
 
 		// ----- HOME BUTTON -----
+		// Not visible
+		home.setVisible(false);
 
 		// ----- CONTINUE BUTTON -----
 		// Not visible
@@ -145,6 +150,8 @@ struct UIState
 		exit.setVisible(false);
 
 		// ----- HOME BUTTON -----
+		// Not visible
+		home.setVisible(false);
 
 		// ----- CONTINUE BUTTON -----
 		// Not visible
@@ -171,6 +178,8 @@ struct UIState
 		exit.setVisible(true);
 
 		// ----- HOME BUTTON -----
+		// Not visible
+		home.setVisible(false);
 
 		// ----- CONTINUE BUTTON -----
 		// Visible
@@ -197,6 +206,8 @@ struct UIState
 		exit.setVisible(false);
 
 		// ----- HOME BUTTON -----
+		// Visible
+		home.setVisible(true);
 
 		// ----- CONTINUE BUTTON -----
 		// Visible
