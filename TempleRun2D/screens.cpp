@@ -541,7 +541,6 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
-
 	// Render the current game frame
 	SDL_RenderPresent(sdl.renderer);
 

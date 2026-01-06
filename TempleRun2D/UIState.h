@@ -18,6 +18,10 @@ const glm::vec2 PAUSE_MARGIN({ 0.975, 0.05 });
 const glm::vec2 PAUSE_PANEL_SIZE({ 672, 504 });
 const glm::vec2 PAUSE_PANEL_MARGIN({ 0.5, 0.55 });
 
+// EXIT BUTTON
+const glm::vec2 EXIT_SIZE({ 260, 80 });
+const glm::vec2 EXIT_MARGIN({ 0.4075, 0.67 });
+
 // UIState struct
 struct UIState
 {
@@ -29,7 +33,7 @@ struct UIState
 	UIButton pausePanel;
 
 	// Buttons in the Pause panel
-	//UIButton exit;
+	UIButton exit;
 	//UIButton home;
 	//UIButton continueGame;
 
@@ -54,6 +58,9 @@ struct UIState
 		
 		// Pause pannel
 		pausePanel = UIButton(renderer, res, "pausePanel", PAUSE_PANEL_SIZE, PAUSE_PANEL_MARGIN);
+		
+		// Exit, Home, Continue buttons
+		exit = UIButton(renderer, res, "exit", EXIT_SIZE, EXIT_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -68,6 +75,9 @@ struct UIState
 
 		// Pause panel
 		pausePanel.render(state);
+
+		// Exit, Home and Continue buttons
+		exit.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -75,6 +85,7 @@ struct UIState
 		// Check each buttons
 		play.updateClicked(mouseX, mouseY, clicked, sdl);
 		pause.updateClicked(mouseX, mouseY, clicked, sdl);
+		exit.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -91,6 +102,10 @@ struct UIState
 		// ----- PAUSE PANEL -----
 		// Not visible
 		pausePanel.setVisible(false);
+
+		// ----- EXIT BUTTON -----
+		// Not visible
+		exit.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -107,6 +122,10 @@ struct UIState
 		// ----- PAUSE PANNEL -----
 		// Not visible
 		pausePanel.setVisible(false);
+
+		// ----- EXIT BUTTON -----
+		// Not visible
+		exit.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -123,5 +142,9 @@ struct UIState
 		// ----- PAUSE PANEL -----
 		// Visible
 		pausePanel.setVisible(true);
+
+		// ----- EXIT BUTTON -----
+		// Visible
+		exit.setVisible(true);
 	}
 };
