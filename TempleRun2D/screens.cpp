@@ -638,10 +638,14 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 
 	// Check which buttons were clicked and act immediately
 	// Continue button
-	/*if (game.ui.resume.isClicked())
+	if (game.ui.continueGame.isClicked())
 	{
-		currentScreen = ScreenState::home; // go back to home
-	}*/
+		// Switch to the home screen
+		game.ui.switchToHomeScreen();
+
+		// Change the Screen State
+		game.screen = ScreenState::home;
+	}
 
 	// Exit button
 	if (game.ui.exit.isClicked())
