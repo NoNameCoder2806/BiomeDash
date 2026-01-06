@@ -821,13 +821,13 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	}
 
 	// Home button
-	/*if (game.ui.exit.isClicked())
+	if (game.ui.home.isClicked())
 	{
 		// Debug
-		//cout << "Exiting the game..." << endl;
+		cout << "Exiting to home..." << endl;
 
 		exit(0);
-	}*/
+	}
 
 	// Render frame
 	uint64_t nowTime = SDL_GetTicks();
