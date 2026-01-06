@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
 			case ScreenState::playingPause:
 			{
-				//runPlayingPauseScreen(sdl, game.screen);  // Update screen
+				runPlayingPauseScreen(sdl, game, res, scrollPositions, prevTime); // update currentScreen if user resumes or quits
 				break;
 			}
 

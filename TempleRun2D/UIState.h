@@ -176,4 +176,30 @@ struct UIState
 		// Visible
 		continueGame.setVisible(true);
 	}
+
+	void switchToPlayingPauseScreen()
+	{
+		// ----- PAUSE BUTTON -----
+		// Visible and toggled
+		pause.setVisible(true);
+		pause.setToggled(true);
+
+		// ----- PLAY BUTTON -----
+		// Not visible
+		play.setVisible(false);
+
+		// ----- PAUSE PANEL -----
+		// Visible
+		pausePanel.setVisible(true);
+
+		// ----- EXIT BUTTON -----
+		// Not visible
+		exit.setVisible(false);
+
+		// ----- HOME BUTTON -----
+
+		// ----- CONTINUE BUTTON -----
+		// Visible
+		continueGame.setVisible(true);
+	}
 };
