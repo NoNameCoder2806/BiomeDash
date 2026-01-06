@@ -641,12 +641,16 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	/*if (game.ui.resume.isClicked())
 	{
 		currentScreen = ScreenState::home; // go back to home
-	}
+	}*/
 
-	// Home button (optional)
-	if (game.ui.quit.isClicked())
+	// Exit button
+	if (game.ui.exit.isClicked())
+	{
+		// Debug
+		//cout << "Exiting the game..." << endl;
+
 		exit(0);
-	*/
+	}
 
 	// Render frame
 	uint64_t nowTime = SDL_GetTicks();
