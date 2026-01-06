@@ -22,6 +22,12 @@ const glm::vec2 PAUSE_PANEL_MARGIN({ 0.5, 0.55 });
 const glm::vec2 EXIT_SIZE({ 260, 80 });
 const glm::vec2 EXIT_MARGIN({ 0.4075, 0.67 });
 
+// HOME BUTTON
+
+// CONTINUE BUTTON
+const glm::vec2 CONTINUE_SIZE({ 260, 80 });
+const glm::vec2 CONTINUE_MARGIN({ 0.5925, 0.67 });
+
 // UIState struct
 struct UIState
 {
@@ -35,7 +41,7 @@ struct UIState
 	// Buttons in the Pause panel
 	UIButton exit;
 	//UIButton home;
-	//UIButton continueGame;
+	UIButton continueGame;
 
 	// Top left avatar
 	//UIButton profile;
@@ -61,6 +67,8 @@ struct UIState
 		
 		// Exit, Home, Continue buttons
 		exit = UIButton(renderer, res, "exit", EXIT_SIZE, EXIT_MARGIN);
+		//home = UIButton(renderer, res, "home", HOME_SIZE, HOME_MARGIN);
+		continueGame = UIButton(renderer, res, "continue", CONTINUE_SIZE, CONTINUE_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -78,6 +86,7 @@ struct UIState
 
 		// Exit, Home and Continue buttons
 		exit.render(state);
+		continueGame.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -86,6 +95,8 @@ struct UIState
 		play.updateClicked(mouseX, mouseY, clicked, sdl);
 		pause.updateClicked(mouseX, mouseY, clicked, sdl);
 		exit.updateClicked(mouseX, mouseY, clicked, sdl);
+		//home.updateClicked(mouseX, mouseY, clicked, sdl);
+		continueGame.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -106,6 +117,12 @@ struct UIState
 		// ----- EXIT BUTTON -----
 		// Not visible
 		exit.setVisible(false);
+
+		// ----- HOME BUTTON -----
+
+		// ----- CONTINUE BUTTON -----
+		// Not visible
+		continueGame.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -126,6 +143,12 @@ struct UIState
 		// ----- EXIT BUTTON -----
 		// Not visible
 		exit.setVisible(false);
+
+		// ----- HOME BUTTON -----
+
+		// ----- CONTINUE BUTTON -----
+		// Not visible
+		continueGame.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -146,5 +169,11 @@ struct UIState
 		// ----- EXIT BUTTON -----
 		// Visible
 		exit.setVisible(true);
+
+		// ----- HOME BUTTON -----
+
+		// ----- CONTINUE BUTTON -----
+		// Visible
+		continueGame.setVisible(true);
 	}
 };
