@@ -666,6 +666,15 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 		// Do something else here
 	}
 
+	// Credits button
+	if (game.ui.credits.isClicked())
+	{
+		// Debug
+		cout << "Credits pannel pops up" << endl;
+
+		// Do something else here
+	}
+
 	// Continue button
 	if (game.ui.continueGame.isClicked())
 	{
