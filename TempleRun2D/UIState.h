@@ -226,8 +226,8 @@ struct UIState
 		volume.setVisible(true);
 
 		// ----- RESTART BUTTON -----
-		// Visible
-		restart.setVisible(true);
+		// Not visible
+		restart.setVisible(false);
 	}
 
 	void switchToPlayingPauseScreen()

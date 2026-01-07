@@ -653,6 +653,19 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
 
 	// Check which buttons were clicked and act immediately
+	// Volume button
+	if (game.ui.volume.isClicked())
+	{
+		// Debug
+		cout << "Muted sound!" << endl;
+
+		// Change the toggled state of the button
+		bool t = !game.ui.volume.isToggled();
+		game.ui.volume.setToggled(t);
+
+		// Do something else here
+	}
+
 	// Continue button
 	if (game.ui.continueGame.isClicked())
 	{
@@ -810,6 +823,39 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
 
 	// Check which buttons were clicked and act immediately
+	// Volume button
+	if (game.ui.volume.isClicked())
+	{
+		// Debug
+		cout << "Muted sound!" << endl;
+
+		// Change the toggled state of the button
+		bool t = !game.ui.volume.isToggled();
+		game.ui.volume.setToggled(t);
+
+		// Do something else here
+	}
+
+	// Restart button
+	if (game.ui.restart.isClicked())
+	{
+		// Reset the game
+		resetGame(sdl, game, res, scrollPositions);
+
+		// Start the game immidiately
+		// Switch the UI to the play screen
+		game.ui.switchToPlayScreen();
+
+		// Change the screen state
+		game.screen = ScreenState::playing;
+
+		// Set the player to the running state
+		game.player().setState(PlayerState::running);
+
+		// Set monster to chasing state
+		game.monster().setState(MonsterState::chasing);
+	}
+
 	// Continue button
 	if (game.ui.continueGame.isClicked())
 	{
