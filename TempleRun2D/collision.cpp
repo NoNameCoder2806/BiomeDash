@@ -100,6 +100,10 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 
 		case ObjectType::monster:
 		{
+			// Debug
+			cout << "Game Over!" << endl;
+
+			// Convert the object to monster
 			Monster& monster = static_cast<Monster&>(objB);
 
 			// Check the player state
@@ -149,6 +153,9 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 				// Change monster state to idle because the player cannot be found
 				monster.setState(MonsterState::idle);
 			}
+			
+			// Change the GameState's screen to GameOver
+			gs.screen = ScreenState::gameOver;
 			
 			break;
 		}
