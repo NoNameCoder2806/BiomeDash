@@ -679,8 +679,13 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				{
 					if (gs.layers[LAYER_IDX_PLAYER].empty())
 					{
+						// Debug
+						cout << "Creating a new player... " << endl;
+
 						auto player = std::make_unique<Player>(res);
 						player->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+						player->setState(PlayerState::idle);
+						player->setCurrentAnimation(res.ANIM_PLAYER_IDLE);
 						gs.layers[LAYER_IDX_PLAYER].push_back(std::move(player));
 					}
 
@@ -867,4 +872,73 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 			}
 		}
 	}
+}
+
+void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<float>& scrollPositions)
+{
+	// STOP gameplay immediately
+	PLAYING = false;
+
+	// Clear ALL game objects
+	for (auto& layer : game.layers)
+	{
+		layer.clear(); // unique_ptr auto-deletes
+	}
+
+	// Reset the gameState
+	// Reset viewport
+	game.mapViewport = SDL_FRect{ 0, 0, (float)state.logW, (float)state.logH };
+
+	// Reset scroll
+	game.backgroundScroll = 0.f;
+	scrollPositions.clear();
+	scrollPositions.resize(res.parallaxBackgrounds.size(), 0.f);
+
+	// Reset flags
+	game.debugMode = false;
+	game.invincibleMode = false;
+	game.needTransition = false;
+	game.portalGenerated = false;
+
+	// Reset indices and counters
+	game.loadedLeftCol = 0;
+	game.loadedRightCol = game.gameMap.at(0).size() - 1;
+	game.currentTile = 5;
+	game.lastChunkEmpty = false;
+
+	// Reset biome
+	game.currentBiome = &biomeTexturesMap["Transition"];
+	game.currentBiome->loadTextures(res, state.renderer); // optional
+
+	// Reset the number of unused biomes
+	game.unusedBiomes = game.biomeList;
+
+	// Reset map
+	game.gameMap = {
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{2, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
+	};
+
+	// Reset screen
+	game.screen = ScreenState::home;
+
+	// Reset UI
+	game.ui.switchToHomeScreen();
+
+	// Start the map size at 0
+	CURRENT_MAP_SIZE = 0;
+
+	// Create the game tiles
+	manageTiles(state, game, res, false);
+
+	// Reset the backgrounds
+	res.reset(state, game.currentBiome->name, game.currentBiome->parallaxBackgrounds);
 }

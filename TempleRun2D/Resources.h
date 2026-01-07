@@ -222,7 +222,7 @@ struct Resources
     {
         // Destroy old background
         if (background) SDL_DestroyTexture(background);
-
+        
         // Load background 
         background = loadTexture(state.renderer, "data/textures/background/" + biomeName + "/" + biomeName + ".png");
 
