@@ -402,7 +402,7 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 				player.setTexture(res.playerBurnt);
 				player.setCurrentAnimation(res.ANIM_PLAYER_BURNT);
 				player.clearCollider();
-				player.addCollider(BURNT_COLLISION);
+				player.addCollider(DIED_COLLISION);
 				player.setAlive(false);
 
 				// Mark this animation as non-looping
@@ -433,6 +433,8 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 			{
 				player.setTexture(res.playerFalling);
 				player.setCurrentAnimation(res.ANIM_PLAYER_FALLING);
+				player.clearCollider();
+				player.addCollider(DIED_COLLISION);
 				player.setAlive(false);
 
 				PLAYING = false;

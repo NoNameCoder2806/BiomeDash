@@ -61,9 +61,8 @@ const float ORIGINAL_SPEED = 150.0f;
 // Collision boxes
 const SDL_FRect RUN_COLLISION = { 7, 5, 16, 27 };
 const SDL_FRect SLIDE_COLLISION = { 1, 21, 30, 11 };
-const SDL_FRect BURNT_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
-const SDL_FRect DIED_COLLISION = { 7, 0, 16, 100 };
+const SDL_FRect DIED_COLLISION = { 7, -500, 16, 600 };
 const SDL_FRect START_PORTAL_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect END_PORTAL_COLLISION = { 50, -96, 28, 128 };
 const SDL_FRect COMMANDER_COLLISION = { -50, -96, 28, 128 };

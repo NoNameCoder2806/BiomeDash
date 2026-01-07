@@ -100,22 +100,56 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 
 		case ObjectType::monster:
 		{
-			// Set player state to caught if the player is playing 
-			if (player.isAlive())
+			Monster& monster = static_cast<Monster&>(objB);
+
+			// Check the player state
+			// If the player is running, sliding, tripped, bleed or knocked
+			if (player.getState() == PlayerState::running
+				|| player.getState() == PlayerState::tripped
+				|| player.getState() == PlayerState::sliding
+				)
 			{
+				// Debug
+				cout << "Player Caught!" << endl;
 
-				cout << "Player Caught!!!" << endl;
-
+				// Change player state to caught
 				player.setState(PlayerState::caught);
 				player.setAlive(false);
 				PLAYING = false;
+
+				// Set monster state to killing
+				monster.setState(MonsterState::killing);
 			}
+			// Otherwise if the player is knocked or bleed to death
+			else if (player.getState() == PlayerState::bleed
+				|| player.getState() == PlayerState::knocked)
+			{
+				// Debug
+				cout << "Player's body Caught!!!" << endl;
 
-			Monster& monster = static_cast<Monster&>(objB);
+				// Change player state to caught but no need to change the state
+				player.setAlive(false);
+				PLAYING = false;
 
-			// Set monster state to killing
-			monster.setState(MonsterState::killing);
+				// Set monster state to killing
+				monster.setState(MonsterState::killing);
+			}
+			// Otherwise, if the player is burnt or falling
+			else if (player.getState() == PlayerState::burnt
+				|| player.getState() == PlayerState::falling)
+			{
+				// Debug
+				cout << "Reached the player's last position" << endl;
 
+				// No need to change player's state
+				// Set the player to not be alive
+				player.setAlive(false);
+				PLAYING = false;
+
+				// Change monster state to idle because the player cannot be found
+				monster.setState(MonsterState::idle);
+			}
+			
 			break;
 		}
 
