@@ -30,6 +30,14 @@ const glm::vec2 HOME_MARGIN({ 0.41, 0.67 });
 const glm::vec2 CONTINUE_SIZE({ 260, 80 });
 const glm::vec2 CONTINUE_MARGIN({ 0.59, 0.67 });
 
+// VOLUME BUTTON
+const glm::vec2 VOLUME_SIZE({ 110, 100 });
+const glm::vec2 VOLUME_MARGIN({ 0.415, 0.495 });
+
+// RESTART BUTTON
+const glm::vec2 RESTART_SIZE({ 110, 110 });
+const glm::vec2 RESTART_MARGIN({ 0.585, 0.495 });
+
 // UIState struct
 struct UIState
 {
@@ -44,6 +52,8 @@ struct UIState
 	UIButton exit;
 	UIButton home;
 	UIButton continueGame;
+	UIButton volume;
+	UIButton restart;
 
 	// Top left avatar
 	//UIButton profile;
@@ -71,6 +81,10 @@ struct UIState
 		exit = UIButton(renderer, res, "exit", EXIT_SIZE, EXIT_MARGIN);
 		home = UIButton(renderer, res, "home", HOME_SIZE, HOME_MARGIN);
 		continueGame = UIButton(renderer, res, "continue", CONTINUE_SIZE, CONTINUE_MARGIN);
+	
+		// Volume and Restart buttons
+		volume = UIButton(renderer, res, "volume", VOLUME_SIZE, VOLUME_MARGIN);
+		restart = UIButton(renderer, res, "restart", RESTART_SIZE, RESTART_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -90,6 +104,10 @@ struct UIState
 		exit.render(state);
 		home.render(state);
 		continueGame.render(state);
+
+		// Volume and Restart buttons
+		volume.render(state);
+		restart.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -100,6 +118,8 @@ struct UIState
 		exit.updateClicked(mouseX, mouseY, clicked, sdl);
 		home.updateClicked(mouseX, mouseY, clicked, sdl);
 		continueGame.updateClicked(mouseX, mouseY, clicked, sdl);
+		volume.updateClicked(mouseX, mouseY, clicked, sdl);
+		restart.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -128,6 +148,14 @@ struct UIState
 		// ----- CONTINUE BUTTON -----
 		// Not visible
 		continueGame.setVisible(false);
+
+		// ----- VOLUME BUTTON -----
+		// Not visible
+		volume.setVisible(false);
+
+		// ----- RESTART BUTTON -----
+		// Not visible
+		restart.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -156,6 +184,14 @@ struct UIState
 		// ----- CONTINUE BUTTON -----
 		// Not visible
 		continueGame.setVisible(false);
+
+		// ----- VOLUME BUTTON -----
+		// Not visible
+		volume.setVisible(false);
+
+		// ----- RESTART BUTTON -----
+		// Not visible
+		restart.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -184,6 +220,14 @@ struct UIState
 		// ----- CONTINUE BUTTON -----
 		// Visible
 		continueGame.setVisible(true);
+
+		// ----- VOLUME BUTTON -----
+		// Visible
+		volume.setVisible(true);
+
+		// ----- RESTART BUTTON -----
+		// Visible
+		restart.setVisible(true);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -212,5 +256,13 @@ struct UIState
 		// ----- CONTINUE BUTTON -----
 		// Visible
 		continueGame.setVisible(true);
+
+		// ----- VOLUME BUTTON -----
+		// Visible
+		volume.setVisible(true);
+
+		// ----- RESTART BUTTON -----
+		// Visible
+		restart.setVisible(true);
 	}
 };
