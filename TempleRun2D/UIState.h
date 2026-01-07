@@ -38,6 +38,10 @@ const glm::vec2 VOLUME_MARGIN({ 0.415, 0.495 });
 const glm::vec2 RESTART_SIZE({ 110, 110 });
 const glm::vec2 RESTART_MARGIN({ 0.585, 0.495 });
 
+// CREDITS BUTTON
+const glm::vec2 CREDITS_SIZE({ 110, 110 });
+const glm::vec2 CREDITS_MARGIN({ 0.585, 0.495 });
+
 // UIState struct
 struct UIState
 {
@@ -54,6 +58,7 @@ struct UIState
 	UIButton continueGame;
 	UIButton volume;
 	UIButton restart;
+	UIButton credits;
 
 	// Top left avatar
 	//UIButton profile;
@@ -82,9 +87,10 @@ struct UIState
 		home = UIButton(renderer, res, "home", HOME_SIZE, HOME_MARGIN);
 		continueGame = UIButton(renderer, res, "continue", CONTINUE_SIZE, CONTINUE_MARGIN);
 	
-		// Volume and Restart buttons
+		// Volume, Restart and Credits buttons
 		volume = UIButton(renderer, res, "volume", VOLUME_SIZE, VOLUME_MARGIN);
 		restart = UIButton(renderer, res, "restart", RESTART_SIZE, RESTART_MARGIN);
+		credits = UIButton(renderer, res, "credits", CREDITS_SIZE, CREDITS_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -105,9 +111,10 @@ struct UIState
 		home.render(state);
 		continueGame.render(state);
 
-		// Volume and Restart buttons
+		// Volume, Restart and Credits buttons
 		volume.render(state);
 		restart.render(state);
+		credits.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -120,6 +127,7 @@ struct UIState
 		continueGame.updateClicked(mouseX, mouseY, clicked, sdl);
 		volume.updateClicked(mouseX, mouseY, clicked, sdl);
 		restart.updateClicked(mouseX, mouseY, clicked, sdl);
+		credits.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -156,6 +164,10 @@ struct UIState
 		// ----- RESTART BUTTON -----
 		// Not visible
 		restart.setVisible(false);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -192,6 +204,10 @@ struct UIState
 		// ----- RESTART BUTTON -----
 		// Not visible
 		restart.setVisible(false);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -228,6 +244,10 @@ struct UIState
 		// ----- RESTART BUTTON -----
 		// Not visible
 		restart.setVisible(false);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(true);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -264,5 +284,9 @@ struct UIState
 		// ----- RESTART BUTTON -----
 		// Visible
 		restart.setVisible(true);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(false);
 	}
 };
