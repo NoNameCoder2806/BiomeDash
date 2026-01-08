@@ -1056,21 +1056,11 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 		game.monster().setState(MonsterState::chasing);
 	}
 
-	// Continue button
-	if (game.ui.continueGame.isClicked())
-	{
-		// Switch to the home screen
-		game.ui.switchToPlayScreen();
-
-		// Change the Screen State
-		game.screen = ScreenState::playing;
-	}
-
-	// Home button
-	if (game.ui.home.isClicked())
+	// Main menu button
+	if (game.ui.mainMenu.isClicked())
 	{
 		// Debug
-		cout << "Exiting to home..." << endl;
+		cout << "Back to main menu..." << endl;
 
 		// Reset the game
 		resetGame(sdl, game, res, scrollPositions);
