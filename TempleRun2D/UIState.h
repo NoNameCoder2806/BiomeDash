@@ -289,4 +289,44 @@ struct UIState
 		// Not visible
 		credits.setVisible(false);
 	}
+
+	void switchToGameOverScreen()
+	{
+		// ----- PAUSE BUTTON -----
+		// Visible and not toggled
+		pause.setVisible(true);
+		pause.setToggled(false);
+
+		// ----- PLAY BUTTON -----
+		// Not visible
+		play.setVisible(false);
+
+		// ----- PAUSE PANEL -----
+		// Visible
+		pausePanel.setVisible(true);
+
+		// ----- EXIT BUTTON -----
+		// Not visible
+		exit.setVisible(false);
+
+		// ----- HOME BUTTON -----
+		// Visible
+		home.setVisible(true);
+
+		// ----- CONTINUE BUTTON -----
+		// Not visible
+		continueGame.setVisible(false);
+
+		// ----- VOLUME BUTTON -----
+		// Visible
+		volume.setVisible(true);
+
+		// ----- RESTART BUTTON -----
+		// Visible
+		restart.setVisible(true);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(false);
+	}
 };

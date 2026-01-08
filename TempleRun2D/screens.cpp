@@ -933,3 +933,194 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 	SDL_RenderPresent(sdl.renderer);
 }
+
+// ----- V/ GAME OVER SCREEN -----
+void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
+{
+	// Events update
+	SDL_Event e;
+	while (SDL_PollEvent(&e))
+	{
+		if (e.type == SDL_EVENT_QUIT)
+		{
+			exit(0);
+		}
+		else if (e.type == SDL_EVENT_KEY_UP)
+		{
+			switch (e.key.scancode)
+			{
+			/*case SDL_SCANCODE_RETURN:
+			case SDL_SCANCODE_RIGHT:
+			case SDL_SCANCODE_D:
+			{
+				// Switch to the play screen
+				game.ui.switchToPlayScreen();
+
+				// Change the Screen State
+				game.screen = ScreenState::playing;
+
+				// Set the player to the running state
+				game.player().setState(PlayerState::running);
+
+				// Set monster to chasing state
+				game.monster().setState(MonsterState::chasing);
+
+				return;
+			}*/
+			case SDL_SCANCODE_C:
+			{
+				//game.changeCharacter();
+				break;
+			}
+			case SDL_SCANCODE_M:
+			{
+				//game.changeMonster();
+				break;
+			}
+			/*case SDL_SCANCODE_ESCAPE:
+			{
+				// Switch to the home screen
+				game.ui.switchToPlayScreen();
+
+				// Change the Screen State
+				game.screen = ScreenState::playing;
+
+				break;
+			}*/
+			case SDL_SCANCODE_F11:
+			{
+				sdl.fullscreen = !sdl.fullscreen;
+				SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
+				// Optionally reset window dimensions after fullscreen toggle
+				if (!sdl.fullscreen)
+				{
+					sdl.width = 1920; // or your default width
+					sdl.height = 1080; // or your default height
+					SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
+				}
+				break;
+			}
+			}
+		}
+		else if (e.type == SDL_EVENT_WINDOW_RESIZED)
+		{
+			sdl.width = e.window.data1;
+			sdl.height = e.window.data2;
+		}
+	}
+
+	// UI Buttons logic update
+	float mouseX;
+	float mouseY;
+
+	// Get the mouse state
+	Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+
+	// Whether the mouse was left-clicked
+	bool leftPressed = mouseState & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
+
+	// Update the UI Buttons
+	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
+
+	// Check which buttons were clicked and act immediately
+	// Volume button
+	if (game.ui.volume.isClicked())
+	{
+		// Debug
+		cout << "Muted sound!" << endl;
+
+		// Change the toggled state of the button
+		bool t = !game.ui.volume.isToggled();
+		game.ui.volume.setToggled(t);
+
+		// Do something else here
+	}
+
+	// Restart button
+	if (game.ui.restart.isClicked())
+	{
+		// Reset the game
+		resetGame(sdl, game, res, scrollPositions);
+
+		// Start the game immidiately
+		// Switch the UI to the play screen
+		game.ui.switchToPlayScreen();
+
+		// Change the screen state
+		game.screen = ScreenState::playing;
+
+		// Set the player to the running state
+		game.player().setState(PlayerState::running);
+
+		// Set monster to chasing state
+		game.monster().setState(MonsterState::chasing);
+	}
+
+	// Continue button
+	if (game.ui.continueGame.isClicked())
+	{
+		// Switch to the home screen
+		game.ui.switchToPlayScreen();
+
+		// Change the Screen State
+		game.screen = ScreenState::playing;
+	}
+
+	// Home button
+	if (game.ui.home.isClicked())
+	{
+		// Debug
+		cout << "Exiting to home..." << endl;
+
+		// Reset the game
+		resetGame(sdl, game, res, scrollPositions);
+	}
+
+	// Render frame
+	uint64_t nowTime = SDL_GetTicks();
+	float deltaTime = (float)(nowTime - prevTime) / 1000.0f;
+	prevTime = nowTime;
+
+	// Clear background
+	SDL_SetRenderDrawColor(sdl.renderer, 128, 0, 128, 255);
+	SDL_RenderClear(sdl.renderer);
+
+	// Draw main background
+	SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
+
+	// Draw parallax (optional: frozen scroll)
+	int layerCount = std::stoi(game.currentBiome->parallaxBackgrounds);
+	if (scrollPositions.size() != res.parallaxBackgrounds.size())
+		scrollPositions.resize(res.parallaxBackgrounds.size(), 0.0f);
+
+	for (int i = 0; i < layerCount; i++)
+	{
+		float scrollFactor = 0.75f * (i + 1) / layerCount;
+		drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i],
+			0.0f, scrollPositions[i], scrollFactor, deltaTime); // keep deltaTime for animation
+	}
+
+	// Draw all objects and update animations
+	for (auto& layer : game.layers)
+	{
+		for (auto& objPtr : layer)
+		{
+			GameObject& obj = *objPtr;
+
+			// Ignore the animation step since this is a pause frame
+			/*if (obj.getCurrentAnimation() != -1)
+			{
+				obj.getAnimations().at(obj.getCurrentAnimation()).step(deltaTime); // keep animations
+			}*/
+
+			drawObject(sdl, game, obj, deltaTime);
+		}
+	}
+
+	// Draw UI
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+	game.ui.render(sdl);
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
+	SDL_RenderPresent(sdl.renderer);
+}

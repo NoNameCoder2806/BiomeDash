@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
 
 			case ScreenState::gameOver:
 			{
-				//runGameOverScreen(sdl, game.screen); // update currentScreen if user goes to home or restarts
+				runGameOverScreen(sdl, game, res, scrollPositions, prevTime); // update currentScreen if user goes to home or restarts
 				break;
 			}
 		}

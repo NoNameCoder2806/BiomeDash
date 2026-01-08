@@ -156,6 +156,9 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 			
 			// Change the GameState's screen to GameOver
 			gs.screen = ScreenState::gameOver;
+
+			// Change the GameState's ui to GameOver
+			gs.ui.switchToGameOverScreen();
 			
 			break;
 		}
