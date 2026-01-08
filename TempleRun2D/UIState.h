@@ -42,6 +42,10 @@ const glm::vec2 RESTART_MARGIN({ 0.585, 0.495 });
 const glm::vec2 CREDITS_SIZE({ 110, 110 });
 const glm::vec2 CREDITS_MARGIN({ 0.585, 0.495 });
 
+// MAIN MENU BUTTON
+const glm::vec2 MAIN_MENU_SIZE({ 520, 80 });
+const glm::vec2 MAIN_MENU_MARGIN({ 0.5, 0.67 });
+
 // UIState struct
 struct UIState
 {
@@ -59,6 +63,7 @@ struct UIState
 	UIButton volume;
 	UIButton restart;
 	UIButton credits;
+	UIButton mainMenu;
 
 	// Top left avatar
 	//UIButton profile;
@@ -91,6 +96,9 @@ struct UIState
 		volume = UIButton(renderer, res, "volume", VOLUME_SIZE, VOLUME_MARGIN);
 		restart = UIButton(renderer, res, "restart", RESTART_SIZE, RESTART_MARGIN);
 		credits = UIButton(renderer, res, "credits", CREDITS_SIZE, CREDITS_MARGIN);
+	
+		// Main Menu button
+		mainMenu = UIButton(renderer, res, "mainMenu", MAIN_MENU_SIZE, MAIN_MENU_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -115,6 +123,9 @@ struct UIState
 		volume.render(state);
 		restart.render(state);
 		credits.render(state);
+
+		// Main Menu button
+		mainMenu.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -128,6 +139,7 @@ struct UIState
 		volume.updateClicked(mouseX, mouseY, clicked, sdl);
 		restart.updateClicked(mouseX, mouseY, clicked, sdl);
 		credits.updateClicked(mouseX, mouseY, clicked, sdl);
+		mainMenu.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -168,6 +180,10 @@ struct UIState
 		// ----- CREDITS BUTTON -----
 		// Not visible
 		credits.setVisible(false);
+
+		// ----- MAIN MENU BUTTON -----
+		// Not visible
+		mainMenu.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -208,6 +224,10 @@ struct UIState
 		// ----- CREDITS BUTTON -----
 		// Not visible
 		credits.setVisible(false);
+
+		// ----- MAIN MENU BUTTON -----
+		// Not visible
+		mainMenu.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -248,6 +268,10 @@ struct UIState
 		// ----- CREDITS BUTTON -----
 		// Not visible
 		credits.setVisible(true);
+
+		// ----- MAIN MENU BUTTON -----
+		// Not visible
+		mainMenu.setVisible(false);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -288,6 +312,10 @@ struct UIState
 		// ----- CREDITS BUTTON -----
 		// Not visible
 		credits.setVisible(false);
+
+		// ----- MAIN MENU BUTTON -----
+		// Not visible
+		mainMenu.setVisible(false);
 	}
 
 	void switchToGameOverScreen()
@@ -310,8 +338,8 @@ struct UIState
 		exit.setVisible(false);
 
 		// ----- HOME BUTTON -----
-		// Visible
-		home.setVisible(true);
+		// Not visible
+		home.setVisible(false);
 
 		// ----- CONTINUE BUTTON -----
 		// Not visible
@@ -328,5 +356,9 @@ struct UIState
 		// ----- CREDITS BUTTON -----
 		// Not visible
 		credits.setVisible(false);
+
+		// ----- MAIN MENU BUTTON -----
+		// Visible
+		mainMenu.setVisible(true);
 	}
 };
