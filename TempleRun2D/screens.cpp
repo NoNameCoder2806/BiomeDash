@@ -949,57 +949,57 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 		{
 			switch (e.key.scancode)
 			{
-			/*case SDL_SCANCODE_RETURN:
-			case SDL_SCANCODE_RIGHT:
-			case SDL_SCANCODE_D:
-			{
-				// Switch to the play screen
-				game.ui.switchToPlayScreen();
-
-				// Change the Screen State
-				game.screen = ScreenState::playing;
-
-				// Set the player to the running state
-				game.player().setState(PlayerState::running);
-
-				// Set monster to chasing state
-				game.monster().setState(MonsterState::chasing);
-
-				return;
-			}*/
-			case SDL_SCANCODE_C:
-			{
-				//game.changeCharacter();
-				break;
-			}
-			case SDL_SCANCODE_M:
-			{
-				//game.changeMonster();
-				break;
-			}
-			/*case SDL_SCANCODE_ESCAPE:
-			{
-				// Switch to the home screen
-				game.ui.switchToPlayScreen();
-
-				// Change the Screen State
-				game.screen = ScreenState::playing;
-
-				break;
-			}*/
-			case SDL_SCANCODE_F11:
-			{
-				sdl.fullscreen = !sdl.fullscreen;
-				SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
-				// Optionally reset window dimensions after fullscreen toggle
-				if (!sdl.fullscreen)
+				/*case SDL_SCANCODE_RETURN:
+				case SDL_SCANCODE_RIGHT:
+				case SDL_SCANCODE_D:
 				{
-					sdl.width = 1920; // or your default width
-					sdl.height = 1080; // or your default height
-					SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
+					// Switch to the play screen
+					game.ui.switchToPlayScreen();
+
+					// Change the Screen State
+					game.screen = ScreenState::playing;
+
+					// Set the player to the running state
+					game.player().setState(PlayerState::running);
+
+					// Set monster to chasing state
+					game.monster().setState(MonsterState::chasing);
+
+					return;
+				}*/
+				case SDL_SCANCODE_C:
+				{
+					//game.changeCharacter();
+					break;
 				}
-				break;
-			}
+				case SDL_SCANCODE_M:
+				{
+					//game.changeMonster();
+					break;
+				}
+				/*case SDL_SCANCODE_ESCAPE:
+				{
+					// Switch to the home screen
+					game.ui.switchToPlayScreen();
+
+					// Change the Screen State
+					game.screen = ScreenState::playing;
+
+					break;
+				}*/
+				case SDL_SCANCODE_F11:
+				{
+					sdl.fullscreen = !sdl.fullscreen;
+					SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
+					// Optionally reset window dimensions after fullscreen toggle
+					if (!sdl.fullscreen)
+					{
+						sdl.width = 1920; // or your default width
+						sdl.height = 1080; // or your default height
+						SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
+					}
+					break;
+				}
 			}
 		}
 		else if (e.type == SDL_EVENT_WINDOW_RESIZED)
@@ -1114,3 +1114,5 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 
 	SDL_RenderPresent(sdl.renderer);
 }
+
+// ----- TRANSITION SCREEN -----
