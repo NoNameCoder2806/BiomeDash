@@ -9,6 +9,7 @@
 #include "entities/GameObject.h"
 #include "entities/Player.h"
 #include "entities/Monster.h"
+#include "entities/Transition.h"
 
 #include "world/Biome.h"
 
@@ -64,7 +65,12 @@ struct GameState
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 
 	// ScreenState
+	ScreenState prevScreen;
 	ScreenState screen;
+	ScreenState nextScreen;
+
+	// Transition
+	Transition transition;
 
 	GameState(const SDLState& state, std::string biomeName = "Transition");
 

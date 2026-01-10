@@ -51,7 +51,9 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 	needTransition = false;
 	portalGenerated = false;
 
+	prevScreen = ScreenState::home;
 	screen = ScreenState::home;
+	nextScreen = ScreenState::home;
 }
 
 Player& GameState::player()                  // The player() function quickly returns

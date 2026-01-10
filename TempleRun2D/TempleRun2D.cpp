@@ -43,9 +43,10 @@ int main(int argc, char* argv[])
 	Resources res;          // Create a Resources object
 	res.load(sdl, "default_character", "default_monster", game.currentBiome->name, game.currentBiome->parallaxBackgrounds);          // Load our player and monster
 
-	// Set up and render the textures for the buttons
+	// Set up the UI and the Transition
 	game.ui.setup(sdl.renderer, res);
 	game.ui.render(sdl);
+	game.transition = Transition(res, sdl);
 
 	// Load the home screen
 	game.ui.switchToHomeScreen();
@@ -162,7 +163,7 @@ int main(int argc, char* argv[])
 
 			case ScreenState::transition:
 			{
-				runTransitionScreen(sdl, game, res, scrollPositions, prevTime, currentScreen, nextScreen);
+				runTransitionScreen(sdl, game, res, scrollPositions, prevTime);
 				break;
 			}
 		}

@@ -930,7 +930,7 @@ void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<flo
 	};
 
 	// Reset screen
-	game.screen = ScreenState::home;
+	game.nextScreen = ScreenState::home;
 
 	// Reset UI
 	game.ui.switchToHomeScreen();
