@@ -159,6 +159,12 @@ int main(int argc, char* argv[])
 				runGameOverScreen(sdl, game, res, scrollPositions, prevTime); // update currentScreen if user goes to home or restarts
 				break;
 			}
+
+			case ScreenState::transition:
+			{
+				runTransitionScreen(sdl, game, res, scrollPositions, prevTime, currentScreen, nextScreen);
+				break;
+			}
 		}
 	}
 

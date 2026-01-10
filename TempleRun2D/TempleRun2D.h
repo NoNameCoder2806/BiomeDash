@@ -21,6 +21,7 @@
 #include "entities/Level.h"
 #include "entities/Obstacle.h"
 #include "entities/Boost.h"
+#include "entities/Transition.h"
 #include "entities/UIButton.h"
 
 // World
@@ -89,6 +90,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
+void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime, ScreenState currentScreen, ScreenState nextScreen);
 
 // ----- II/ GAME LOGIC -----
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res);

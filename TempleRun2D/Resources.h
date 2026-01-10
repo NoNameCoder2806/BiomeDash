@@ -70,7 +70,15 @@ struct Resources
     SDL_Texture* commander = nullptr;
     SDL_Texture* commander_reversed = nullptr;
 
-    // ----- VI/ BACKGROUNDS -----
+    // ----- VI/ TRANSITION ANIMATION -----
+    const int ANIM_TRANSITION = 0;
+    const int ANIM_TRANSITION_REVERSED = 1;
+
+    std::vector<Animation> transitionAnims;
+    SDL_Texture* transition = nullptr;
+    SDL_Texture* transitionReversed = nullptr;
+
+    // ----- VII/ BACKGROUNDS -----
     SDL_Texture* background = nullptr;
     std::vector<SDL_Texture*> parallaxBackgrounds;
 
@@ -192,6 +200,14 @@ struct Resources
 
         commander = loadTexture(state.renderer, "data/textures/characters/commander/commander.png");
         commander_reversed = loadTexture(state.renderer, "data/textures/characters/commander/commander_reversed.png");
+
+        // Load transition
+        transitionAnims.resize(2);
+        transitionAnims[ANIM_TRANSITION] = Animation(102, 1.0f, false);
+        transitionAnims[ANIM_TRANSITION_REVERSED] = Animation(102, 1.0f, false);
+
+        transition = loadTexture(state.renderer, "data/textures/screen_transition/screen_transition.png");
+        transitionReversed = loadTexture(state.renderer, "data/textures/screen_transition/screen_transition_reversed.png");
 
         // Load background 
         background = loadTexture(state.renderer, "data/textures/background/" + biomeName + "/" + biomeName + ".png");

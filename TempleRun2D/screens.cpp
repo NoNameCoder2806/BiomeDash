@@ -1116,3 +1116,7 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 }
 
 // ----- TRANSITION SCREEN -----
+void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime, ScreenState currentScreen, ScreenState nextScreen)
+{
+	if ()
+}

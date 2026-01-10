@@ -25,7 +25,7 @@ const int MINIMAL_SCORE = 2000;
 // ----- SCREEN STATES -----
 enum class ScreenState
 {
-	home, playing, homePause, playingPause, gameOver
+	home, playing, homePause, playingPause, gameOver, transition
 };
 
 // ----- GAMESTATE STRUCT -----
@@ -63,6 +63,7 @@ struct GameState
 	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 
+	// ScreenState
 	ScreenState screen;
 
 	GameState(const SDLState& state, std::string biomeName = "Transition");
