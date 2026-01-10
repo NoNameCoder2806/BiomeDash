@@ -93,7 +93,7 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 
 	// Check which buttons were clicked and act immediately
 	// Pause Button
-	if (game.ui.pause.isClicked())
+	if (game.ui.pause.isReleased())
 	{
 		// Debug
 		//cout << "Switching to pause screen" << endl;
@@ -106,7 +106,7 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 	}
 	
 	// Play Button
-	if (game.ui.play.isClicked())
+	if (game.ui.play.isReleased())
 	{
 		// Switch the UI to the play screen
 		game.ui.switchToPlayScreen();
@@ -290,7 +290,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 
 	// Check which buttons were clicked and act immediately
 	// Pause Button
-	if (game.ui.pause.isClicked())
+	if (game.ui.pause.isReleased())
 	{
 		// Debug
 		//cout << "Switching to pause screen" << endl;
@@ -648,7 +648,7 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 
 	// Check which buttons were clicked and act immediately
 	// Volume button
-	if (game.ui.volume.isClicked())
+	if (game.ui.volume.isReleased())
 	{
 		// Debug
 		cout << "Muted sound!" << endl;
@@ -661,7 +661,7 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	}
 
 	// Credits button
-	if (game.ui.credits.isClicked())
+	if (game.ui.credits.isReleased())
 	{
 		// Debug
 		cout << "Credits pannel pops up" << endl;
@@ -670,7 +670,7 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	}
 
 	// Continue button
-	if (game.ui.continueGame.isClicked())
+	if (game.ui.continueGame.isReleased())
 	{
 		// Switch to the home screen
 		game.ui.switchToHomeScreen();
@@ -680,7 +680,7 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	}
 
 	// Exit button
-	if (game.ui.exit.isClicked())
+	if (game.ui.exit.isReleased())
 	{
 		// Debug
 		//cout << "Exiting the game..." << endl;
@@ -825,7 +825,7 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 	// Check which buttons were clicked and act immediately
 	// Volume button
-	if (game.ui.volume.isClicked())
+	if (game.ui.volume.isReleased())
 	{
 		// Debug
 		cout << "Muted sound!" << endl;
@@ -838,7 +838,7 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	}
 
 	// Restart button
-	if (game.ui.restart.isClicked())
+	if (game.ui.restart.isReleased())
 	{
 		// Reset the game
 		resetGame(sdl, game, res, scrollPositions);
@@ -858,7 +858,7 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	}
 
 	// Continue button
-	if (game.ui.continueGame.isClicked())
+	if (game.ui.continueGame.isReleased())
 	{
 		// Switch to the home screen
 		game.ui.switchToPlayScreen();
@@ -868,7 +868,7 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	}
 
 	// Home button
-	if (game.ui.home.isClicked())
+	if (game.ui.home.isReleased())
 	{
 		// Debug
 		cout << "Exiting to home..." << endl;
@@ -1019,7 +1019,7 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 
 	// Check which buttons were clicked and act immediately
 	// Volume button
-	if (game.ui.volume.isClicked())
+	if (game.ui.volume.isReleased())
 	{
 		// Debug
 		cout << "Muted sound!" << endl;
@@ -1032,7 +1032,7 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 	}
 
 	// Restart button
-	if (game.ui.restart.isClicked())
+	if (game.ui.restart.isReleased())
 	{
 		// Reset the game
 		resetGame(sdl, game, res, scrollPositions);
@@ -1052,7 +1052,7 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 	}
 
 	// Main menu button
-	if (game.ui.mainMenu.isClicked())
+	if (game.ui.mainMenu.isReleased())
 	{
 		// Debug
 		cout << "Back to main menu..." << endl;

@@ -25,6 +25,7 @@ private:
     // Whether the object is visible and clicked
     bool visible = true;
     bool clicked = false;
+    bool wasClicked = false;
     bool toggled = false;
 
 public:
@@ -61,6 +62,11 @@ public:
     void setToggled(bool t) { toggled = t; }
 
     // Helper functions
+    bool isReleased() const
+    {
+        return wasClicked && !clicked;
+    }
+
     bool isHovered(float mouseX, float mouseY, const SDLState& sdl) const
     {
         // If the button is not visible or not clickable, we return false
@@ -88,13 +94,9 @@ public:
 
     void updateClicked(float mouseX, float mouseY, bool mouseDown, const SDLState& sdl)
     {
-        clicked = mouseDown && isHovered(mouseX, mouseY, sdl);
+        wasClicked = clicked;
 
-        /*if (clicked)
-        {
-            // Debug
-            //std::cout << "Button " << name << " is clicked!" << std::endl;
-        }*/
+        clicked = mouseDown && isHovered(mouseX, mouseY, sdl);
     }
 
     void render(const SDLState& sdl) const
@@ -107,9 +109,6 @@ public:
         // Save world viewport
         SDL_Rect oldViewport;
         SDL_GetRenderViewport(sdl.renderer, &oldViewport);
-
-        // Debug
-        //std::cout << "Old viewport: x=" << oldViewport.x << ", y=" << oldViewport.y << ", w=" << oldViewport.w << ", h=" << oldViewport.h << std::endl;
 
         // Switch to screen space
         SDL_SetRenderViewport(sdl.renderer, nullptr);
@@ -127,10 +126,6 @@ public:
         float dstX = margin.x * (sdl.width - dstW);  // 0-1 margin
         float dstY = margin.y * (sdl.height - dstH);
 
-        // Make sure it never goes off-screen
-        //if (dstX + dstW > sdl.width) dstX = sdl.width - dstW;
-        //if (dstY + dstH > sdl.height) dstY = sdl.height - dstH;
-
         SDL_FRect dst
         {
             .x = dstX,
@@ -143,16 +138,10 @@ public:
         SDL_Texture* texToDraw = nullptr;
         if (clicked || toggled)
         {
-            // Debug
-            //std::cout << "Button: " << name << "Using the clicked texture!" << std::endl;
-            
             texToDraw = clickedTexture;
         }
         else
         {
-            // Debug
-            //std::cout << "Button: " << name << "Using the normal texture!" << std::endl;
-
             texToDraw = normalTexture;
         }
         SDL_RenderTexture(sdl.renderer, texToDraw, nullptr, &dst);
