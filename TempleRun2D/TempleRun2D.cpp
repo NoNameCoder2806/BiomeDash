@@ -167,6 +167,9 @@ int main(int argc, char* argv[])
 				break;
 			}
 		}
+
+		// Render the frames
+		SDL_RenderPresent(sdl.renderer);
 	}
 
 	// Clean up and destroy all the memories and resources used 

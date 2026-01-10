@@ -198,9 +198,6 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 
 	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
-
-	// Present frame
-	SDL_RenderPresent(sdl.renderer);
 }
 
 // ----- II/ PLAYING FRAME -----
@@ -557,9 +554,6 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
-	// Render the current game frame
-	SDL_RenderPresent(sdl.renderer);
-
 	// Assign nowTime to prevTime to update the time
 	prevTime = nowTime;
 }
@@ -739,8 +733,6 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
-
-	SDL_RenderPresent(sdl.renderer);
 }
 
 // ----- IV/ PLAYING PAUSE SCREEN -----
@@ -935,8 +927,6 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
-
-	SDL_RenderPresent(sdl.renderer);
 }
 
 // ----- V/ GAME OVER SCREEN -----
@@ -1121,15 +1111,13 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
-
-	SDL_RenderPresent(sdl.renderer);
 }
 
 // ----- TRANSITION SCREEN -----
 void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
 	// Debug
-	std::cout << "Drawing the Transition screen. Timer: " << game.transition.getTime() << std::endl;
+	//std::cout << "Drawing the Transition screen. Timer: " << game.transition.getTime() << std::endl;
 
 	// --- Compute deltaTime ---
 	uint64_t nowTime = SDL_GetTicks();
@@ -1144,129 +1132,105 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 	Animation& anim = game.transition.getAnimations()[game.transition.getCurrentAnimation()];
 	SDL_Texture* tex = game.transition.getTexture();
 
-	// Debug
-	std::cout << "Timer: " << t << std::endl;
-
 	// --- Phase 1: Closing animation (0s - 1s) ---
 	if (t <= 1.0f)
 	{
-		// Debug
-		std::cout << "Closing animation!" << std::endl;
-
 		if (game.transition.getCurrentAnimation() != res.ANIM_TRANSITION)
 		{
 			game.transition.setCurrentAnimation(res.ANIM_TRANSITION);
 			game.transition.setTexture(res.transition);
-			anim.reset();
+			game.transition.getAnimations()[res.ANIM_TRANSITION].reset();
 		}
-
-		// Debug
-		std::cout << "Switching cases:" << std::endl;
 
 		// Draw previous screen
 		switch (game.prevScreen)
 		{
-		case ScreenState::gameOver:
-			std::cout << "Game Over Screen" << std::endl;
-			runGameOverScreen(sdl, game, res, scrollPositions, prevTime);
-			break;
-		case ScreenState::playingPause:
-			std::cout << "Playing Pause Screen" << std::endl;
-			runPlayingPauseScreen(sdl, game, res, scrollPositions, prevTime);
-			break;
-		default:
-			break;
+			case ScreenState::gameOver:
+			{
+				runGameOverScreen(sdl, game, res, scrollPositions, prevTime);
+				break;
+			}
+			case ScreenState::playingPause:
+			{
+				runPlayingPauseScreen(sdl, game, res, scrollPositions, prevTime);
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 
 		// Step animation
-		anim.step(deltaTime);
-
-		int frameWidth = 128;
-		int frameHeight = 128;
+		game.transition.getAnimations()[game.transition.getCurrentAnimation()].step(deltaTime);
 
 		// current frame of animation
-		int frameIndex = anim.currentFrame();
+		int frameIndex = game.transition.getAnimations()[game.transition.getCurrentAnimation()].currentFrame();
 
 		SDL_FRect srcRect = {
-			frameIndex * (float)frameWidth,  // x
-			0,                               // y
-			(float)frameWidth,               // w
-			(float)frameHeight               // h
+			.x = frameIndex * (float)game.transition.getImageSize().x,
+			.y = 0,
+			.w = (float)game.transition.getImageSize().x,
+			.h = (float)game.transition.getImageSize().y
 		};
 
 		// Full screen destination
-		//SDL_FRect dstRect = { 0, 0, (float)sdl.width, (float)sdl.height };
-
-		// Test
-		SDL_FRect dstRect = { 100, 100, 128, 128 };
+		SDL_FRect dstRect = { 0, 0, (float)sdl.logW, (float)sdl.logH };
 
 		SDL_RenderTexture(sdl.renderer, game.transition.getTexture(), &srcRect, &dstRect);
 	}
 	// --- Phase 2: Black pause (1s - 1.5s) ---
 	else if (t <= 1.5f)
 	{
-		if (t >= 1.00001f || t <= 1.00001)
+		if (t >= 1.00001f && t <= 1.01f)
 		{
 			// Reset the game
 			resetGame(sdl, game, res, scrollPositions);
 		}
 
-		// Debug
-		std::cout << "Drawing the black screen!" << std::endl;
-
 		SDL_SetRenderDrawColor(sdl.renderer, 0, 0, 0, 255);
 		SDL_RenderClear(sdl.renderer);
-
-		// Debug
-		std::cout << "Drawn black screen!" << std::endl;
 	}
 	// --- Phase 3: Opening animation (1.5s - 2.5s) ---
 	else if (t <= 2.5f)
 	{
-		// Debug
-		std::cout << "Opening animation!" << std::endl;
-
+		// Switch animation if needed
 		if (game.transition.getCurrentAnimation() != res.ANIM_TRANSITION_REVERSED)
 		{
 			game.transition.setCurrentAnimation(res.ANIM_TRANSITION_REVERSED);
 			game.transition.setTexture(res.transitionReversed);
-			anim.reset();
+			game.transition.getAnimations()[res.ANIM_TRANSITION_REVERSED].reset();
 		}
 
 		// Draw next screen
 		if (game.nextScreen == ScreenState::home)
+		{
 			runHomeScreen(sdl, game, res, scrollPositions, prevTime);
+		}
 
 		// Step animation
-		anim.step(deltaTime);
-
-		int frameWidth = 128;
-		int frameHeight = 128;
+		game.transition.getAnimations()[game.transition.getCurrentAnimation()].step(deltaTime);
 
 		// current frame of animation
-		int frameIndex = anim.currentFrame();
+		int frameIndex = game.transition.getAnimations()[game.transition.getCurrentAnimation()].currentFrame();
 
 		SDL_FRect srcRect = {
-			frameIndex * (float)frameWidth,  // x
-			0,                               // y
-			(float)frameWidth,               // w
-			(float)frameHeight               // h
+			.x = frameIndex * (float)game.transition.getImageSize().x,
+			.y = 0,
+			.w = (float)game.transition.getImageSize().x,
+			.h = (float)game.transition.getImageSize().y
 		};
 
 		// Full screen destination
-		SDL_FRect dstRect = { 0, 0, (float)sdl.width, (float)sdl.height };
+		SDL_FRect dstRect = { 0, 0, (float)sdl.logW, (float)sdl.logH };
 
 		SDL_RenderTexture(sdl.renderer, game.transition.getTexture(), &srcRect, &dstRect);
 	}
 	// --- Phase 4: End of transition ---
 	else
 	{
-		// Debug
-		std::cout << "Reset the Timer, Animation and Texture!" << std::endl;
-
+		// Reset the timer
 		game.transition.resetTimer();
-		game.transition.setCurrentAnimation(res.ANIM_TRANSITION);
-		game.transition.setTexture(res.transition);
 
 		// Switch to next screen
 		game.screen = game.nextScreen;

@@ -35,7 +35,7 @@ public:
 		currentAnimation = res.ANIM_TRANSITION;
 
 		position = { state.width / 2, state.height / 2 };
-		imageSize = { state.width, state.height };
+		imageSize = { 128, 128 };
 
 		timer = 0.0f;
 	}
