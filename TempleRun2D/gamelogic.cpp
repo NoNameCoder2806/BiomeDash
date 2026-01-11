@@ -929,12 +929,6 @@ void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<flo
 		{6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10, 6, 7, 8, 9, 10}
 	};
 
-	// Reset screen
-	game.nextScreen = ScreenState::home;
-
-	// Reset UI
-	game.ui.switchToHomeScreen();
-
 	// Start the map size at 0
 	CURRENT_MAP_SIZE = 0;
 
@@ -943,4 +937,14 @@ void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<flo
 
 	// Reset the backgrounds
 	res.reset(state, game.currentBiome->name, game.currentBiome->parallaxBackgrounds);
+
+	// Reset UI
+	if (game.nextScreen == ScreenState::home)
+	{
+		game.ui.switchToHomeScreen();
+	}
+	else if (game.nextScreen == ScreenState::playing)
+	{
+		game.ui.switchToPlayScreen();
+	}
 }

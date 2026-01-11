@@ -125,6 +125,16 @@ int main(int argc, char* argv[])
 	bool running = true;
 	while (running)
 	{
+		// Increment the frame count
+		frames++;
+		uint64_t fpsNow = SDL_GetTicks();
+		if (fpsNow - fpsLastTime >= 1000)
+		{
+			fps = frames * 1000.0f / (fpsNow - fpsLastTime);
+			frames = 0;
+			fpsLastTime = fpsNow;
+		}
+
 		// Check the screen state
 		switch (game.screen)
 		{
@@ -139,7 +149,7 @@ int main(int argc, char* argv[])
 
 			case ScreenState::playing:
 			{
-				runPlayingFrame(sdl, game, res, scrollPositions, prevTime, fps, frames, fpsLastTime, running);
+				runPlayingFrame(sdl, game, res, scrollPositions, prevTime);
 				break;
 			}
 
@@ -166,7 +176,26 @@ int main(int argc, char* argv[])
 				runTransitionScreen(sdl, game, res, scrollPositions, prevTime);
 				break;
 			}
+
+			case ScreenState::exit:
+			{
+				running = false;
+				break;
+			}
 		}
+		// Dark blue: #173F6C
+		SDL_SetRenderDrawColor(sdl.renderer, 23, 63, 108, 255);
+
+		// Display FPS
+		string fpsText = std::format("FPS: {:.1f}", fps);
+		SDL_RenderDebugText(sdl.renderer, 5, 5, fpsText.c_str());
+
+		// Display the game score and the number of biomes completed
+		string scoreText = format("Score: {:.1f}", game.getScore());
+		SDL_RenderDebugText(sdl.renderer, 165, 5, scoreText.c_str());
+
+		// White color
+		SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
 
 		// Render the frames
 		SDL_RenderPresent(sdl.renderer);

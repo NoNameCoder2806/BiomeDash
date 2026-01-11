@@ -202,8 +202,7 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 
 // ----- II/ PLAYING FRAME -----
 void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
-	vector<float>& scrollPositions, uint64_t& prevTime,
-	float& fps, int& frames, uint64_t& fpsLastTime, bool& running)
+	vector<float>& scrollPositions, uint64_t& prevTime)
 {
 	// Event polling loop
 	SDL_Event e;
@@ -213,9 +212,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 		{
 			case SDL_EVENT_QUIT:
 			{
-				running = false;
-
-				break;
+				exit(0);
 			}
 
 			case SDL_EVENT_WINDOW_RESIZED:
@@ -317,16 +314,6 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 
 	uint64_t nowTime = SDL_GetTicks();
 	float deltaTime = (float)(nowTime - prevTime) / 1000;    // Convert to seconds
-
-	// Increment the frame count
-	frames++;
-	uint64_t fpsNow = SDL_GetTicks();
-	if (fpsNow - fpsLastTime >= 1000)
-	{
-		fps = frames * 1000.0f / (fpsNow - fpsLastTime);
-		frames = 0;
-		fpsLastTime = fpsNow;
-	}
 
 	for (auto& layer : game.layers)
 	{
@@ -530,20 +517,6 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 		game.player().clearCollider();
 		game.player().addCollider(INVINCIBLE_COLLISION);
 	}
-
-	// Dark blue: #173F6C
-	SDL_SetRenderDrawColor(sdl.renderer, 23, 63, 108, 255);
-
-	// Display FPS
-	string fpsText = std::format("FPS: {:.1f}", fps);
-	SDL_RenderDebugText(sdl.renderer, 5, 5, fpsText.c_str());
-
-	// Display the game score and the number of biomes completed
-	string scoreText = format("Score: {:.1f}", game.getScore());
-	SDL_RenderDebugText(sdl.renderer, 165, 5, scoreText.c_str());
-
-	// White color
-	SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
 
 	// Temporarily switch to “real pixels” for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
@@ -840,8 +813,16 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	// Restart button
 	if (game.ui.restart.isReleased())
 	{
+		// Debug
+		cout << "Restarting the game! Next state: playing!" << endl;
+
+		// Change the states for the screen
+		game.prevScreen = ScreenState::playingPause;
+		game.screen = ScreenState::transition;
+		game.nextScreen = ScreenState::playing;
+
 		// Reset the game
-		resetGame(sdl, game, res, scrollPositions);
+		/*resetGame(sdl, game, res, scrollPositions);
 
 		// Start the game immidiately
 		// Switch the UI to the play screen
@@ -854,7 +835,7 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		game.player().setState(PlayerState::running);
 
 		// Set monster to chasing state
-		game.monster().setState(MonsterState::chasing);
+		game.monster().setState(MonsterState::chasing);*/
 	}
 
 	// Continue button
@@ -1034,8 +1015,16 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 	// Restart button
 	if (game.ui.restart.isReleased())
 	{
+		// Debug
+		cout << "Restarting the game! Next screen: playing" << endl;
+
+		// Change the states for the screen
+		game.prevScreen = ScreenState::playingPause;
+		game.screen = ScreenState::transition;
+		game.nextScreen = ScreenState::playing;
+
 		// Reset the game
-		resetGame(sdl, game, res, scrollPositions);
+		/*resetGame(sdl, game, res, scrollPositions);
 
 		// Start the game immidiately
 		// Switch the UI to the play screen
@@ -1048,7 +1037,7 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 		game.player().setState(PlayerState::running);
 
 		// Set monster to chasing state
-		game.monster().setState(MonsterState::chasing);
+		game.monster().setState(MonsterState::chasing);*/
 	}
 
 	// Main menu button
@@ -1207,6 +1196,10 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 		{
 			runHomeScreen(sdl, game, res, scrollPositions, prevTime);
 		}
+		else if (game.nextScreen == ScreenState::playing)
+		{
+			runPlayingFrame(sdl, game, res, scrollPositions, prevTime);
+		}
 
 		// Step animation
 		game.transition.getAnimations()[game.transition.getCurrentAnimation()].step(deltaTime);
@@ -1234,5 +1227,27 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 
 		// Switch to next screen
 		game.screen = game.nextScreen;
+
+		if (game.screen == ScreenState::playing)
+		{
+			// Debug
+			cout << "Restarted! Starts playing..." << endl;
+
+			// Reset the game
+			resetGame(sdl, game, res, scrollPositions);
+
+			// Start the game immidiately
+			// Switch the UI to the play screen
+			game.ui.switchToPlayScreen();
+
+			// Change the screen state
+			game.screen = ScreenState::playing;
+
+			// Set the player to the running state
+			game.player().setState(PlayerState::running);
+
+			// Set monster to chasing state
+			game.monster().setState(MonsterState::chasing);
+		}
 	}
 }
