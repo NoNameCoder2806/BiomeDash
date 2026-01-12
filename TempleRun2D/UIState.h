@@ -46,6 +46,10 @@ const glm::vec2 CREDITS_MARGIN({ 0.585, 0.495 });
 const glm::vec2 MAIN_MENU_SIZE({ 520, 80 });
 const glm::vec2 MAIN_MENU_MARGIN({ 0.5, 0.67 });
 
+// AVATAR BUTTON
+const glm::vec2 AVATAR_SIZE({ 400, 215 });
+const glm::vec2 AVATAR_MARGIN({ 0.05, 0.065 });
+
 // UIState struct
 struct UIState
 {
@@ -66,7 +70,7 @@ struct UIState
 	UIButton mainMenu;
 
 	// Top left avatar
-	//UIButton profile;
+	UIButton avatar;
 	//UIButton changeName;
 
 	// Select button
@@ -99,6 +103,9 @@ struct UIState
 	
 		// Main Menu button
 		mainMenu = UIButton(renderer, res, "mainMenu", MAIN_MENU_SIZE, MAIN_MENU_MARGIN);
+	
+		// Avatar button
+		avatar = UIButton(renderer, res, "avatar", AVATAR_SIZE, AVATAR_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -126,6 +133,9 @@ struct UIState
 
 		// Main Menu button
 		mainMenu.render(state);
+
+		// Avatar button
+		avatar.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -140,6 +150,7 @@ struct UIState
 		restart.updateClicked(mouseX, mouseY, clicked, sdl);
 		credits.updateClicked(mouseX, mouseY, clicked, sdl);
 		mainMenu.updateClicked(mouseX, mouseY, clicked, sdl);
+		avatar.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -184,6 +195,10 @@ struct UIState
 		// ----- MAIN MENU BUTTON -----
 		// Not visible
 		mainMenu.setVisible(false);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
 	}
 
 	void switchToPlayScreen()
@@ -228,6 +243,10 @@ struct UIState
 		// ----- MAIN MENU BUTTON -----
 		// Not visible
 		mainMenu.setVisible(false);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
 	}
 
 	void switchToHomePauseScreen()
@@ -272,6 +291,10 @@ struct UIState
 		// ----- MAIN MENU BUTTON -----
 		// Not visible
 		mainMenu.setVisible(false);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -316,6 +339,10 @@ struct UIState
 		// ----- MAIN MENU BUTTON -----
 		// Not visible
 		mainMenu.setVisible(false);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
 	}
 
 	void switchToGameOverScreen()
@@ -360,5 +387,9 @@ struct UIState
 		// ----- MAIN MENU BUTTON -----
 		// Visible
 		mainMenu.setVisible(true);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
 	}
 };

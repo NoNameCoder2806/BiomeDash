@@ -83,9 +83,7 @@ extern std::unordered_map<std::string, Biome> biomeTexturesMap;
 // FUNCTION PROTOTYPES
 // ----- I/ SCREENS -----
 void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
-//void runPauseScreen(SDLState& sdl, ScreenState& currentScreen);
-void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
-    std::vector<float>& scrollPositions, uint64_t& prevTimee);
+void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTimee);
 void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
