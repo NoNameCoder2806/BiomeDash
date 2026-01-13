@@ -121,6 +121,15 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 		game.monster().setState(MonsterState::chasing);
 	}
 
+	// Heroes Button
+	if (game.ui.heroes.isReleased())
+	{
+		// Switch the UI to the change player screen
+
+		// Change the screen state
+		game.screen = ScreenState::changePlayer;
+	}
+
 	// Compute deltaTime like runPlayingFrame
 	uint64_t nowTime = SDL_GetTicks();
 	float deltaTime = (float)(nowTime - prevTime) / 1000.0f;

@@ -177,6 +177,12 @@ int main(int argc, char* argv[])
 				break;
 			}
 
+			case ScreenState::changePlayer:
+			{
+				runChangePlayerScreen(sdl, game, res, scrollPositions, prevTime);
+				break;
+			}
+
 			case ScreenState::exit:
 			{
 				running = false;
