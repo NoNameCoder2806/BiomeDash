@@ -35,6 +35,10 @@
 #include <unordered_map>
 
 // Constants
+// Screen size
+const glm::vec2 NORMAL_SCREEN = { 544.0f, 306.0f };
+const glm::vec2 ZOOMED_SCREEN = { 160.0f, 90.0f };
+
 // Game tiles / characters index
 const int PLAYER_INDEX = 1;
 const int MONSTER_INDEX = 2;

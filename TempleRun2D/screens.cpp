@@ -1276,52 +1276,59 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		switch (e.type)
 		{
 		case SDL_EVENT_QUIT: exit(0);
-
 		case SDL_EVENT_WINDOW_RESIZED:
 			sdl.width = e.window.data1;
 			sdl.height = e.window.data2;
 			break;
-
 		case SDL_EVENT_KEY_DOWN:
 		case SDL_EVENT_KEY_UP:
-			// Optional: handle keys for UI navigation
 			break;
 		}
 	}
 
-	// --- UI Buttons logic ---
-	float mouseX, mouseY;
-	Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
-	bool leftPressed = mouseState & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
-	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
+	// --- Zoom parameters ---
+	const float zoom = 2.0f;  // 2x zoom
+	float centerX = sdl.logW / 2.0f; // center of zoom in world coordinates
+	float centerY = sdl.logH / 2.0f;
 
-	// --- Determine zoom target ---
-	float zoomMultiplier = 0.5f; // 50% of screen
-	float targetViewportW = sdl.logW * zoomMultiplier;
-	float targetViewportH = sdl.logH * zoomMultiplier;
-	float targetZoom = sdl.logW / targetViewportW;
+	// --- Focus rectangle in world coordinates ---
+	SDL_FRect focus = {
+		focus.w = sdl.logW / zoom - 100,
+		focus.h = sdl.logH / zoom,
+		focus.x = centerX - focus.w / 2.0f,
+		focus.y = centerY
+	};
 
-	// Player center
-	float playerX = game.player().getPosition().x + TILE_SIZE / 2;
-	float playerY = game.player().getPosition().y + TILE_SIZE / 2;
+	// --- Destination rectangle on the window ---
+	SDL_FRect dst = {
+		dst.x = 0,
+		dst.y = 0,
+		dst.w = (float)sdl.width,
+		dst.h = (float)sdl.height
+	};
 
-	float targetX = playerX - targetViewportW / 2;
-	float targetY = playerY - targetViewportH / 2;
+	// --- Create world texture once ---
+	static SDL_Texture* worldTex = nullptr;
+	if (!worldTex)
+	{
+		worldTex = SDL_CreateTexture(
+			sdl.renderer,
+			SDL_PIXELFORMAT_RGBA8888,
+			SDL_TEXTUREACCESS_TARGET,
+			sdl.logW,  // logical world width
+			sdl.logH
+		);
+	}
 
-	// Smooth interpolation
-	float speed = 4.0f; // higher = faster zoom
-	game.mapViewport.x += (targetX - game.mapViewport.x) * deltaTime * speed;
-	game.mapViewport.y += (targetY - game.mapViewport.y) * deltaTime * speed;
-	game.mapViewport.w += (targetViewportW - game.mapViewport.w) * deltaTime * speed;
-	game.mapViewport.h += (targetViewportH - game.mapViewport.h) * deltaTime * speed;
-
-	// --- Draw background ---
-	SDL_SetRenderDrawColor(sdl.renderer, 128, 0, 128, 255); // dark purple
+	// --- Render everything to the world texture ---
+	SDL_SetRenderTarget(sdl.renderer, worldTex);
+	SDL_SetRenderDrawColor(sdl.renderer, 0, 0, 0, 255);
 	SDL_RenderClear(sdl.renderer);
 
+	// Draw background
 	SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
 
-	// --- Draw parallax layers ---
+	// Draw parallax layers
 	int layerCount = stoi(game.currentBiome->parallaxBackgrounds);
 	if (scrollPositions.size() != res.parallaxBackgrounds.size())
 		scrollPositions.resize(res.parallaxBackgrounds.size());
@@ -1333,26 +1340,20 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 			0, // freeze movement
 			scrollPositions[i],
 			scrollFactor,
-			deltaTime); // only update animation
+			deltaTime);
 	}
 
-	// --- Draw game objects but freeze movement ---
+	// Draw game objects (animations frozen)
 	for (auto& layer : game.layers)
-	{
 		for (auto& objPtr : layer)
-		{
-			GameObject& obj = *objPtr;
+			drawObject(sdl, game, *objPtr, 0.0f);
 
-			// Only step animations
-			if (obj.getCurrentAnimation() != -1)
-				obj.getAnimations().at(obj.getCurrentAnimation()).step(deltaTime);
+	// --- Back to screen ---
+	SDL_SetRenderTarget(sdl.renderer, nullptr);
 
-			drawObject(sdl, game, obj, deltaTime);
-		}
-	}
-
-	// --- Draw UI on top ---
-	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+	// Render the UI
 	game.ui.render(sdl);
-	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
+	// --- Render the zoomed portion to the screen ---
+	SDL_RenderTexture(sdl.renderer, worldTex, &focus, &dst);
 }

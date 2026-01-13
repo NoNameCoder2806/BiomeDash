@@ -6,7 +6,9 @@ using namespace std;
 // ----- I/ BIOME RESET -----
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 {
-	cout << "Reseting the resources and game state" << endl;
+	// Debug
+	//cout << "Reseting the resources and game state" << endl;
+	
 	// Set the world ready flag to false
 	gs.worldReady = false;
 
