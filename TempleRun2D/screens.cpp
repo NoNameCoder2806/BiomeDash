@@ -1102,7 +1102,7 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 }
 
-// ----- TRANSITION SCREEN -----
+// ----- VI/ TRANSITION SCREEN -----
 void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
 	// Debug
@@ -1250,4 +1250,100 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 			game.monster().setState(MonsterState::chasing);
 		}
 	}
+}
+
+// ----- VII/ CHANGE PLAYER -----
+void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
+{
+	// --- Compute deltaTime ---
+	uint64_t nowTime = SDL_GetTicks();
+	float deltaTime = (float)(nowTime - prevTime) / 1000.0f;
+	prevTime = nowTime;
+
+	// --- Event polling ---
+	SDL_Event e;
+	while (SDL_PollEvent(&e))
+	{
+		switch (e.type)
+		{
+		case SDL_EVENT_QUIT: exit(0);
+
+		case SDL_EVENT_WINDOW_RESIZED:
+			sdl.width = e.window.data1;
+			sdl.height = e.window.data2;
+			break;
+
+		case SDL_EVENT_KEY_DOWN:
+		case SDL_EVENT_KEY_UP:
+			// Optional: handle keys for UI navigation
+			break;
+		}
+	}
+
+	// --- UI Buttons logic ---
+	float mouseX, mouseY;
+	Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+	bool leftPressed = mouseState & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
+	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
+
+	// --- Determine zoom target ---
+	float zoomMultiplier = 0.5f; // 50% of screen
+	float targetViewportW = sdl.logW * zoomMultiplier;
+	float targetViewportH = sdl.logH * zoomMultiplier;
+	float targetZoom = sdl.logW / targetViewportW;
+
+	// Player center
+	float playerX = game.player().getPosition().x + TILE_SIZE / 2;
+	float playerY = game.player().getPosition().y + TILE_SIZE / 2;
+
+	float targetX = playerX - targetViewportW / 2;
+	float targetY = playerY - targetViewportH / 2;
+
+	// Smooth interpolation
+	float speed = 4.0f; // higher = faster zoom
+	game.mapViewport.x += (targetX - game.mapViewport.x) * deltaTime * speed;
+	game.mapViewport.y += (targetY - game.mapViewport.y) * deltaTime * speed;
+	game.mapViewport.w += (targetViewportW - game.mapViewport.w) * deltaTime * speed;
+	game.mapViewport.h += (targetViewportH - game.mapViewport.h) * deltaTime * speed;
+
+	// --- Draw background ---
+	SDL_SetRenderDrawColor(sdl.renderer, 128, 0, 128, 255); // dark purple
+	SDL_RenderClear(sdl.renderer);
+
+	SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
+
+	// --- Draw parallax layers ---
+	int layerCount = stoi(game.currentBiome->parallaxBackgrounds);
+	if (scrollPositions.size() != res.parallaxBackgrounds.size())
+		scrollPositions.resize(res.parallaxBackgrounds.size());
+
+	for (int i = 0; i < layerCount; i++)
+	{
+		float scrollFactor = 0.75f * (i + 1) / layerCount;
+		drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i],
+			0, // freeze movement
+			scrollPositions[i],
+			scrollFactor,
+			deltaTime); // only update animation
+	}
+
+	// --- Draw game objects but freeze movement ---
+	for (auto& layer : game.layers)
+	{
+		for (auto& objPtr : layer)
+		{
+			GameObject& obj = *objPtr;
+
+			// Only step animations
+			if (obj.getCurrentAnimation() != -1)
+				obj.getAnimations().at(obj.getCurrentAnimation()).step(deltaTime);
+
+			drawObject(sdl, game, obj, deltaTime);
+		}
+	}
+
+	// --- Draw UI on top ---
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+	game.ui.render(sdl);
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 }

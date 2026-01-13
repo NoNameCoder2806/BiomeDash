@@ -88,6 +88,7 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
+void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 
 // ----- II/ GAME LOGIC -----
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res);
