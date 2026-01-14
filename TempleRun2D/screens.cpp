@@ -199,7 +199,7 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 	//SDL_RenderDebugText(sdl.renderer, 400, 650, "Press ESC to quit");
 	//SDL_RenderDebugText(sdl.renderer, 400, 700, "Press F11 to toggle fullscreen");
 
-	// Temporarily switch to “real pixels” for UI
+	// Temporarily switch to "real pixels" for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 
 	// Draw the buttons
@@ -1261,53 +1261,37 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 	}
 }
 
-// ----- VII/ CHANGE PLAYER -----
+// ----- VII / CHANGE PLAYER -----
 void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
-	// --- Compute deltaTime ---
-	uint64_t nowTime = SDL_GetTicks();
-	float deltaTime = (float)(nowTime - prevTime) / 1000.0f;
-	prevTime = nowTime;
-
-	// --- Event polling ---
+	// ---------------- Events ----------------
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
-		switch (e.type)
+		if (e.type == SDL_EVENT_QUIT)
+			exit(0);
+
+		if (e.type == SDL_EVENT_WINDOW_RESIZED)
 		{
-		case SDL_EVENT_QUIT: exit(0);
-		case SDL_EVENT_WINDOW_RESIZED:
 			sdl.width = e.window.data1;
 			sdl.height = e.window.data2;
-			break;
-		case SDL_EVENT_KEY_DOWN:
-		case SDL_EVENT_KEY_UP:
-			break;
 		}
 	}
 
-	// --- Zoom parameters ---
-	const float zoom = 2.0f;  // 2x zoom
-	float centerX = sdl.logW / 2.0f; // center of zoom in world coordinates
-	float centerY = sdl.logH / 2.0f;
+	// ---------------- Delta time ----------------
+	uint64_t nowTime = SDL_GetTicks();
+	float deltaTime = (nowTime - prevTime) / 1000.0f;
+	prevTime = nowTime;
 
-	// --- Focus rectangle in world coordinates ---
-	SDL_FRect focus = {
-		focus.w = sdl.logW / zoom - 100,
-		focus.h = sdl.logH / zoom,
-		focus.x = centerX - focus.w / 2.0f,
-		focus.y = centerY
-	};
+	// ---------------- Fixed logical world ----------------
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		sdl.logW,
+		sdl.logH,
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	);
 
-	// --- Destination rectangle on the window ---
-	SDL_FRect dst = {
-		dst.x = 0,
-		dst.y = 0,
-		dst.w = (float)sdl.width,
-		dst.h = (float)sdl.height
-	};
-
-	// --- Create world texture once ---
+	// ---------------- Create world texture ONCE ----------------
 	static SDL_Texture* worldTex = nullptr;
 	if (!worldTex)
 	{
@@ -1315,48 +1299,92 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 			sdl.renderer,
 			SDL_PIXELFORMAT_RGBA8888,
 			SDL_TEXTUREACCESS_TARGET,
-			sdl.logW,  // logical world width
+			sdl.logW,
 			sdl.logH
 		);
+
+		SDL_SetTextureScaleMode(worldTex, SDL_SCALEMODE_NEAREST);
 	}
 
-	// --- Render everything to the world texture ---
+	// ---------------- Render WORLD ----------------
 	SDL_SetRenderTarget(sdl.renderer, worldTex);
 	SDL_SetRenderDrawColor(sdl.renderer, 0, 0, 0, 255);
 	SDL_RenderClear(sdl.renderer);
 
-	// Draw background
+	// Background
 	SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
 
-	// Draw parallax layers
-	int layerCount = stoi(game.currentBiome->parallaxBackgrounds);
+	// Parallax
+	int layerCount = std::stoi(game.currentBiome->parallaxBackgrounds);
 	if (scrollPositions.size() != res.parallaxBackgrounds.size())
 		scrollPositions.resize(res.parallaxBackgrounds.size());
 
 	for (int i = 0; i < layerCount; i++)
 	{
 		float scrollFactor = 0.75f * (i + 1) / layerCount;
-		drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i],
-			0, // freeze movement
+		drawParalaxBackground(
+			sdl.renderer,
+			res.parallaxBackgrounds[i],
+			0,
 			scrollPositions[i],
 			scrollFactor,
-			deltaTime);
+			deltaTime
+		);
 	}
 
-	// Draw game objects (animations frozen)
+	// Objects
 	for (auto& layer : game.layers)
+	{
 		for (auto& objPtr : layer)
-			drawObject(sdl, game, *objPtr, 0.0f);
+		{
+			GameObject& obj = *objPtr;
 
-	// --- Back to screen ---
+			if (obj.getCurrentAnimation() != -1)
+				obj.getAnimations().at(obj.getCurrentAnimation()).step(deltaTime);
+
+			drawObject(sdl, game, obj, deltaTime);
+		}
+	}
+
 	SDL_SetRenderTarget(sdl.renderer, nullptr);
 
-	// Render the UI
+	// ---------------- CAMERA ----------------
+	const float zoom = 2.0f;
+
+	float camW = sdl.logW / zoom;
+	float camH = sdl.logH / zoom;
+
+	float targetX = game.player().getPosition().x + TILE_SIZE / 2.0f;
+	float targetY = game.player().getPosition().y + TILE_SIZE / 2.0f;
+
+	SDL_FRect src;
+	src.w = camW;
+	src.h = camH;
+	src.x = targetX - camW / 2.0f;
+	src.y = targetY - camH / 2.0f;
+
+	// Clamp camera to world
+	if (src.x < 0) src.x = 0;
+	if (src.y < 0) src.y = 0;
+	if (src.x + src.w > sdl.logW) src.x = sdl.logW - src.w;
+	if (src.y + src.h > sdl.logH) src.y = sdl.logH - src.h;
+
+	SDL_FRect dst = {
+		0,
+		0,
+		(float)sdl.width,
+		(float)sdl.height
+	};
+
+	SDL_RenderTexture(sdl.renderer, worldTex, &src, &dst);
+
+	// ---------------- UI ----------------
 	game.ui.render(sdl);
 
-	// Use nearest neighbor to fix the blurr 
-	SDL_SetTextureScaleMode(worldTex, SDL_SCALEMODE_NEAREST);
-
-	// --- Render the zoomed portion to the screen ---
-	SDL_RenderTexture(sdl.renderer, worldTex, &focus, &dst);
+	// ---------------- Debug ----------------
+	cout << "[CAMERA]\n";
+	cout << "  src: x=" << src.x << " y=" << src.y
+		<< " w=" << src.w << " h=" << src.h << endl;
+	cout << "  window: " << sdl.width << "x" << sdl.height << endl;
+	cout << "  logical: " << sdl.logW << "x" << sdl.logH << endl;
 }
