@@ -1,4 +1,4 @@
-#include "TempleRun2D.h"
+ï»¿#include "TempleRun2D.h"
 
 using namespace std;
 
@@ -199,7 +199,7 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 	//SDL_RenderDebugText(sdl.renderer, 400, 650, "Press ESC to quit");
 	//SDL_RenderDebugText(sdl.renderer, 400, 700, "Press F11 to toggle fullscreen");
 
-	// Temporarily switch to “real pixels” for UI
+	// Temporarily switch to â€œreal pixelsâ€ for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 
 	// Draw the buttons
@@ -527,7 +527,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 		game.player().addCollider(INVINCIBLE_COLLISION);
 	}
 
-	// Temporarily switch to “real pixels” for UI
+	// Temporarily switch to â€œreal pixelsâ€ for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 
 	// Draw the buttons
@@ -1353,6 +1353,9 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 	// Render the UI
 	game.ui.render(sdl);
+
+	// Use nearest neighbor to fix the blurr 
+	SDL_SetTextureScaleMode(worldTex, SDL_SCALEMODE_NEAREST);
 
 	// --- Render the zoomed portion to the screen ---
 	SDL_RenderTexture(sdl.renderer, worldTex, &focus, &dst);
