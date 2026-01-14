@@ -1264,6 +1264,15 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 // ----- VII / CHANGE PLAYER -----
 void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		0,
+		0,
+		SDL_LOGICAL_PRESENTATION_DISABLED
+	);
+
+	SDL_SetRenderViewport(sdl.renderer, nullptr);
+
 	// ---------------- Events ----------------
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
@@ -1282,14 +1291,6 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	uint64_t nowTime = SDL_GetTicks();
 	float deltaTime = (nowTime - prevTime) / 1000.0f;
 	prevTime = nowTime;
-
-	// ---------------- Fixed logical world ----------------
-	SDL_SetRenderLogicalPresentation(
-		sdl.renderer,
-		sdl.logW,
-		sdl.logH,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
-	);
 
 	// ---------------- Create world texture ONCE ----------------
 	static SDL_Texture* worldTex = nullptr;
@@ -1350,32 +1351,37 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 	// ---------------- CAMERA ----------------
 	const float zoom = 2.0f;
-
 	float camW = sdl.logW / zoom;
 	float camH = sdl.logH / zoom;
 
-	float targetX = game.player().getPosition().x + TILE_SIZE / 2.0f;
-	float targetY = game.player().getPosition().y + TILE_SIZE / 2.0f;
+	// My "INVENTION"
+	// Basically, we calculate the space we zoomed in, 
+	// then take the remaining and divide by 2 to have the starting point
+	float leftOverW = sdl.logW - sdl.logW / zoom;
+	float startingX = leftOverW / 2.0f;
+	float startingY = sdl.logH - sdl.logH / zoom;
 
+	// Player center in world coordinates (match texture space)
+	float playerCenterX = game.player().getPosition().x + TILE_SIZE / 2.0f;
+	float playerCenterY = game.player().getPosition().y + TILE_SIZE / 2.0f;
+
+	// camera rect in worldTex coordinates
 	SDL_FRect src;
 	src.w = camW;
 	src.h = camH;
-	src.x = targetX - camW / 2.0f;
-	src.y = targetY - camH / 2.0f;
+	src.x = startingX;
+	src.y = startingY;
+	//src.x = (playerCenterX - camW / zoom) / 2.0f;
+	//src.y = playerCenterY - camH / zoom;
 
-	// Clamp camera to world
+	// Clamp camera to world bounds
 	if (src.x < 0) src.x = 0;
 	if (src.y < 0) src.y = 0;
-	if (src.x + src.w > sdl.logW) src.x = sdl.logW - src.w;
-	if (src.y + src.h > sdl.logH) src.y = sdl.logH - src.h;
+	if (src.x + camW > sdl.logW) src.x = sdl.logW - camW;
+	if (src.y + camH > sdl.logH) src.y = sdl.logH - camH;
 
-	SDL_FRect dst = {
-		0,
-		0,
-		(float)sdl.width,
-		(float)sdl.height
-	};
-
+	// Draw to full window
+	SDL_FRect dst = { 0, 0, (float)sdl.width, (float)sdl.height };
 	SDL_RenderTexture(sdl.renderer, worldTex, &src, &dst);
 
 	// ---------------- UI ----------------
@@ -1387,4 +1393,8 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		<< " w=" << src.w << " h=" << src.h << endl;
 	cout << "  window: " << sdl.width << "x" << sdl.height << endl;
 	cout << "  logical: " << sdl.logW << "x" << sdl.logH << endl;
+
+	cout << "[PLAYER] x=" << playerCenterX
+		<< " camLeft=" << src.x
+		<< " camRight=" << (src.x + src.w) << endl;
 }
