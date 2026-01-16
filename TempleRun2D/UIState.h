@@ -424,4 +424,108 @@ struct UIState
 		// Not visible
 		heroes.setVisible(false);
 	}
+
+	void switchToChangePlayerTransitionScreen()
+	{
+		// ----- PAUSE BUTTON -----
+		// Visible and not toggled
+		pause.setVisible(true);
+		pause.setToggled(false);
+
+		// ----- PLAY BUTTON -----
+		// Not visible
+		play.setVisible(false);
+
+		// ----- PAUSE PANEL -----
+		// Not visible
+		pausePanel.setVisible(false);
+
+		// ----- EXIT BUTTON -----
+		// Not visible
+		exit.setVisible(false);
+
+		// ----- HOME BUTTON -----
+		// Not visible
+		home.setVisible(false);
+
+		// ----- CONTINUE BUTTON -----
+		// Not visible
+		continueGame.setVisible(false);
+
+		// ----- VOLUME BUTTON -----
+		// Not visible
+		volume.setVisible(false);
+
+		// ----- RESTART BUTTON -----
+		// Not visible
+		restart.setVisible(false);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(false);
+
+		// ----- MAIN MENU BUTTON -----
+		// Not visible
+		mainMenu.setVisible(false);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
+
+		// HEROES BUTTON
+		// Not visible
+		heroes.setVisible(false);
+	}
+
+	void switchToChangePlayerScreen()
+	{
+		// ----- PAUSE BUTTON -----
+		// Visible and not toggled
+		pause.setVisible(true);
+		pause.setToggled(false);
+
+		// ----- PLAY BUTTON -----
+		// Not visible
+		play.setVisible(false);
+
+		// ----- PAUSE PANEL -----
+		// Not visible
+		pausePanel.setVisible(false);
+
+		// ----- EXIT BUTTON -----
+		// Not visible
+		exit.setVisible(false);
+
+		// ----- HOME BUTTON -----
+		// Not visible
+		home.setVisible(false);
+
+		// ----- CONTINUE BUTTON -----
+		// Not visible
+		continueGame.setVisible(false);
+
+		// ----- VOLUME BUTTON -----
+		// Not visible
+		volume.setVisible(false);
+
+		// ----- RESTART BUTTON -----
+		// Not visible
+		restart.setVisible(false);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(false);
+
+		// ----- MAIN MENU BUTTON -----
+		// Not visible
+		mainMenu.setVisible(false);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
+
+		// HEROES BUTTON
+		// Not visible
+		heroes.setVisible(false);
+	}
 };

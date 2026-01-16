@@ -125,9 +125,11 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 	if (game.ui.heroes.isReleased())
 	{
 		// Switch the UI to the change player screen
+		game.ui.switchToChangePlayerTransitionScreen();
 
 		// Change the screen state
 		game.screen = ScreenState::changePlayer;
+		game.nextScreen = ScreenState::changePlayer;
 
 		// Change the target zoom
 		game.targetZoom = 3.0f;
@@ -1276,7 +1278,7 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 	SDL_SetRenderViewport(sdl.renderer, nullptr);
 
-	// ---------------- Events ----------------
+	// Events
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
@@ -1290,12 +1292,12 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		}
 	}
 
-	// ---------------- Delta time ----------------
+	// Delta time
 	uint64_t nowTime = SDL_GetTicks();
 	float deltaTime = (nowTime - prevTime) / 1000.0f;
 	prevTime = nowTime;
 
-	// ---------------- Create world texture ONCE ----------------
+	// Create world texture ONCE
 	static SDL_Texture* worldTex = nullptr;
 	if (!worldTex)
 	{
@@ -1310,7 +1312,7 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		SDL_SetTextureScaleMode(worldTex, SDL_SCALEMODE_NEAREST);
 	}
 
-	// ---------------- Render WORLD ----------------
+	// Render WORLD
 	SDL_SetRenderTarget(sdl.renderer, worldTex);
 	SDL_SetRenderDrawColor(sdl.renderer, 0, 0, 0, 255);
 	SDL_RenderClear(sdl.renderer);
@@ -1352,7 +1354,7 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 	SDL_SetRenderTarget(sdl.renderer, nullptr);
 
-	// ---------------- CAMERA ----------------
+	// The camera zoom rate and destination calculation
 	float zoom = 0.0f;
 
 	// Determine whether its zooming in or out
@@ -1361,6 +1363,23 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	if (fabs(game.cameraZoom - game.targetZoom) <= 0.02f)
 	{
 		zoom = game.cameraZoom;
+
+		// Change the UI based on whether its zooming in or out
+		// If zooming in
+		if (fabs(game.cameraZoom - 3.0f) <= 0.02f && game.nextScreen == ScreenState::changePlayer)
+		{
+			// Change the UI to changePlayer screen
+			game.ui.switchToChangePlayerScreen();
+		}
+		// If zooming out
+		else if (fabs(game.cameraZoom - 1.0f) <= 0.02f && game.nextScreen == ScreenState::home)
+		{
+			// Change the UI to home screen
+			game.ui.switchToHomeScreen();
+
+			// Change the ScreenState
+			game.screen = ScreenState::home;
+		}
 	}
 	// Zooming in
 	else if (game.cameraZoom < game.targetZoom)
@@ -1408,19 +1427,6 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	SDL_FRect dst = { 0, 0, (float)sdl.width, (float)sdl.height };
 	SDL_RenderTexture(sdl.renderer, worldTex, &src, &dst);
 
-	// ---------------- UI ----------------
+	// Render the UI
 	game.ui.render(sdl);
-
-	// ---------------- Debug ----------------
-	cout << "[CAMERA]\n";
-	cout << "  src: x=" << src.x << " y=" << src.y
-		<< " w=" << src.w << " h=" << src.h << endl;
-	cout << "  window: " << sdl.width << "x" << sdl.height << endl;
-	cout << "  logical: " << sdl.logW << "x" << sdl.logH << endl;
-
-	cout << "[PLAYER] x=" << playerCenterX
-		<< " camLeft=" << src.x
-		<< " camRight=" << (src.x + src.w) << endl;
-
-	cout << "Zoom rate: " << zoom << endl;
 }
