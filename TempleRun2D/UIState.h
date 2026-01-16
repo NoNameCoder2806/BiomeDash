@@ -55,8 +55,8 @@ const glm::vec2 HEROES_SIZE({ 260, 80 });
 const glm::vec2 HEROES_MARGIN({ 0.5, 0.75 });
 
 // BACK BUTTON
-const glm::vec2 BACK_SIZE({ 260, 80 });
-const glm::vec2 BACK_MARGIN({ 0.5, 0.75 });
+const glm::vec2 BACK_SIZE({ 364, 112 });
+const glm::vec2 BACK_MARGIN({ 0.5, 0.25 });
 
 // UIState struct
 struct UIState

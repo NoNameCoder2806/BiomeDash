@@ -1306,17 +1306,20 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
 
 	// Check which buttons were clicked and act immediately
-	// Pause Button
-	if (game.ui.pause.isReleased())
+	// Back Button
+	if (game.ui.back.isReleased())
 	{
 		// Debug
 		//cout << "Switching to pause screen" << endl;
 
 		// Switch the UI to the home pause screen
-		game.ui.switchToHomePauseScreen();
+		game.ui.switchToChangePlayerTransitionScreen();
 
-		// Change the screen state
-		game.screen = ScreenState::homePause;
+		// Change the next screen state
+		game.nextScreen = ScreenState::home;
+
+		// Set the target zoom to 1.0f
+		game.targetZoom = 1.0f;
 	}
 
 	// Delta time
