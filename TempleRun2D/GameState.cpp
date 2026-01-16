@@ -54,6 +54,9 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 	prevScreen = ScreenState::home;
 	screen = ScreenState::home;
 	nextScreen = ScreenState::home;
+
+	cameraZoom = 1.0f;
+	targetZoom = 3.0f;
 }
 
 Player& GameState::player()                  // The player() function quickly returns

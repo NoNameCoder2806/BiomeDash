@@ -72,6 +72,10 @@ struct GameState
 	// Transition
 	Transition transition;
 
+	// Camera Zoom
+	float cameraZoom;
+	float targetZoom;
+
 	GameState(const SDLState& state, std::string biomeName = "Transition");
 
 	Player& player();                  // The player() function quickly returns

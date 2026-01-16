@@ -128,6 +128,9 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 
 		// Change the screen state
 		game.screen = ScreenState::changePlayer;
+
+		// Change the target zoom
+		game.targetZoom = 3.0f;
 	}
 
 	// Compute deltaTime like runPlayingFrame
@@ -1350,7 +1353,28 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	SDL_SetRenderTarget(sdl.renderer, nullptr);
 
 	// ---------------- CAMERA ----------------
-	const float zoom = 2.0f;
+	float zoom = 0.0f;
+
+	// Determine whether its zooming in or out
+	// No zooming
+	// If the absolute value of the zoom is within 0.001 from the target zoom
+	if (fabs(game.cameraZoom - game.targetZoom) <= 0.02f)
+	{
+		zoom = game.cameraZoom;
+	}
+	// Zooming in
+	else if (game.cameraZoom < game.targetZoom)
+	{
+		game.cameraZoom = game.cameraZoom * 1.01f;
+		zoom = game.cameraZoom;
+	}
+	// Zooming out
+	else if (game.cameraZoom > game.targetZoom)
+	{
+		game.cameraZoom = game.cameraZoom * 0.99f;
+		zoom = game.cameraZoom;
+	}
+
 	float camW = sdl.logW / zoom;
 	float camH = sdl.logH / zoom;
 
@@ -1397,4 +1421,6 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	cout << "[PLAYER] x=" << playerCenterX
 		<< " camLeft=" << src.x
 		<< " camRight=" << (src.x + src.w) << endl;
+
+	cout << "Zoom rate: " << zoom << endl;
 }
