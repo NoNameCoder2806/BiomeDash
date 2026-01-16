@@ -54,6 +54,10 @@ const glm::vec2 AVATAR_MARGIN({ 0.05, 0.065 });
 const glm::vec2 HEROES_SIZE({ 260, 80 });
 const glm::vec2 HEROES_MARGIN({ 0.5, 0.75 });
 
+// BACK BUTTON
+const glm::vec2 BACK_SIZE({ 260, 80 });
+const glm::vec2 BACK_MARGIN({ 0.5, 0.75 });
+
 // UIState struct
 struct UIState
 {
@@ -79,6 +83,7 @@ struct UIState
 
 	// Change hero and pet
 	UIButton heroes;
+	UIButton back;
 	//UIButton select;
 
 	// Default constructor
@@ -114,6 +119,7 @@ struct UIState
 
 		// Heroes and Pet buttons
 		heroes = UIButton(renderer, res, "heroes", HEROES_SIZE, HEROES_MARGIN);
+		back = UIButton(renderer, res, "back", BACK_SIZE, BACK_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -145,8 +151,9 @@ struct UIState
 		// Avatar button
 		avatar.render(state);
 
-		// Heroes button
+		// Change Heroes, Back and Select buttons
 		heroes.render(state);
+		back.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -163,6 +170,7 @@ struct UIState
 		mainMenu.updateClicked(mouseX, mouseY, clicked, sdl);
 		avatar.updateClicked(mouseX, mouseY, clicked, sdl);
 		heroes.updateClicked(mouseX, mouseY, clicked, sdl);
+		back.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -212,9 +220,13 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
-		// HEROES BUTTON
+		// ----- HEROES BUTTON -----
 		// Visible
 		heroes.setVisible(true);
+
+		// ----- BACK BUTTON -----
+		// Not visible
+		back.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -264,9 +276,13 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
-		// HEROES BUTTON
+		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
+
+		// ----- BACK BUTTON -----
+		// Not visible
+		back.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -316,9 +332,13 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
-		// HEROES BUTTON
+		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
+
+		// ----- BACK BUTTON -----
+		// Not visible
+		back.setVisible(false);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -368,9 +388,13 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
-		// HEROES BUTTON
+		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
+
+		// ----- BACK BUTTON -----
+		// Not visible
+		back.setVisible(false);
 	}
 
 	void switchToGameOverScreen()
@@ -420,9 +444,13 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
-		// HEROES BUTTON
+		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
+
+		// ----- BACK BUTTON -----
+		// Not visible
+		back.setVisible(false);
 	}
 
 	void switchToChangePlayerTransitionScreen()
@@ -472,9 +500,13 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
-		// HEROES BUTTON
+		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
+
+		// ----- BACK BUTTON -----
+		// Not visible
+		back.setVisible(false);
 	}
 
 	void switchToChangePlayerScreen()
@@ -524,8 +556,12 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
-		// HEROES BUTTON
+		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
+
+		// ----- BACK BUTTON -----
+		// Visible
+		back.setVisible(true);
 	}
 };
