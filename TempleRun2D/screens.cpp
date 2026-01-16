@@ -1292,6 +1292,33 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		}
 	}
 
+	// UI Buttons logic update
+	float mouseX;
+	float mouseY;
+
+	// Get the mouse state
+	Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+
+	// Whether the mouse was left-clicked
+	bool leftPressed = mouseState & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
+
+	// Update the UI Buttons
+	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
+
+	// Check which buttons were clicked and act immediately
+	// Pause Button
+	if (game.ui.pause.isReleased())
+	{
+		// Debug
+		//cout << "Switching to pause screen" << endl;
+
+		// Switch the UI to the home pause screen
+		game.ui.switchToHomePauseScreen();
+
+		// Change the screen state
+		game.screen = ScreenState::homePause;
+	}
+
 	// Delta time
 	uint64_t nowTime = SDL_GetTicks();
 	float deltaTime = (nowTime - prevTime) / 1000.0f;

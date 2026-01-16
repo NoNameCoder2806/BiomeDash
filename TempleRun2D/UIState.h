@@ -456,9 +456,8 @@ struct UIState
 	void switchToChangePlayerTransitionScreen()
 	{
 		// ----- PAUSE BUTTON -----
-		// Visible and not toggled
-		pause.setVisible(true);
-		pause.setToggled(false);
+		// Not visible
+		pause.setVisible(false);
 
 		// ----- PLAY BUTTON -----
 		// Not visible
@@ -497,8 +496,8 @@ struct UIState
 		mainMenu.setVisible(false);
 
 		// ----- AVATAR BUTTON -----
-		// Visible
-		avatar.setVisible(true);
+		// Not visible
+		avatar.setVisible(false);
 
 		// ----- HEROES BUTTON -----
 		// Not visible
@@ -512,9 +511,8 @@ struct UIState
 	void switchToChangePlayerScreen()
 	{
 		// ----- PAUSE BUTTON -----
-		// Visible and not toggled
-		pause.setVisible(true);
-		pause.setToggled(false);
+		// Not visible
+		pause.setVisible(false);
 
 		// ----- PLAY BUTTON -----
 		// Not visible
@@ -553,8 +551,8 @@ struct UIState
 		mainMenu.setVisible(false);
 
 		// ----- AVATAR BUTTON -----
-		// Visible
-		avatar.setVisible(true);
+		// Not visible
+		avatar.setVisible(false);
 
 		// ----- HEROES BUTTON -----
 		// Not visible
