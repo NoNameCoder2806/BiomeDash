@@ -6,6 +6,17 @@ using namespace std;
 // ----- HOME SCREEN -----
 void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	// Make sure the game uses the correct render state
+	SDL_SetRenderTarget(sdl.renderer, nullptr);
+	SDL_SetRenderViewport(sdl.renderer, nullptr);
+
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		sdl.logW,
+		sdl.logH,
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	);
+
 	// Events update
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
@@ -1392,6 +1403,7 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	// If the absolute value of the zoom is within 0.001 from the target zoom
 	if (fabs(game.cameraZoom - game.targetZoom) <= 0.02f)
 	{
+		game.cameraZoom = game.targetZoom;
 		zoom = game.cameraZoom;
 
 		// Change the UI based on whether its zooming in or out
