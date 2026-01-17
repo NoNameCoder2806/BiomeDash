@@ -94,6 +94,16 @@ public:
 
     void updateClicked(float mouseX, float mouseY, bool mouseDown, const SDLState& sdl)
     {
+        // If the button is not visible we don't want to update it
+        if (!visible)
+        {
+            wasClicked = false;
+            clicked = false;
+
+            // Exit the function early
+            return;
+        }
+
         wasClicked = clicked;
 
         clicked = mouseDown && isHovered(mouseX, mouseY, sdl);
