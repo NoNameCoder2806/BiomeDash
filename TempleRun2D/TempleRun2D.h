@@ -24,6 +24,9 @@
 #include "entities/Transition.h"
 #include "entities/UIButton.h"
 
+// Textures
+#include "textures/PlayerTextures.h"
+
 // World
 #include "world/Biome.h"
 
@@ -81,8 +84,9 @@ extern bool BIOME_UPDATE;
 extern int CURRENT_MAP_SIZE;
 extern std::vector<UIButton> buttons;
 
-// All biomes' textures
+// All textures (Biomes, Characters, Monsters)
 extern std::unordered_map<std::string, Biome> biomeTexturesMap;
+extern std::unordered_map<std::string, PlayerTextures> playerTexturesMap;
 
 // FUNCTION PROTOTYPES
 // ----- I/ SCREENS -----
