@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	GameState game(sdl, "Transition");    // Create a GameState object
 	game.updateBiome(game.currentBiome->name);
 	Resources res;          // Create a Resources object
-	res.load(sdl, "red_hood", "default_monster", game.currentBiome->name, game.currentBiome->parallaxBackgrounds);          // Load our player and monster
+	res.load(sdl, "soldier_meppo", "default_monster", game.currentBiome->name, game.currentBiome->parallaxBackgrounds);          // Load our player and monster
 
 	// Set up the UI and the Transition
 	game.ui.setup(sdl.renderer, res);
