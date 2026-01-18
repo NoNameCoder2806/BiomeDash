@@ -229,6 +229,17 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	// Make sure the game uses the correct render state
+	SDL_SetRenderTarget(sdl.renderer, nullptr);
+	SDL_SetRenderViewport(sdl.renderer, nullptr);
+
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		sdl.logW,
+		sdl.logH,
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	);
+
 	// Event polling loop
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
@@ -559,6 +570,17 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 // ----- III/ HOME PAUSE SCREEN -----
 void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	// Make sure the game uses the correct render state
+	SDL_SetRenderTarget(sdl.renderer, nullptr);
+	SDL_SetRenderViewport(sdl.renderer, nullptr);
+
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		sdl.logW,
+		sdl.logH,
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	);
+
 	// Events update
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
@@ -736,6 +758,17 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 // ----- IV/ PLAYING PAUSE SCREEN -----
 void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	// Make sure the game uses the correct render state
+	SDL_SetRenderTarget(sdl.renderer, nullptr);
+	SDL_SetRenderViewport(sdl.renderer, nullptr);
+
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		sdl.logW,
+		sdl.logH,
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	);
+
 	// Events update
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
@@ -938,6 +971,17 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 // ----- V/ GAME OVER SCREEN -----
 void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	// Make sure the game uses the correct render state
+	SDL_SetRenderTarget(sdl.renderer, nullptr);
+	SDL_SetRenderViewport(sdl.renderer, nullptr);
+
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		sdl.logW,
+		sdl.logH,
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	);
+
 	// Events update
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
@@ -1130,6 +1174,17 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 // ----- VI/ TRANSITION SCREEN -----
 void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	// Make sure the game uses the correct render state
+	SDL_SetRenderTarget(sdl.renderer, nullptr);
+	SDL_SetRenderViewport(sdl.renderer, nullptr);
+
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		sdl.logW,
+		sdl.logH,
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	);
+
 	// Debug
 	//std::cout << "Drawing the Transition screen. Timer: " << game.transition.getTime() << std::endl;
 
