@@ -143,7 +143,7 @@ struct Resources
     }
 
     // Loads all textures and animations into memory
-    void load(SDLState& state, std::string playerName, std::string monsterName, std::string biomeName, std::string parallaxBackgrounds)
+    void load(SDLState& state, std::string monsterName, std::string biomeName, std::string parallaxBackgrounds)
     {
         // ----- I/ Player's animations ----- 
         playerAnims.resize(11);
@@ -159,7 +159,7 @@ struct Resources
         playerAnims[ANIM_PLAYER_SPEEDING] = Animation(8, 1.0f, true);
         playerAnims[ANIM_PLAYER_CAUGHT] = Animation(8, 1.0f, true);
 
-        playerIdle = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/idle.png");
+        /*playerIdle = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/idle.png");
         playerRun = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/run.png");
         playerJump = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/jump.png");
         playerSlide = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/slide.png");
@@ -170,7 +170,7 @@ struct Resources
         playerFalling = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/falling.png");
         playerSpeeding = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/speeding.png");
         playerCaught = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/caught.png");
-
+        */
         // ----- II/ Monster's animations ----- 
         monsterAnims.resize(5);
         monsterAnims[ANIM_MONSTER_IDLE] = Animation(8, 1.0f, true);   // 8 frames over 1 second
