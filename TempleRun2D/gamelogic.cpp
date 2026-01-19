@@ -878,6 +878,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 	}
 }
 
+// ----- VI/ RESET GAME -----
 void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<float>& scrollPositions)
 {
 	// STOP gameplay immediately
@@ -949,4 +950,49 @@ void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<flo
 	{
 		game.ui.switchToPlayScreen();
 	}
+}
+
+// ----- VII/ SWITCH CHARACTER TEXTURES -----
+void switchCharacterTextures(PlayerTextures& playerTex, Resources& res)
+{
+	playerTex.anims.resize(11);
+	res.playerAnims.resize(11);
+
+	res.playerAnims[res.ANIM_PLAYER_IDLE] = playerTex.anims[res.ANIM_PLAYER_IDLE];
+	res.playerAnims[res.ANIM_PLAYER_RUN] = playerTex.anims[res.ANIM_PLAYER_RUN];
+	res.playerAnims[res.ANIM_PLAYER_JUMP] = playerTex.anims[res.ANIM_PLAYER_JUMP];
+	res.playerAnims[res.ANIM_PLAYER_SLIDE] = playerTex.anims[res.ANIM_PLAYER_SLIDE];
+	res.playerAnims[res.ANIM_PLAYER_TRIPPED] = playerTex.anims[res.ANIM_PLAYER_TRIPPED];
+	res.playerAnims[res.ANIM_PLAYER_KNOCKED] = playerTex.anims[res.ANIM_PLAYER_KNOCKED];
+	res.playerAnims[res.ANIM_PLAYER_BURNT] = playerTex.anims[res.ANIM_PLAYER_BURNT];
+	res.playerAnims[res.ANIM_PLAYER_BLEED] = playerTex.anims[res.ANIM_PLAYER_BLEED];
+	res.playerAnims[res.ANIM_PLAYER_FALLING] = playerTex.anims[res.ANIM_PLAYER_FALLING];
+	res.playerAnims[res.ANIM_PLAYER_CAUGHT] = playerTex.anims[res.ANIM_PLAYER_CAUGHT];
+	res.playerAnims[res.ANIM_PLAYER_SPEEDING] = playerTex.anims[res.ANIM_PLAYER_SPEEDING];
+
+	res.playerIdle = playerTex.idle;
+	res.playerRun = playerTex.run;
+	res.playerJump = playerTex.jump;
+	res.playerSlide = playerTex.slide;
+	res.playerTripped = playerTex.tripped;
+	res.playerKnocked = playerTex.knocked;
+	res.playerBurnt = playerTex.burnt;
+	res.playerBleed = playerTex.bleed;
+	res.playerFalling = playerTex.falling;
+	res.playerCaught = playerTex.caught;
+	res.playerSpeeding = playerTex.caught;
+
+	// Debug
+	std::cout << " --- Switching to new textures! --- " << std::endl;
+	std::cout << " - Idle Ptr:    " << playerTex.idle << std::endl;
+	std::cout << " - Run Ptr:     " << playerTex.run << std::endl;
+	std::cout << " - Jump Ptr:    " << playerTex.jump << std::endl;
+	std::cout << " - Slide Ptr:   " << playerTex.slide << std::endl;
+	std::cout << " - Tripped Ptr: " << playerTex.tripped << std::endl;
+	std::cout << " - Knocked Ptr: " << playerTex.knocked << std::endl;
+	std::cout << " - Burnt Ptr:   " << playerTex.burnt << std::endl;
+	std::cout << " - Bleed Ptr:   " << playerTex.bleed << std::endl;
+	std::cout << " - Falling Ptr: " << playerTex.falling << std::endl;
+	std::cout << " - Caught Ptr:  " << playerTex.caught << std::endl;
+	//std::cout << " - Speeding Ptr:" << playerTex.speeding << std::endl;
 }

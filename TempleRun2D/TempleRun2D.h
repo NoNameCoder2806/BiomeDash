@@ -105,6 +105,7 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUpdate);
 void handleKeyInput(const SDLState& state, GameState& gs, GameObject& obj, SDL_Scancode key, bool keyDown);
 void resetGame(SDLState& state, GameState& gs, Resources& res, std::vector<float>& scrollPositions);
+void switchCharacterTextures(PlayerTextures& playerTex, Resources& res);
 
 // ----- III/ COLLISION -----
 void checkCollision(SDLState& state, GameState& gs, Resources& res, GameObject& objA, GameObject& objB, float deltaTime);

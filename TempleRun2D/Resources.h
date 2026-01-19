@@ -22,8 +22,8 @@ struct Resources
     const int ANIM_PLAYER_BURNT = 6;          // Burnt
     const int ANIM_PLAYER_BLEED = 7;          // Bleed
     const int ANIM_PLAYER_FALLING = 8;        // Falling 
-    const int ANIM_PLAYER_SPEEDING = 9;       // Speeding
-    const int ANIM_PLAYER_CAUGHT = 10;        // Caught
+    const int ANIM_PLAYER_CAUGHT = 9;         // Caught
+    const int ANIM_PLAYER_SPEEDING = 10;      // Speeding
 
     std::vector<Animation> playerAnims;       // Stores all player animations
 
@@ -36,8 +36,8 @@ struct Resources
     SDL_Texture* playerBurnt = nullptr;
     SDL_Texture* playerBleed = nullptr;
     SDL_Texture* playerFalling = nullptr;
-    SDL_Texture* playerSpeeding = nullptr;
     SDL_Texture* playerCaught = nullptr;
+    SDL_Texture* playerSpeeding = nullptr;
 
     // ----- II/ MONSTER ANIMATIONS ----- 
     const int ANIM_MONSTER_IDLE = 0;          // Idle

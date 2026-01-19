@@ -63,6 +63,9 @@ struct GameState
 	const std::vector<std::string> fullBiomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
+	
+	const std::vector<std::string> fullCharactersList = { "hooded_hero", "red_meppo", "bad_meppo", "soldier_meppo" };
+	const std::string defaultCharacterName = "hooded_hero";
 
 	// ScreenState
 	ScreenState prevScreen;

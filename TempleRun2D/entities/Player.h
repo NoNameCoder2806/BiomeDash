@@ -22,6 +22,9 @@ class Player : public GameObject
 private:
     PlayerState state;
 
+    // Character name
+    std::string name;
+
     // Jumping
     bool jumpRequested = false;
     bool slideRequested = false;
@@ -41,7 +44,7 @@ private:
 
 public:
     // Constructor
-    Player(const Resources& res) : state(PlayerState::idle), speed(150.0f), slideDuration(2.0f), trippedDuration(1.0f),
+    Player(const Resources& res) : name("hooded_hero"), state(PlayerState::idle), speed(150.0f), slideDuration(2.0f), trippedDuration(1.0f),
                                 boostMeter(0.0f), active(false), jumpRequested(false), slideRequested(false)
     {
         setType(ObjectType::player);
@@ -59,6 +62,11 @@ public:
     PlayerState getState() const
     {
         return state;
+    }
+
+    std::string getName() const
+    {
+        return name;
     }
 
     float getSpeed() const
@@ -111,6 +119,11 @@ public:
     void setState(PlayerState s)
     {
         state = s;
+    }
+
+    void setName(std::string n)
+    {
+        name = n;
     }
 
     void setSpeed(float s)

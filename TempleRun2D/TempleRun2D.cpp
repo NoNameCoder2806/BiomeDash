@@ -15,8 +15,9 @@ bool PLAYING = false;
 bool BIOME_UPDATE = true;
 int CURRENT_MAP_SIZE = 0;
 
-// All biomes' textures
+// All textures (Biomes, Characters, Monsters)
 unordered_map<string, Biome> biomeTexturesMap;
+unordered_map<string, PlayerTextures> playerTexturesMap;
 
 // Main function
 int main(int argc, char* argv[])
@@ -51,8 +52,48 @@ int main(int argc, char* argv[])
 	// Load the home screen
 	game.ui.switchToHomeScreen();
 
-	// Preload the biomes
-	// Load the Transition biome
+	// ----- PRELOAD THE CHARACTERES TEXTURES -----
+	// Iterate through all the characters and load the textures
+	for (string name : game.fullCharactersList)
+	{
+		// Debug
+		cout << " --- Loading character: " << name << endl;
+
+		// Create a temporary PlayerTextures object
+		PlayerTextures playerTex;
+
+		// Load the animations and textures
+		playerTex.loadTextures(sdl.renderer, name, res);
+
+		// Add the Player textures into the map
+		playerTexturesMap[name] = playerTex;
+	}
+
+	// Debug
+	for (string name : game.fullCharactersList)
+	{
+		PlayerTextures& playerTex = playerTexturesMap[name];
+
+		// Debug
+		std::cout << " --- Character:" << name << " --- " << std::endl;
+		std::cout << " - Idle Ptr:    " << playerTex.idle << std::endl;
+		std::cout << " - Run Ptr:     " << playerTex.run << std::endl;
+		std::cout << " - Jump Ptr:    " << playerTex.jump << std::endl;
+		std::cout << " - Slide Ptr:   " << playerTex.slide << std::endl;
+		std::cout << " - Tripped Ptr: " << playerTex.tripped << std::endl;
+		std::cout << " - Knocked Ptr: " << playerTex.knocked << std::endl;
+		std::cout << " - Burnt Ptr:   " << playerTex.burnt << std::endl;
+		std::cout << " - Bleed Ptr:   " << playerTex.bleed << std::endl;
+		std::cout << " - Falling Ptr: " << playerTex.falling << std::endl;
+		std::cout << " - Caught Ptr:  " << playerTex.caught << std::endl;
+		//std::cout << " - Speeding Ptr:" << playerTex.speeding << std::endl;
+	}
+
+	// Switch the character's textures based on the name
+	switchCharacterTextures(playerTexturesMap[game.defaultCharacterName], res);
+	
+	// ----- PRELOAD THE BIOMES -----
+	// Load the Transition biome first
 	game.currentBiome->name = "Transition";
 
 	// Read and load all the textures
@@ -76,32 +117,12 @@ int main(int argc, char* argv[])
 		// Debug
 		cout << "Creating the objects..." << endl;
 
-		// Call manageTiles() to create the objects
-		//manageTiles(sdl, game, res, false);
-
-		// Clear the tiles
-		//game.currentBiome->clearTextures();
-
 		// Insert the biome to the map
 		biomeTexturesMap[temp.name] = move(temp);
-
-		// Debug
-		/*auto& debugBiome = biomeTexturesMap[name];
-		for (auto& [id, obj] : debugBiome.floor)
-		{
-			std::cout << "Biome " << name << " Floor Tile ID " << id
-				<< " | Texture pointer: " << obj.getTexture() << std::endl;
-		}*/
 	}
 	
-	//game.preloadBiomes(res, sdl);
-
 	// Set a new name for the biome
 	game.currentBiome = &biomeTexturesMap["Transition"];
-
-	// Load the current textures of the biome
-	//game.updateBiome(game.currentBiome->name);
-	//game.currentBiome->loadTextures(res, sdl.renderer);
 
 	// Start the map size at 0
 	CURRENT_MAP_SIZE = 0;
