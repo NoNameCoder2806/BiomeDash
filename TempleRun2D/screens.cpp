@@ -1413,7 +1413,7 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		game.player().setName(nextName);
 
 		// Switch to the next character
-		switchCharacterTextures(playerTexturesMap[nextName], res);
+		switchCharacterTextures(game, playerTexturesMap[nextName], res);
 
 		// Update the textures
 		game.player().setTexture(res.playerIdle);
@@ -1447,7 +1447,7 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		game.player().setName(nextName);
 
 		// Switch to the next character
-		switchCharacterTextures(playerTexturesMap[nextName], res);
+		switchCharacterTextures(game, playerTexturesMap[nextName], res);
 
 		// Update the textures
 		game.player().setTexture(res.playerIdle);

@@ -55,6 +55,7 @@ public:
     // Setters
     void setName(std::string n) { name = n; }
     void setTexture(SDL_Texture* tex) { normalTexture = tex; }
+    void setClickedTexture(SDL_Texture* tex) { clickedTexture = tex; }
     void setMargin(glm::vec2 mg) { margin = mg; }
     void setSize(glm::vec2 sz) { size = sz; }
     void setVisible(bool v) { visible = v; }

@@ -954,7 +954,7 @@ void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<flo
 }
 
 // ----- VII/ SWITCH CHARACTER TEXTURES -----
-void switchCharacterTextures(PlayerTextures& playerTex, Resources& res)
+void switchCharacterTextures(GameState& gs, PlayerTextures& playerTex, Resources& res)
 {
 	playerTex.anims.resize(10);
 	res.playerAnims.resize(10);
@@ -984,4 +984,8 @@ void switchCharacterTextures(PlayerTextures& playerTex, Resources& res)
 	//res.playerSpeeding = playerTex.caught;
 
 	res.avatar = playerTex.avatar;
+
+	// Change the character avatar
+	gs.ui.characterAvatar.setTexture(res.avatar);
+	gs.ui.characterAvatar.setClickedTexture(res.avatar);
 }

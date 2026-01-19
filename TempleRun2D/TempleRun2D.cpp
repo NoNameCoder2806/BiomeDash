@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Switch to the default character's textures
-	switchCharacterTextures(playerTexturesMap[game.defaultCharacterName], res);
+	switchCharacterTextures(game, playerTexturesMap[game.defaultCharacterName], res);
 	
 	// ----- PRELOAD THE BIOMES -----
 	// Iterate through all the biomes and load the textures
