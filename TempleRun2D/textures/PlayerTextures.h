@@ -26,6 +26,8 @@ struct PlayerTextures
     SDL_Texture* caught = nullptr;
     //SDL_Texture* speeding = nullptr;
 
+    SDL_Texture* avatar = nullptr;
+
     // A helper function to load all the textures
     void loadTextures(SDL_Renderer* renderer, const std::string& characterName, Resources& res)
     {
@@ -55,5 +57,7 @@ struct PlayerTextures
         falling = res.loadTexture(renderer, "data/textures/characters/" + name + "/falling.png");
         caught = res.loadTexture(renderer, "data/textures/characters/" + name + "/caught.png");
         //speeding = res.loadTexture(renderer, "data/textures/characters/" + name + "/speeding.png");
+        
+        avatar = res.loadTexture(renderer, "data/textures/characters/" + name + "/avatar.png");
     }
 };

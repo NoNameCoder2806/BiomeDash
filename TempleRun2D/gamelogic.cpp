@@ -982,4 +982,6 @@ void switchCharacterTextures(PlayerTextures& playerTex, Resources& res)
 	res.playerFalling = playerTex.falling;
 	res.playerCaught = playerTex.caught;
 	//res.playerSpeeding = playerTex.caught;
+
+	res.avatar = playerTex.avatar;
 }

@@ -50,6 +50,10 @@ const glm::vec2 MAIN_MENU_MARGIN({ 0.5, 0.67 });
 const glm::vec2 AVATAR_SIZE({ 400, 125 });
 const glm::vec2 AVATAR_MARGIN({ 0.06, 0.08 });
 
+// CHARACTER AVATAR
+const glm::vec2 CHARACTER_AVATAR_SIZE({ 96, 96 });
+const glm::vec2 CHARACTER_AVATAR_MARGIN({ 0.06, 0.09 });
+
 // HEROES BUTTON
 const glm::vec2 HEROES_SIZE({ 260, 80 });
 const glm::vec2 HEROES_MARGIN({ 0.5, 0.75 });
@@ -87,6 +91,7 @@ struct UIState
 
 	// Top left avatar
 	UIButton avatar;
+	UIButton characterAvatar;
 	//UIButton changeName;
 
 	// Change hero and pet
@@ -124,8 +129,9 @@ struct UIState
 		// Main Menu button
 		mainMenu = UIButton(renderer, res, "mainMenu", MAIN_MENU_SIZE, MAIN_MENU_MARGIN);
 	
-		// Avatar button
+		// Character Avatar and Avatar button
 		avatar = UIButton(renderer, res, "avatar", AVATAR_SIZE, AVATAR_MARGIN);
+		characterAvatar = UIButton(renderer, res, "characterAvatar", CHARACTER_AVATAR_SIZE, CHARACTER_AVATAR_MARGIN);
 
 		// Heroes and Pet buttons
 		heroes = UIButton(renderer, res, "heroes", HEROES_SIZE, HEROES_MARGIN);
@@ -161,8 +167,9 @@ struct UIState
 		// Main Menu button
 		mainMenu.render(state);
 
-		// Avatar button
+		// Character Avatar and Avatar button
 		avatar.render(state);
+		characterAvatar.render(state);
 
 		// Change Heroes, Back, Select, Left and Right Arrow buttons
 		heroes.render(state);
@@ -185,6 +192,7 @@ struct UIState
 		credits.updateClicked(mouseX, mouseY, clicked, sdl);
 		mainMenu.updateClicked(mouseX, mouseY, clicked, sdl);
 		avatar.updateClicked(mouseX, mouseY, clicked, sdl);
+		characterAvatar.updateClicked(mouseX, mouseY, clicked, sdl);
 		heroes.updateClicked(mouseX, mouseY, clicked, sdl);
 		back.updateClicked(mouseX, mouseY, clicked, sdl);
 		//select.updateClicked(mouseX, mouseY, clicked, sdl);
@@ -238,6 +246,10 @@ struct UIState
 		// ----- AVATAR BUTTON -----
 		// Visible
 		avatar.setVisible(true);
+
+		// ----- CHARACTER AVATAR -----
+		// Visible
+		characterAvatar.setVisible(true);
 
 		// ----- HEROES BUTTON -----
 		// Visible
@@ -300,6 +312,10 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
+		// ----- CHARACTER AVATAR -----
+		// Visible
+		characterAvatar.setVisible(true);
+
 		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
@@ -360,6 +376,10 @@ struct UIState
 		// ----- AVATAR BUTTON -----
 		// Visible
 		avatar.setVisible(true);
+
+		// ----- CHARACTER AVATAR -----
+		// Visible
+		characterAvatar.setVisible(true);
 
 		// ----- HEROES BUTTON -----
 		// Not visible
@@ -422,6 +442,10 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
+		// ----- CHARACTER AVATAR -----
+		// Visible
+		characterAvatar.setVisible(true);
+
 		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
@@ -483,6 +507,10 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
+		// ----- CHARACTER AVATAR -----
+		// Visible
+		characterAvatar.setVisible(true);
+
 		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
@@ -543,6 +571,10 @@ struct UIState
 		// Not visible
 		avatar.setVisible(false);
 
+		// ----- CHARACTER AVATAR -----
+		// Not visible
+		characterAvatar.setVisible(false);
+
 		// ----- HEROES BUTTON -----
 		// Not visible
 		heroes.setVisible(false);
@@ -602,6 +634,10 @@ struct UIState
 		// ----- AVATAR BUTTON -----
 		// Not visible
 		avatar.setVisible(false);
+
+		// ----- CHARACTER AVATAR -----
+		// Not visible
+		characterAvatar.setVisible(false);
 
 		// ----- HEROES BUTTON -----
 		// Not visible

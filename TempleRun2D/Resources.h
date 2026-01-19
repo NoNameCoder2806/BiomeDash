@@ -82,6 +82,9 @@ struct Resources
     SDL_Texture* background = nullptr;
     std::vector<SDL_Texture*> parallaxBackgrounds;
 
+    // ----- VIII/ CHARACTER AVATAR -----
+    SDL_Texture* avatar = nullptr;
+
     std::vector<SDL_Texture*> textures;  // Keeps track of all loaded textures (for cleanup)
 
     // A map to keep track of all the textures
