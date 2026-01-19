@@ -444,17 +444,6 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 				break;
 			}
 
-			case PlayerState::speeding:
-			{
-				player.setTexture(res.playerSpeeding);
-				player.setCurrentAnimation(res.ANIM_PLAYER_SPEEDING);
-				player.clearCollider();
-				player.addCollider(RUN_COLLISION);
-				player.setAlive(true);
-
-				break;
-			}
-
 			case PlayerState::caught:
 			{
 				player.setTexture(res.playerCaught);
@@ -469,6 +458,17 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 
 				break;
 			}
+
+			/*case PlayerState::speeding:
+			{
+				player.setTexture(res.playerSpeeding);
+				player.setCurrentAnimation(res.ANIM_PLAYER_SPEEDING);
+				player.clearCollider();
+				player.addCollider(RUN_COLLISION);
+				player.setAlive(true);
+
+				break;
+			}*/
 			}
 
 			break;
@@ -956,8 +956,8 @@ void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<flo
 // ----- VII/ SWITCH CHARACTER TEXTURES -----
 void switchCharacterTextures(PlayerTextures& playerTex, Resources& res)
 {
-	playerTex.anims.resize(11);
-	res.playerAnims.resize(11);
+	playerTex.anims.resize(10);
+	res.playerAnims.resize(10);
 
 	res.playerAnims[res.ANIM_PLAYER_IDLE] = playerTex.anims[res.ANIM_PLAYER_IDLE];
 	res.playerAnims[res.ANIM_PLAYER_RUN] = playerTex.anims[res.ANIM_PLAYER_RUN];
@@ -969,7 +969,7 @@ void switchCharacterTextures(PlayerTextures& playerTex, Resources& res)
 	res.playerAnims[res.ANIM_PLAYER_BLEED] = playerTex.anims[res.ANIM_PLAYER_BLEED];
 	res.playerAnims[res.ANIM_PLAYER_FALLING] = playerTex.anims[res.ANIM_PLAYER_FALLING];
 	res.playerAnims[res.ANIM_PLAYER_CAUGHT] = playerTex.anims[res.ANIM_PLAYER_CAUGHT];
-	res.playerAnims[res.ANIM_PLAYER_SPEEDING] = playerTex.anims[res.ANIM_PLAYER_SPEEDING];
+	//res.playerAnims[res.ANIM_PLAYER_SPEEDING] = playerTex.anims[res.ANIM_PLAYER_SPEEDING];
 
 	res.playerIdle = playerTex.idle;
 	res.playerRun = playerTex.run;
@@ -981,5 +981,5 @@ void switchCharacterTextures(PlayerTextures& playerTex, Resources& res)
 	res.playerBleed = playerTex.bleed;
 	res.playerFalling = playerTex.falling;
 	res.playerCaught = playerTex.caught;
-	res.playerSpeeding = playerTex.caught;
+	//res.playerSpeeding = playerTex.caught;
 }

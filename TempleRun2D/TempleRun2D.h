@@ -67,7 +67,7 @@ const int TILE_PRELOAD_AHEAD = 5;
 const float ORIGINAL_SPEED = 150.0f;
 
 // Collision boxes
-const SDL_FRect RUN_COLLISION = { 7, 5, 16, 27 };
+const SDL_FRect RUN_COLLISION = { 7, 10, 16, 22 };
 const SDL_FRect SLIDE_COLLISION = { 7, 21, 16, 11 };
 const SDL_FRect INVINCIBLE_COLLISION = { 0, 0, 0, 0 };
 const SDL_FRect DIED_COLLISION = { 7, -500, 16, 600 };

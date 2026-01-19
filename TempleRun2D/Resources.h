@@ -23,7 +23,7 @@ struct Resources
     const int ANIM_PLAYER_BLEED = 7;          // Bleed
     const int ANIM_PLAYER_FALLING = 8;        // Falling 
     const int ANIM_PLAYER_CAUGHT = 9;         // Caught
-    const int ANIM_PLAYER_SPEEDING = 10;      // Speeding
+    //const int ANIM_PLAYER_SPEEDING = 10;      // Speeding
 
     std::vector<Animation> playerAnims;       // Stores all player animations
 
@@ -37,7 +37,7 @@ struct Resources
     SDL_Texture* playerBleed = nullptr;
     SDL_Texture* playerFalling = nullptr;
     SDL_Texture* playerCaught = nullptr;
-    SDL_Texture* playerSpeeding = nullptr;
+    //SDL_Texture* playerSpeeding = nullptr;
 
     // ----- II/ MONSTER ANIMATIONS ----- 
     const int ANIM_MONSTER_IDLE = 0;          // Idle
@@ -146,7 +146,7 @@ struct Resources
     void load(SDLState& state, std::string monsterName, std::string biomeName, std::string parallaxBackgrounds)
     {
         // ----- I/ Player's animations ----- 
-        playerAnims.resize(11);
+        playerAnims.resize(10);
         playerAnims[ANIM_PLAYER_IDLE] = Animation(8, 1.0f, true);
         playerAnims[ANIM_PLAYER_RUN] = Animation(8, 1.0f, true);
         playerAnims[ANIM_PLAYER_JUMP] = Animation(8, 1.0f, true);
@@ -156,8 +156,8 @@ struct Resources
         playerAnims[ANIM_PLAYER_BURNT] = Animation(8, 1.0f, false);
         playerAnims[ANIM_PLAYER_BLEED] = Animation(8, 1.0f, false);
         playerAnims[ANIM_PLAYER_FALLING] = Animation(8, 1.0f, false);
-        playerAnims[ANIM_PLAYER_SPEEDING] = Animation(8, 1.0f, true);
         playerAnims[ANIM_PLAYER_CAUGHT] = Animation(8, 1.0f, true);
+        //playerAnims[ANIM_PLAYER_SPEEDING] = Animation(8, 1.0f, true);
 
         /*playerIdle = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/idle.png");
         playerRun = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/run.png");
@@ -171,6 +171,7 @@ struct Resources
         playerSpeeding = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/speeding.png");
         playerCaught = loadTexture(state.renderer, "data/textures/characters/" + playerName + "/caught.png");
         */
+
         // ----- II/ Monster's animations ----- 
         monsterAnims.resize(5);
         monsterAnims[ANIM_MONSTER_IDLE] = Animation(8, 1.0f, true);   // 8 frames over 1 second

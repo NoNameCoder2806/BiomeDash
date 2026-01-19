@@ -13,7 +13,8 @@ const float SLIDE_PULL = 350.0f;
 // ----- PLAYER STATES -----
 enum class PlayerState
 {
-    idle, running, jumping, sliding, tripped, knocked, burnt, falling, bleed, speeding, caught, won
+    idle, running, jumping, sliding, tripped, knocked, burnt, falling, bleed, caught, won
+    // speeding state removed
 };
 
 // ----- PLAYER CLASS ----- 
@@ -311,11 +312,11 @@ public:
                 break;
             }
 
-            case PlayerState::speeding:
+            /*case PlayerState::speeding:
             {
                 moveAmount = getSpeed() + 50.0f;
                 break;
-            }
+            }*/
 
             default:
             {

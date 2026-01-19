@@ -541,11 +541,11 @@ void GameState::displayPlayerInformation(SDLState& state)
 			strState = "burnt";
 			break;
 		}
-		case PlayerState::speeding: // PlayerState::speeding
+		/*case PlayerState::speeding: // PlayerState::speeding
 		{
 			strState = "speeding";
 			break;
-		}
+		}*/
 		case PlayerState::falling: // PlayerState::falling
 		{
 			strState = "falling";
