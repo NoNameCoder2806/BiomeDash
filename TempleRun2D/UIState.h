@@ -58,6 +58,14 @@ const glm::vec2 HEROES_MARGIN({ 0.5, 0.75 });
 const glm::vec2 BACK_SIZE({ 364, 112 });
 const glm::vec2 BACK_MARGIN({ 0.5, 0.25 });
 
+// RIGHT ARROW BUTTON
+const glm::vec2 RIGHT_ARROW_SIZE({ 60, 100 });
+const glm::vec2 RIGHT_ARROW_MARGIN({ 0.65, 0.55 });
+
+// LEFT ARROW BUTTON
+const glm::vec2 LEFT_ARROW_SIZE({ 60, 100 });
+const glm::vec2 LEFT_ARROW_MARGIN({ 0.35, 0.55 });
+
 // UIState struct
 struct UIState
 {
@@ -85,6 +93,8 @@ struct UIState
 	UIButton heroes;
 	UIButton back;
 	//UIButton select;
+	UIButton leftArrow;
+	UIButton rightArrow;
 
 	// Default constructor
 	UIState()
@@ -120,6 +130,9 @@ struct UIState
 		// Heroes and Pet buttons
 		heroes = UIButton(renderer, res, "heroes", HEROES_SIZE, HEROES_MARGIN);
 		back = UIButton(renderer, res, "back", BACK_SIZE, BACK_MARGIN);
+		//select
+		leftArrow = UIButton(renderer, res, "leftArrow", LEFT_ARROW_SIZE, LEFT_ARROW_MARGIN);
+		rightArrow = UIButton(renderer, res, "rightArrow", RIGHT_ARROW_SIZE, RIGHT_ARROW_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -151,9 +164,12 @@ struct UIState
 		// Avatar button
 		avatar.render(state);
 
-		// Change Heroes, Back and Select buttons
+		// Change Heroes, Back, Select, Left and Right Arrow buttons
 		heroes.render(state);
 		back.render(state);
+		//select.render(state);
+		leftArrow.render(state);
+		rightArrow.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -171,6 +187,9 @@ struct UIState
 		avatar.updateClicked(mouseX, mouseY, clicked, sdl);
 		heroes.updateClicked(mouseX, mouseY, clicked, sdl);
 		back.updateClicked(mouseX, mouseY, clicked, sdl);
+		//select.updateClicked(mouseX, mouseY, clicked, sdl);
+		leftArrow.updateClicked(mouseX, mouseY, clicked, sdl);
+		rightArrow.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -227,6 +246,11 @@ struct UIState
 		// ----- BACK BUTTON -----
 		// Not visible
 		back.setVisible(false);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Not visible
+		leftArrow.setVisible(false);
+		rightArrow.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -283,6 +307,11 @@ struct UIState
 		// ----- BACK BUTTON -----
 		// Not visible
 		back.setVisible(false);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Not visible
+		leftArrow.setVisible(false);
+		rightArrow.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -339,6 +368,11 @@ struct UIState
 		// ----- BACK BUTTON -----
 		// Not visible
 		back.setVisible(false);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Not visible
+		leftArrow.setVisible(false);
+		rightArrow.setVisible(false);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -395,6 +429,11 @@ struct UIState
 		// ----- BACK BUTTON -----
 		// Not visible
 		back.setVisible(false);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Not visible
+		leftArrow.setVisible(false);
+		rightArrow.setVisible(false);
 	}
 
 	void switchToGameOverScreen()
@@ -451,6 +490,11 @@ struct UIState
 		// ----- BACK BUTTON -----
 		// Not visible
 		back.setVisible(false);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Not visible
+		leftArrow.setVisible(false);
+		rightArrow.setVisible(false);
 	}
 
 	void switchToChangePlayerTransitionScreen()
@@ -506,6 +550,11 @@ struct UIState
 		// ----- BACK BUTTON -----
 		// Not visible
 		back.setVisible(false);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Not visible
+		leftArrow.setVisible(false);
+		rightArrow.setVisible(false);
 	}
 
 	void switchToChangePlayerScreen()
@@ -561,5 +610,10 @@ struct UIState
 		// ----- BACK BUTTON -----
 		// Visible
 		back.setVisible(true);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Visible
+		leftArrow.setVisible(true);
+		rightArrow.setVisible(true);
 	}
 };

@@ -69,37 +69,10 @@ int main(int argc, char* argv[])
 		playerTexturesMap[name] = playerTex;
 	}
 
-	// Debug
-	for (string name : game.fullCharactersList)
-	{
-		PlayerTextures& playerTex = playerTexturesMap[name];
-
-		// Debug
-		std::cout << " --- Character:" << name << " --- " << std::endl;
-		std::cout << " - Idle Ptr:    " << playerTex.idle << std::endl;
-		std::cout << " - Run Ptr:     " << playerTex.run << std::endl;
-		std::cout << " - Jump Ptr:    " << playerTex.jump << std::endl;
-		std::cout << " - Slide Ptr:   " << playerTex.slide << std::endl;
-		std::cout << " - Tripped Ptr: " << playerTex.tripped << std::endl;
-		std::cout << " - Knocked Ptr: " << playerTex.knocked << std::endl;
-		std::cout << " - Burnt Ptr:   " << playerTex.burnt << std::endl;
-		std::cout << " - Bleed Ptr:   " << playerTex.bleed << std::endl;
-		std::cout << " - Falling Ptr: " << playerTex.falling << std::endl;
-		std::cout << " - Caught Ptr:  " << playerTex.caught << std::endl;
-		//std::cout << " - Speeding Ptr:" << playerTex.speeding << std::endl;
-	}
-
-	// Switch the character's textures based on the name
+	// Switch to the default character's textures
 	switchCharacterTextures(playerTexturesMap[game.defaultCharacterName], res);
 	
 	// ----- PRELOAD THE BIOMES -----
-	// Load the Transition biome first
-	game.currentBiome->name = "Transition";
-
-	// Read and load all the textures
-	game.currentBiome->loadBiome(game.currentBiome->name);          // parse the text file
-	game.currentBiome->loadTextures(res, sdl.renderer); // actually load images to GPU
-
 	// Iterate through all the biomes and load the textures
 	for (std::string name : game.fullBiomeList)
 	{
@@ -107,15 +80,15 @@ int main(int argc, char* argv[])
 		Biome temp;
 		temp.name = name;
 
-		// Debug 
-		cout << "Preloading " << name << endl;
+		// Debug
+		//cout << "Preloading " << name << endl;
 
 		// Read and load all the textures
 		temp.loadBiome(name);          // parse the text file
 		temp.loadTextures(res, sdl.renderer); // actually load images to GPU
 		
 		// Debug
-		cout << "Creating the objects..." << endl;
+		//cout << "Creating the objects..." << endl;
 
 		// Insert the biome to the map
 		biomeTexturesMap[temp.name] = move(temp);

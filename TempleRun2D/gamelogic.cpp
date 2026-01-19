@@ -981,18 +981,4 @@ void switchCharacterTextures(PlayerTextures& playerTex, Resources& res)
 	res.playerFalling = playerTex.falling;
 	res.playerCaught = playerTex.caught;
 	res.playerSpeeding = playerTex.caught;
-
-	// Debug
-	std::cout << " --- Switching to new textures! --- " << std::endl;
-	std::cout << " - Idle Ptr:    " << playerTex.idle << std::endl;
-	std::cout << " - Run Ptr:     " << playerTex.run << std::endl;
-	std::cout << " - Jump Ptr:    " << playerTex.jump << std::endl;
-	std::cout << " - Slide Ptr:   " << playerTex.slide << std::endl;
-	std::cout << " - Tripped Ptr: " << playerTex.tripped << std::endl;
-	std::cout << " - Knocked Ptr: " << playerTex.knocked << std::endl;
-	std::cout << " - Burnt Ptr:   " << playerTex.burnt << std::endl;
-	std::cout << " - Bleed Ptr:   " << playerTex.bleed << std::endl;
-	std::cout << " - Falling Ptr: " << playerTex.falling << std::endl;
-	std::cout << " - Caught Ptr:  " << playerTex.caught << std::endl;
-	//std::cout << " - Speeding Ptr:" << playerTex.speeding << std::endl;
 }

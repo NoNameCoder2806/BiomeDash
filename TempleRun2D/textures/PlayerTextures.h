@@ -23,8 +23,8 @@ struct PlayerTextures
     SDL_Texture* burnt = nullptr;
     SDL_Texture* bleed = nullptr;
     SDL_Texture* falling = nullptr;
-    SDL_Texture* speeding = nullptr;
     SDL_Texture* caught = nullptr;
+    SDL_Texture* speeding = nullptr;
 
     // A helper function to load all the textures
     void loadTextures(SDL_Renderer* renderer, const std::string& characterName, Resources& res)
