@@ -23,7 +23,7 @@ private:
     PlayerState state;
 
     // Character name
-    std::string name;
+    std::string characterName;
 
     // Jumping
     bool jumpRequested = false;
@@ -44,7 +44,7 @@ private:
 
 public:
     // Constructor
-    Player(const Resources& res) : name("hooded_hero"), state(PlayerState::idle), speed(150.0f), slideDuration(2.0f), trippedDuration(1.0f),
+    Player(const Resources& res) : characterName("hooded_hero"), state(PlayerState::idle), speed(150.0f), slideDuration(2.0f), trippedDuration(1.0f),
                                 boostMeter(0.0f), active(false), jumpRequested(false), slideRequested(false)
     {
         setType(ObjectType::player);
@@ -66,7 +66,7 @@ public:
 
     std::string getName() const
     {
-        return name;
+        return characterName;
     }
 
     float getSpeed() const
@@ -123,7 +123,7 @@ public:
 
     void setName(std::string n)
     {
-        name = n;
+        characterName = n;
     }
 
     void setSpeed(float s)

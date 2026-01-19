@@ -67,6 +67,9 @@ struct GameState
 	const std::vector<std::string> fullCharactersList = { "hooded_hero", "red_meppo", "bad_meppo", "soldier_meppo" };
 	const std::string defaultCharacterName = "hooded_hero";
 
+	// Current character index
+	int currentCharacter;
+
 	// ScreenState
 	ScreenState prevScreen;
 	ScreenState screen;

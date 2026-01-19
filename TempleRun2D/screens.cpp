@@ -1388,6 +1388,74 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		game.targetZoom = 1.0f;
 	}
 
+	// Right arrow
+	if (game.ui.rightArrow.isReleased())
+	{
+		// Create a variable to store the next character's name
+		string nextName;
+
+		// Check to see if this is the last character in the list
+		// If this is the last character
+		if (game.currentCharacter == game.fullCharactersList.size() - 1)
+		{
+			// Next character is the first character
+			nextName = game.fullCharactersList.at(0);
+			game.currentCharacter = 0;
+		}
+		else
+		{
+			// Otherwise we take the next character
+			game.currentCharacter = game.currentCharacter + 1;
+			nextName = game.fullCharactersList.at(game.currentCharacter);
+		}
+
+		// Update the character name
+		game.player().setName(nextName);
+
+		// Switch to the next character
+		switchCharacterTextures(playerTexturesMap[nextName], res);
+
+		// Update the textures
+		game.player().setTexture(res.playerIdle);
+
+		// Debug
+		cout << "Next Player: " << nextName << endl;
+	}
+
+	// Left arrow
+	if (game.ui.leftArrow.isReleased())
+	{
+		// Create a variable to store the next character's name
+		string nextName;
+
+		// Check to see if this is the first character in the list
+		// If this is the first character
+		if (game.currentCharacter == 0)
+		{
+			// Next character is the first character
+			nextName = game.fullCharactersList.at(game.fullCharactersList.size() - 1);
+			game.currentCharacter = game.fullCharactersList.size() - 1;
+		}
+		else
+		{
+			// Otherwise we take the previous character
+			game.currentCharacter = game.currentCharacter - 1;
+			nextName = game.fullCharactersList.at(game.currentCharacter);
+		}
+
+		// Update the character name
+		game.player().setName(nextName);
+
+		// Switch to the next character
+		switchCharacterTextures(playerTexturesMap[nextName], res);
+
+		// Update the textures
+		game.player().setTexture(res.playerIdle);
+
+		// Debug
+		cout << "Previous Player: " << nextName << endl;
+	}
+
 	// Delta time
 	uint64_t nowTime = SDL_GetTicks();
 	float deltaTime = (nowTime - prevTime) / 1000.0f;

@@ -690,6 +690,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 						player->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
 						player->setState(PlayerState::idle);
 						player->setCurrentAnimation(res.ANIM_PLAYER_IDLE);
+						player->setName(gs.defaultCharacterName);
 						gs.layers[LAYER_IDX_PLAYER].push_back(std::move(player));
 					}
 
