@@ -60,7 +60,11 @@ const glm::vec2 HEROES_MARGIN({ 0.5, 0.75 });
 
 // BACK BUTTON
 const glm::vec2 BACK_SIZE({ 364, 112 });
-const glm::vec2 BACK_MARGIN({ 0.5, 0.25 });
+const glm::vec2 BACK_MARGIN({ 0.5, 0.85 });
+
+// NAME TAG
+const glm::vec2 NAME_TAG_SIZE({ 442, 112 });
+const glm::vec2 NAME_TAG_MARGIN({ 0.5, 0.25 });
 
 // RIGHT ARROW BUTTON
 const glm::vec2 RIGHT_ARROW_SIZE({ 60, 100 });
@@ -94,12 +98,12 @@ struct UIState
 	UIButton characterAvatar;
 	//UIButton changeName;
 
-	// Change hero and pet
+	// Change heroes
 	UIButton heroes;
 	UIButton back;
-	//UIButton select;
 	UIButton leftArrow;
 	UIButton rightArrow;
+	UIButton nameTag;
 
 	// Default constructor
 	UIState()
@@ -133,12 +137,12 @@ struct UIState
 		avatar = UIButton(renderer, res, "avatar", AVATAR_SIZE, AVATAR_MARGIN);
 		characterAvatar = UIButton(renderer, res, "characterAvatar", CHARACTER_AVATAR_SIZE, CHARACTER_AVATAR_MARGIN);
 
-		// Heroes and Pet buttons
+		// Heroes change buttons
 		heroes = UIButton(renderer, res, "heroes", HEROES_SIZE, HEROES_MARGIN);
 		back = UIButton(renderer, res, "back", BACK_SIZE, BACK_MARGIN);
-		//select
 		leftArrow = UIButton(renderer, res, "leftArrow", LEFT_ARROW_SIZE, LEFT_ARROW_MARGIN);
 		rightArrow = UIButton(renderer, res, "rightArrow", RIGHT_ARROW_SIZE, RIGHT_ARROW_MARGIN);
+		nameTag = UIButton(renderer, res, "nameTag", NAME_TAG_SIZE, NAME_TAG_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -174,9 +178,9 @@ struct UIState
 		// Change Heroes, Back, Select, Left and Right Arrow buttons
 		heroes.render(state);
 		back.render(state);
-		//select.render(state);
 		leftArrow.render(state);
 		rightArrow.render(state);
+		nameTag.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
@@ -195,9 +199,9 @@ struct UIState
 		characterAvatar.updateClicked(mouseX, mouseY, clicked, sdl);
 		heroes.updateClicked(mouseX, mouseY, clicked, sdl);
 		back.updateClicked(mouseX, mouseY, clicked, sdl);
-		//select.updateClicked(mouseX, mouseY, clicked, sdl);
 		leftArrow.updateClicked(mouseX, mouseY, clicked, sdl);
 		rightArrow.updateClicked(mouseX, mouseY, clicked, sdl);
+		nameTag.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -263,6 +267,10 @@ struct UIState
 		// Not visible
 		leftArrow.setVisible(false);
 		rightArrow.setVisible(false);
+
+		// ----- NAME TAG -----
+		// Not visible
+		nameTag.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -328,6 +336,10 @@ struct UIState
 		// Not visible
 		leftArrow.setVisible(false);
 		rightArrow.setVisible(false);
+
+		// ----- NAME TAG -----
+		// Not visible
+		nameTag.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -393,6 +405,10 @@ struct UIState
 		// Not visible
 		leftArrow.setVisible(false);
 		rightArrow.setVisible(false);
+
+		// ----- NAME TAG -----
+		// Not visible
+		nameTag.setVisible(false);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -458,6 +474,10 @@ struct UIState
 		// Not visible
 		leftArrow.setVisible(false);
 		rightArrow.setVisible(false);
+
+		// ----- NAME TAG -----
+		// Not visible
+		nameTag.setVisible(false);
 	}
 
 	void switchToGameOverScreen()
@@ -523,6 +543,10 @@ struct UIState
 		// Not visible
 		leftArrow.setVisible(false);
 		rightArrow.setVisible(false);
+
+		// ----- NAME TAG -----
+		// Not visible
+		nameTag.setVisible(false);
 	}
 
 	void switchToChangePlayerTransitionScreen()
@@ -587,6 +611,10 @@ struct UIState
 		// Not visible
 		leftArrow.setVisible(false);
 		rightArrow.setVisible(false);
+
+		// ----- NAME TAG -----
+		// Not visible
+		nameTag.setVisible(false);
 	}
 
 	void switchToChangePlayerScreen()
@@ -651,5 +679,9 @@ struct UIState
 		// Visible
 		leftArrow.setVisible(true);
 		rightArrow.setVisible(true);
+
+		// ----- NAME TAG -----
+		// Visible
+		nameTag.setVisible(true);
 	}
 };
