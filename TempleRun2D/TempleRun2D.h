@@ -6,6 +6,7 @@
 // Libraries
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 // Header files
 #include "GameState.h"
@@ -22,7 +23,10 @@
 #include "entities/Obstacle.h"
 #include "entities/Boost.h"
 #include "entities/Transition.h"
-#include "entities/UIButton.h"
+
+// UI
+#include "ui/UIButton.h"
+#include "ui/UILabel.h"
 
 // Textures
 #include "textures/PlayerTextures.h"

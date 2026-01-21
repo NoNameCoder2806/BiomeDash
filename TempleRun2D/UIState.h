@@ -2,7 +2,7 @@
 
 #include <SDL3/SDL.h>
 
-#include "entities/UIButton.h"
+#include "ui/UIButton.h"
 #include "GameState.h"
 
 // Constants

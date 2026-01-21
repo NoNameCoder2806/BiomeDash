@@ -30,6 +30,18 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	if (!TTF_Init())
+	{
+		SDL_Log("TTF_Init failed: %s", SDL_GetError());
+		return 1;
+	}
+
+	// --- CREATE TITLE LABEL ONCE ---
+	UILabel titleLabel(sdl.renderer, "assets/fonts/BrickFlash.ttf", 64);
+	titleLabel.setText("Temple Run 2D");
+	titleLabel.setColor(0, 255, 128); // neon green-cyan
+	titleLabel.setPosition(sdl.width / 2, sdl.height / 2); // somewhere noticeable
+
 	for (int i = 0; i < SDL_SCANCODE_COUNT; ++i)
 	{
 		if (sdl.keys[i])
@@ -183,6 +195,10 @@ int main(int argc, char* argv[])
 				break;
 			}
 		}
+
+		// --- RENDER TITLE LABEL ---
+		titleLabel.render();
+
 		// Dark blue: #173F6C
 		SDL_SetRenderDrawColor(sdl.renderer, 23, 63, 108, 255);
 

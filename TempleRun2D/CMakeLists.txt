@@ -10,7 +10,7 @@ find_package (SDL3_mixer REQUIRED)
 find_package (SDL3_ttf REQUIRED)
 find_package (glm REQUIRED)
 
-add_executable (TempleRun2D "TempleRun2D.cpp" "TempleRun2D.h"   "GameState.cpp" "entities/UIButton.h" "screens.cpp" "utilities.cpp" "collision.cpp" "gamelogic.cpp" "UIState.h" "entities/Transition.h")
+add_executable (TempleRun2D "TempleRun2D.cpp" "TempleRun2D.h"   "GameState.cpp" "ui/UIButton.h" "screens.cpp" "utilities.cpp" "collision.cpp" "gamelogic.cpp" "UIState.h" "entities/Transition.h" "ui/UILabel.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET TempleRun2D PROPERTY CXX_STANDARD 20)
