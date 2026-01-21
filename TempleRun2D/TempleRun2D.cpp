@@ -40,7 +40,10 @@ int main(int argc, char* argv[])
 	UILabel titleLabel(sdl.renderer, "assets/fonts/BrickFlash.ttf", 64);
 	titleLabel.setText("Temple Run 2D");
 	titleLabel.setColor(0, 255, 128); // neon green-cyan
-	titleLabel.setPosition(sdl.width / 2, sdl.height / 2); // somewhere noticeable
+	float visualOffsetX = 50.0f; // tweak based on the font
+	titleLabel.setPosition(sdl.width / 2 - titleLabel.getWidth() / 2 - visualOffsetX, sdl.height / 2 - titleLabel.getHeight() / 2);
+	//titleLabel.setPosition(sdl.width / 2 - titleLabel.getWidth() / 2, sdl.height / 2 - titleLabel.getHeight() / 2); // somewhere noticeable
+	SDL_Log("Screen size: %d x %d", sdl.width, sdl.height);
 
 	for (int i = 0; i < SDL_SCANCODE_COUNT; ++i)
 	{
