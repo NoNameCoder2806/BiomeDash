@@ -63,6 +63,7 @@ struct GameState
 
 	// UILabel
 	std::unique_ptr<UILabel> title;
+	std::unique_ptr<UILabel> titleShadow;
 	glm::vec2 titleWorldPos;
 
 	const std::vector<std::string> fullBiomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };

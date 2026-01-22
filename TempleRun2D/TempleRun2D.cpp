@@ -36,19 +36,6 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	// --- CREATE TITLE LABEL ONCE ---
-	//UILabel titleLabel(sdl.renderer, "assets/fonts/BrickFlash.ttf", 64);
-	//titleLabel.setText("Biome Dash");
-	//titleLabel.setColor(0, 255, 128); // neon green-cyan
-	//
-	//float visualOffsetX = 45.0f; // tweak based on the font
-	//float xCoordinate = sdl.width / 2 - titleLabel.getWidth() / 2 - visualOffsetX;
-	//float yCoordinate = sdl.height / 2 - titleLabel.getHeight() / 2;
-	//titleLabel.setPosition(140.5, yCoordinate);
-	//titleLabel.setPosition(sdl.width / 2 - titleLabel.getWidth() / 2, sdl.height / 2 - titleLabel.getHeight() / 2); // somewhere noticeable
-	//cout << sdl.width / 2 - titleLabel.getWidth() / 2 - visualOffsetX << ", " << sdl.height / 2 - titleLabel.getHeight() / 2 << endl;
-	SDL_Log("Screen size: %d x %d", sdl.width, sdl.height);
-
 	for (int i = 0; i < SDL_SCANCODE_COUNT; ++i)
 	{
 		if (sdl.keys[i])
@@ -64,10 +51,13 @@ int main(int argc, char* argv[])
 	res.load(sdl, "default_monster", game.currentBiome->name, game.currentBiome->parallaxBackgrounds);          // Load our player and monster
 
 	// --- CREATE TITLE LABEL ONCE ---
-	game.title = std::make_unique<UILabel>(sdl.renderer, "assets/fonts/BrickFlash.ttf", 64);
+	game.title = std::make_unique<UILabel>(sdl.renderer, "assets/fonts/ArcadeIn.ttf", 64);
 	game.title->setText("Biome Dash");
-	game.title->setColor(0, 255, 128); // neon green-cyan
-
+	game.title->setColor(160, 64, 255); // neon green-cyan
+	game.titleShadow = std::make_unique<UILabel>(sdl.renderer, "assets/fonts/ArcadeOut.ttf", 64);
+	game.titleShadow->setText("Biome Dash");
+	game.titleShadow->setColor(0, 0, 0); // neon green-cyan
+	
 	float visualOffsetX = 45.0f; // tweak based on the font
 	float xCoordinate = sdl.width / 2 - game.title->getWidth() / 2 - visualOffsetX;
 	float yCoordinate = sdl.height / 2 - game.title->getHeight() / 2;
@@ -132,7 +122,7 @@ int main(int argc, char* argv[])
 	// Create the game tiles
 	manageTiles(sdl, game, res, false);
 
-	game.titleWorldPos = { game.player().getPosition().x - 250, game.player().getPosition().y / 3 };
+	game.titleWorldPos = { game.player().getPosition().x - 260, game.player().getPosition().y / 3 };
 
 	// Store the time into prevTime
 	uint64_t prevTime = SDL_GetTicks();

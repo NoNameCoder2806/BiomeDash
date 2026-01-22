@@ -201,6 +201,8 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 
 	// Render the game title
 	renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
+	glm::vec2 shadowPos = game.titleWorldPos;
+	renderWorldLabel(game.titleShadow.get(), shadowPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 
 	// Temporarily switch to "real pixels" for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
@@ -518,6 +520,8 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	if (game.unusedBiomes.size() == game.biomeList.size())
 	{
 		renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
+		glm::vec2 shadowPos = game.titleWorldPos;
+		renderWorldLabel(game.titleShadow.get(), shadowPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 	}
 	
 	// Display debug information
@@ -744,6 +748,8 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 
 	// Render the game title
 	renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
+	glm::vec2 shadowPos = game.titleWorldPos;
+	renderWorldLabel(game.titleShadow.get(), shadowPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 
 	// Draw UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
@@ -962,6 +968,8 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	if (game.unusedBiomes.size() == game.biomeList.size())
 	{
 		renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
+		glm::vec2 shadowPos = game.titleWorldPos;
+		renderWorldLabel(game.titleShadow.get(), shadowPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 	}
 
 	// Draw UI
