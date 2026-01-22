@@ -758,7 +758,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				}
 
 				// Starting text
-				case START_TEXT_INDEX:
+				case GAME_TITLE_INDEX:
 				{
 					auto text = std::make_unique<GameObject>();
 

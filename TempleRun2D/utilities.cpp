@@ -86,13 +86,13 @@ void cleanupOffscreenObjects(GameState& gs)
 //}
 
 // ----- IV/ RENDER WORLD LABEL -----
-void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos)
+void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos, std::vector<float>& scrollPositions)
 {
 	if (!label) return;
 
 	// Convert world position to screen position
-	float screenX = worldPos.x - cameraPos.x;
-	float screenY = worldPos.y - cameraPos.y;
+	float screenX = worldPos.x + scrollPositions[0];
+	float screenY = worldPos.y;
 
 	label->setPosition(screenX, screenY);
 	label->render();

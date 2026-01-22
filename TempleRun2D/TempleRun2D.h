@@ -52,7 +52,7 @@ const int MONSTER_INDEX = 2;
 const int SECOND_PLAYER_INDEX = 3;
 const int START_PORTAL_INDEX = 4;
 const int END_PORTAL_INDEX = 5;
-const int START_TEXT_INDEX = 998;
+const int GAME_TITLE_INDEX = 998;
 const int ORB_INDEX = 999;
 const int COMMANDER_INDEX = 1000;
 
@@ -121,4 +121,4 @@ bool checkGrounded(const GameObject& player, const std::vector<std::unique_ptr<G
 void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float xVelocity, float& scrollPos, float scrollFactor, float deltaTime);
 void cleanupOffscreenObjects(GameState& gs);
 //void countObjectsWithTexture(const GameState& game);
-void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos);
+void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos, std::vector<float>& scrollPositions);

@@ -6,9 +6,6 @@ using namespace std;
 // ----- HOME SCREEN -----
 void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
-	// World position for the title
-	static glm::vec2 titleWorldPos = { game.player().getPosition().x, game.player().getPosition().y }; // tweak X/Y for visual placement
-
 	// Make sure the game uses the correct render state
 	SDL_SetRenderTarget(sdl.renderer, nullptr);
 	SDL_SetRenderViewport(sdl.renderer, nullptr);
@@ -202,24 +199,8 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 	float px = game.player().getPosition().x - game.mapViewport.x;
 	float py = game.player().getPosition().y - game.mapViewport.y;
 
-	// --- RENDER WORLD-TITLE LABEL ---
-	renderWorldLabel(game.title.get(), titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y));
-
-	// Draw text slightly above the player's head
-	/*SDL_SetRenderDrawColor(sdl.renderer, 0, 0, 0, 255); // black text
-	SDL_RenderDebugText(
-		sdl.renderer,
-		(int)(px - 50),   // center horizontally
-		(int)(py + 60),   // above head
-		"Press > to start"
-	);*/
-
-	// Draw menu options
-	//SDL_RenderDebugText(sdl.renderer, 400, 500, "Press RIGHT or RETURN to start");
-	//SDL_RenderDebugText(sdl.renderer, 400, 550, "Press C to change character");
-	//SDL_RenderDebugText(sdl.renderer, 400, 600, "Press M to change monster");
-	//SDL_RenderDebugText(sdl.renderer, 400, 650, "Press ESC to quit");
-	//SDL_RenderDebugText(sdl.renderer, 400, 700, "Press F11 to toggle fullscreen");
+	// Render the game title
+	renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 
 	// Temporarily switch to "real pixels" for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
@@ -533,6 +514,12 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 		}
 	}
 
+	// Render game title only if this is the first biome
+	if (game.unusedBiomes.size() == game.biomeList.size())
+	{
+		renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
+	}
+	
 	// Display debug information
 	SDL_SetRenderDrawColor(sdl.renderer, 255, 255, 255, 255);
 
@@ -755,6 +742,9 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 		}
 	}
 
+	// Render the game title
+	renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
+
 	// Draw UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
@@ -966,6 +956,12 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 			drawObject(sdl, game, obj, deltaTime);
 		}
+	}
+
+	// Render game title only if this is the first biome
+	if (game.unusedBiomes.size() == game.biomeList.size())
+	{
+		renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 	}
 
 	// Draw UI

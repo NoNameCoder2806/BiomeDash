@@ -132,6 +132,8 @@ int main(int argc, char* argv[])
 	// Create the game tiles
 	manageTiles(sdl, game, res, false);
 
+	game.titleWorldPos = { game.player().getPosition().x - 250, game.player().getPosition().y / 3 };
+
 	// Store the time into prevTime
 	uint64_t prevTime = SDL_GetTicks();
 
