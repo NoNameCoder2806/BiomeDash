@@ -81,7 +81,7 @@ public:
         }
 
         // Debug
-        SDL_Log("Text size: %d x %d | text=\"%s\"", textW, textH, currentText.c_str());
+        //SDL_Log("Text size: %d x %d | text=\"%s\"", textW, textH, currentText.c_str());
     }
 
     void setColor(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255)
@@ -106,8 +106,8 @@ public:
             }
             else
             {
-                SDL_Log("Rendering text \"%s\" at x=%.2f y=%.2f | size=%.2f x %.2f",
-                    currentText.c_str(), x, y, getWidth(), getHeight());
+                /*SDL_Log("Rendering text \"%s\" at x=%.2f y=%.2f | size=%.2f x %.2f",
+                    currentText.c_str(), x, y, getWidth(), getHeight());*/
             }
         }
     }
