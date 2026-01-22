@@ -6,6 +6,9 @@ using namespace std;
 // ----- HOME SCREEN -----
 void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
+	// World position for the title
+	static glm::vec2 titleWorldPos = { game.player().getPosition().x, game.player().getPosition().y }; // tweak X/Y for visual placement
+
 	// Make sure the game uses the correct render state
 	SDL_SetRenderTarget(sdl.renderer, nullptr);
 	SDL_SetRenderViewport(sdl.renderer, nullptr);
@@ -198,6 +201,9 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 	// Convert player world position to screen position
 	float px = game.player().getPosition().x - game.mapViewport.x;
 	float py = game.player().getPosition().y - game.mapViewport.y;
+
+	// --- RENDER WORLD-TITLE LABEL ---
+	renderWorldLabel(game.title.get(), titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y));
 
 	// Draw text slightly above the player's head
 	/*SDL_SetRenderDrawColor(sdl.renderer, 0, 0, 0, 255); // black text

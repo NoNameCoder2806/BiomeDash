@@ -15,6 +15,7 @@
 
 #include "SDLState.h"
 #include "UIState.h"
+#include "ui/UILabel.h"
 
 const size_t LAYER_IDX_PLAYER = 3;          // Index for the player layer in 'layers' array, including monster, player, ground tiles
 const size_t LAYER_IDX_MONSTER = 2;
@@ -59,6 +60,9 @@ struct GameState
 
 	// UIState
 	UIState ui;
+
+	// UILabel
+	std::unique_ptr<UILabel> title;
 
 	const std::vector<std::string> fullBiomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };

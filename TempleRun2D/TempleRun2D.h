@@ -121,3 +121,4 @@ bool checkGrounded(const GameObject& player, const std::vector<std::unique_ptr<G
 void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float xVelocity, float& scrollPos, float scrollFactor, float deltaTime);
 void cleanupOffscreenObjects(GameState& gs);
 //void countObjectsWithTexture(const GameState& game);
+void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos);

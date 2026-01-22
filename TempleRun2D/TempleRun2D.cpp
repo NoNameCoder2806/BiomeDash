@@ -37,13 +37,16 @@ int main(int argc, char* argv[])
 	}
 
 	// --- CREATE TITLE LABEL ONCE ---
-	UILabel titleLabel(sdl.renderer, "assets/fonts/BrickFlash.ttf", 64);
-	titleLabel.setText("Biome Dash");
-	titleLabel.setColor(0, 255, 128); // neon green-cyan
-	
-	float visualOffsetX = 45.0f; // tweak based on the font
-	titleLabel.setPosition(sdl.width / 2 - titleLabel.getWidth() / 2 - visualOffsetX, sdl.height / 2 - titleLabel.getHeight() / 2);
+	//UILabel titleLabel(sdl.renderer, "assets/fonts/BrickFlash.ttf", 64);
+	//titleLabel.setText("Biome Dash");
+	//titleLabel.setColor(0, 255, 128); // neon green-cyan
+	//
+	//float visualOffsetX = 45.0f; // tweak based on the font
+	//float xCoordinate = sdl.width / 2 - titleLabel.getWidth() / 2 - visualOffsetX;
+	//float yCoordinate = sdl.height / 2 - titleLabel.getHeight() / 2;
+	//titleLabel.setPosition(140.5, yCoordinate);
 	//titleLabel.setPosition(sdl.width / 2 - titleLabel.getWidth() / 2, sdl.height / 2 - titleLabel.getHeight() / 2); // somewhere noticeable
+	//cout << sdl.width / 2 - titleLabel.getWidth() / 2 - visualOffsetX << ", " << sdl.height / 2 - titleLabel.getHeight() / 2 << endl;
 	SDL_Log("Screen size: %d x %d", sdl.width, sdl.height);
 
 	for (int i = 0; i < SDL_SCANCODE_COUNT; ++i)
@@ -59,6 +62,16 @@ int main(int argc, char* argv[])
 	game.updateBiome(game.currentBiome->name);
 	Resources res;          // Create a Resources object
 	res.load(sdl, "default_monster", game.currentBiome->name, game.currentBiome->parallaxBackgrounds);          // Load our player and monster
+
+	// --- CREATE TITLE LABEL ONCE ---
+	game.title = std::make_unique<UILabel>(sdl.renderer, "assets/fonts/BrickFlash.ttf", 64);
+	game.title->setText("Biome Dash");
+	game.title->setColor(0, 255, 128); // neon green-cyan
+
+	float visualOffsetX = 45.0f; // tweak based on the font
+	float xCoordinate = sdl.width / 2 - game.title->getWidth() / 2 - visualOffsetX;
+	float yCoordinate = sdl.height / 2 - game.title->getHeight() / 2;
+	game.title->setPosition(140.5, yCoordinate);
 
 	// Set up the UI and the Transition
 	game.ui.setup(sdl.renderer, res);
@@ -201,7 +214,7 @@ int main(int argc, char* argv[])
 		}
 
 		// --- RENDER TITLE LABEL ---
-		titleLabel.render();
+		//titleLabel.render();
 
 		// Dark blue: #173F6C
 		SDL_SetRenderDrawColor(sdl.renderer, 23, 63, 108, 255);

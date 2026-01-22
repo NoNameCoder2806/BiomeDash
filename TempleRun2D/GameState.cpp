@@ -12,7 +12,8 @@
 
 GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex(1)
 {
-	mapViewport = SDL_FRect{
+	mapViewport = SDL_FRect
+	{
 		.x = 0,
 		.y = 0,
 		.w = static_cast<float>(state.logW),

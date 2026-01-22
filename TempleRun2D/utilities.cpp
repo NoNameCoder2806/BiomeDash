@@ -84,3 +84,16 @@ void cleanupOffscreenObjects(GameState& gs)
 //	
 //	cout << "Total number of Objects: " << count << endl;
 //}
+
+// ----- IV/ RENDER WORLD LABEL -----
+void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos)
+{
+	if (!label) return;
+
+	// Convert world position to screen position
+	float screenX = worldPos.x - cameraPos.x;
+	float screenY = worldPos.y - cameraPos.y;
+
+	label->setPosition(screenX, screenY);
+	label->render();
+}
