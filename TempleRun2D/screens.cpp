@@ -14,7 +14,7 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 		sdl.renderer,
 		sdl.logW,
 		sdl.logH,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
+		SDL_LOGICAL_PRESENTATION_STRETCH
 	);
 
 	// Events update
@@ -211,7 +211,7 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 	game.ui.render(sdl);
 
 	// Restore logical presentation so everything else still uses your world scaling
-	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
 }
 
 // ----- II/ PLAYING FRAME -----
@@ -226,7 +226,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 		sdl.renderer,
 		sdl.logW,
 		sdl.logH,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
+		SDL_LOGICAL_PRESENTATION_STRETCH
 	);
 
 	// Event polling loop
@@ -558,7 +558,7 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	game.ui.render(sdl);
 
 	// Restore logical presentation so everything else still uses your world scaling
-	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
 
 	// Assign nowTime to prevTime to update the time
 	prevTime = nowTime;
@@ -575,7 +575,7 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 		sdl.renderer,
 		sdl.logW,
 		sdl.logH,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
+		SDL_LOGICAL_PRESENTATION_STRETCH
 	);
 
 	// Events update
@@ -754,7 +754,7 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	// Draw UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
-	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
 }
 
 // ----- IV/ PLAYING PAUSE SCREEN -----
@@ -768,7 +768,7 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		sdl.renderer,
 		sdl.logW,
 		sdl.logH,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
+		SDL_LOGICAL_PRESENTATION_STRETCH
 	);
 
 	// Events update
@@ -975,7 +975,7 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	// Draw UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
-	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
 }
 
 // ----- V/ GAME OVER SCREEN -----
@@ -989,7 +989,7 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 		sdl.renderer,
 		sdl.logW,
 		sdl.logH,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
+		SDL_LOGICAL_PRESENTATION_STRETCH
 	);
 
 	// Events update
@@ -1178,7 +1178,7 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 	// Draw UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
-	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
 }
 
 // ----- VI/ TRANSITION SCREEN -----
@@ -1192,7 +1192,7 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 		sdl.renderer,
 		sdl.logW,
 		sdl.logH,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
+		SDL_LOGICAL_PRESENTATION_STRETCH
 	);
 
 	// Debug
@@ -1354,14 +1354,34 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 	SDL_SetRenderViewport(sdl.renderer, nullptr);
 
-	// Events
+	// Events update
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
 		if (e.type == SDL_EVENT_QUIT)
+		{
 			exit(0);
-
-		if (e.type == SDL_EVENT_WINDOW_RESIZED)
+		}
+		else if (e.type == SDL_EVENT_KEY_UP)
+		{
+			switch (e.key.scancode)
+			{
+				case SDL_SCANCODE_F11:
+				{
+					sdl.fullscreen = !sdl.fullscreen;
+					SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
+					// Optionally reset window dimensions after fullscreen toggle
+					if (!sdl.fullscreen)
+					{
+						sdl.width = 1920; // or your default width
+						sdl.height = 1080; // or your default height
+						SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
+					}
+					break;
+				}
+			}
+		}
+		else if (e.type == SDL_EVENT_WINDOW_RESIZED)
 		{
 			sdl.width = e.window.data1;
 			sdl.height = e.window.data2;
