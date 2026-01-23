@@ -65,12 +65,15 @@ struct GameState
 	std::unique_ptr<UILabel> title;
 	std::unique_ptr<UILabel> titleShadow;
 	glm::vec2 titleWorldPos;
+	std::unique_ptr<UILabel> characterName;
+	glm::vec2 characterNamePos;
 
 	const std::vector<std::string> fullBiomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	
 	const std::vector<std::string> fullCharactersList = { "hooded_hero", "red_meppo", "bad_meppo", "soldier_meppo" };
+	const std::vector<std::string> fullCharactersNickNames = { "RED HOODIE", "RED MEPPO", "CIGAREPPO", "FIGHTYEPPO" };
 	const std::string defaultCharacterName = "hooded_hero";
 
 	// Current character index

@@ -12,7 +12,7 @@ const glm::vec2 PLAY_MARGIN({ 0.5, 0.625 });
 
 // PAUSE BUTTON
 const glm::vec2 PAUSE_SIZE({ 84, 84 });
-const glm::vec2 PAUSE_MARGIN({ 0.975, 0.05 });
+const glm::vec2 PAUSE_MARGIN({ 0.975, 0.08 });
 
 // PAUSE PANEL
 const glm::vec2 PAUSE_PANEL_SIZE({ 672, 504 });
@@ -47,11 +47,11 @@ const glm::vec2 MAIN_MENU_SIZE({ 520, 80 });
 const glm::vec2 MAIN_MENU_MARGIN({ 0.5, 0.67 });
 
 // AVATAR BUTTON
-const glm::vec2 AVATAR_SIZE({ 400, 125 });
+const glm::vec2 AVATAR_SIZE({ 522, 150 });
 const glm::vec2 AVATAR_MARGIN({ 0.06, 0.08 });
 
 // CHARACTER AVATAR
-const glm::vec2 CHARACTER_AVATAR_SIZE({ 96, 96 });
+const glm::vec2 CHARACTER_AVATAR_SIZE({ 120, 120 });
 const glm::vec2 CHARACTER_AVATAR_MARGIN({ 0.06, 0.09 });
 
 // HEROES BUTTON

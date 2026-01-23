@@ -35,6 +35,7 @@
 #include "world/Biome.h"
 
 // Libraries
+#include <algorithm>
 #include <vector>
 #include <array>
 #include <string>
@@ -87,6 +88,9 @@ extern bool PLAYING;
 extern bool BIOME_UPDATE;
 extern int CURRENT_MAP_SIZE;
 extern std::vector<UIButton> buttons;
+extern glm::vec2 GAME_TITLE_POSITION;
+extern glm::vec2 CHARACTER_NAME_POSITION;
+extern glm::vec2 CHARACTER_NAME_POSITION_CHANGE;
 
 // All textures (Biomes, Characters, Monsters)
 extern std::unordered_map<std::string, Biome> biomeTexturesMap;
@@ -121,4 +125,4 @@ bool checkGrounded(const GameObject& player, const std::vector<std::unique_ptr<G
 void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float xVelocity, float& scrollPos, float scrollFactor, float deltaTime);
 void cleanupOffscreenObjects(GameState& gs);
 //void countObjectsWithTexture(const GameState& game);
-void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos, std::vector<float>& scrollPositions);
+void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos, std::vector<float>& scrollPositions, bool followCamera = false);

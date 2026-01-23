@@ -86,13 +86,26 @@ void cleanupOffscreenObjects(GameState& gs)
 //}
 
 // ----- IV/ RENDER WORLD LABEL -----
-void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos, std::vector<float>& scrollPositions)
+void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos, std::vector<float>& scrollPositions, bool followCamera)
 {
 	if (!label) return;
 
-	// Convert world position to screen position
-	float screenX = worldPos.x + scrollPositions[0];
-	float screenY = worldPos.y;
+	float screenX = 0.0f;
+	float screenY = 0.0f;
+
+	// Check to see if it follows the camera or not
+	if (followCamera)
+	{
+		// If it does, we keep drawing it without changing the coordinates
+		screenX = worldPos.x;
+		screenY = worldPos.y;
+	}
+	else
+	{
+		// Otherwise, we make sure it floats with the scroll position
+		screenX = worldPos.x + scrollPositions[0];
+		screenY = worldPos.y;
+	}
 
 	label->setPosition(screenX, screenY);
 	label->render();

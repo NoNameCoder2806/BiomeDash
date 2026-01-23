@@ -14,6 +14,9 @@ int FLOOR_TILES = 0;
 bool PLAYING = false;
 bool BIOME_UPDATE = true;
 int CURRENT_MAP_SIZE = 0;
+glm::vec2 GAME_TITLE_POSITION = { 0, 0 };
+glm::vec2 CHARACTER_NAME_POSITION = { 70, 16 };
+glm::vec2 CHARACTER_NAME_POSITION_CHANGE = { 222, 68 };
 
 // All textures (Biomes, Characters, Monsters)
 unordered_map<string, Biome> biomeTexturesMap;
@@ -50,14 +53,22 @@ int main(int argc, char* argv[])
 	Resources res;          // Create a Resources object
 	res.load(sdl, "default_monster", game.currentBiome->name, game.currentBiome->parallaxBackgrounds);          // Load our player and monster
 
-	// --- CREATE TITLE LABEL ONCE ---
+	// Create the game title
 	game.title = std::make_unique<UILabel>(sdl.renderer, "assets/fonts/ArcadeIn.ttf", 64);
 	game.title->setText("Biome Dash");
-	game.title->setColor(160, 64, 255); // neon green-cyan
+	game.title->setColor(160, 64, 255);    // Purple text
 	game.titleShadow = std::make_unique<UILabel>(sdl.renderer, "assets/fonts/ArcadeOut.ttf", 64);
 	game.titleShadow->setText("Biome Dash");
-	game.titleShadow->setColor(0, 0, 0); // neon green-cyan
-	
+	game.titleShadow->setColor(0, 0, 0);    // Black text
+
+	// Create the character's name
+	game.characterName = std::make_unique<UILabel>(sdl.renderer, "assets/fonts/VirtupetPixies.ttf", 32);
+	string name = game.fullCharactersNickNames.at(game.currentCharacter);
+	replace(name.begin(), name.end(), '_', ' ');
+	game.characterName->setText(name);
+	game.characterName->setColor(255, 255, 255);    // White text
+	game.characterNamePos = CHARACTER_NAME_POSITION;
+
 	float visualOffsetX = 45.0f; // tweak based on the font
 	float xCoordinate = sdl.width / 2 - game.title->getWidth() / 2 - visualOffsetX;
 	float yCoordinate = sdl.height / 2 - game.title->getHeight() / 2;
@@ -122,7 +133,9 @@ int main(int argc, char* argv[])
 	// Create the game tiles
 	manageTiles(sdl, game, res, false);
 
-	game.titleWorldPos = { game.player().getPosition().x - 260, game.player().getPosition().y / 3 };
+	// Set the title world position
+	GAME_TITLE_POSITION = { game.player().getPosition().x - 260, game.player().getPosition().y / 3 };
+	game.titleWorldPos = GAME_TITLE_POSITION;
 
 	// Store the time into prevTime
 	uint64_t prevTime = SDL_GetTicks();

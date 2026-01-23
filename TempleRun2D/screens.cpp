@@ -29,57 +29,57 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 		{
 			switch (e.key.scancode)
 			{
-				case SDL_SCANCODE_RETURN:
-				case SDL_SCANCODE_RIGHT:
-				case SDL_SCANCODE_D:
+			case SDL_SCANCODE_RETURN:
+			case SDL_SCANCODE_RIGHT:
+			case SDL_SCANCODE_D:
+			{
+				// Switch to the play screen
+				game.ui.switchToPlayScreen();
+
+				// Change the Screen State
+				game.screen = ScreenState::playing;
+
+				// Set the player to the running state
+				game.player().setState(PlayerState::running);
+
+				// Set monster to chasing state
+				game.monster().setState(MonsterState::chasing);
+
+				return;
+			}
+			case SDL_SCANCODE_C:
+			{
+				//game.changeCharacter();
+				break;
+			}
+			case SDL_SCANCODE_M:
+			{
+				//game.changeMonster();
+				break;
+			}
+			case SDL_SCANCODE_ESCAPE:
+			{
+				// Switch the UI to the home pause screen
+				game.ui.switchToHomePauseScreen();
+
+				// Change the screen state
+				game.screen = ScreenState::homePause;
+
+				break;
+			}
+			case SDL_SCANCODE_F11:
+			{
+				sdl.fullscreen = !sdl.fullscreen;
+				SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
+				// Optionally reset window dimensions after fullscreen toggle
+				if (!sdl.fullscreen)
 				{
-					// Switch to the play screen
-					game.ui.switchToPlayScreen();
-
-					// Change the Screen State
-					game.screen = ScreenState::playing;
-
-					// Set the player to the running state
-					game.player().setState(PlayerState::running);
-
-					// Set monster to chasing state
-					game.monster().setState(MonsterState::chasing);
-
-					return;
+					sdl.width = 1920; // or your default width
+					sdl.height = 1080; // or your default height
+					SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
 				}
-				case SDL_SCANCODE_C:
-				{
-					//game.changeCharacter();
-					break;
-				}
-				case SDL_SCANCODE_M:
-				{
-					//game.changeMonster();
-					break;
-				}
-				case SDL_SCANCODE_ESCAPE:
-				{
-					// Switch the UI to the home pause screen
-					game.ui.switchToHomePauseScreen();
-
-					// Change the screen state
-					game.screen = ScreenState::homePause;
-
-					break;
-				}
-				case SDL_SCANCODE_F11:
-				{
-					sdl.fullscreen = !sdl.fullscreen;
-					SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
-					// Optionally reset window dimensions after fullscreen toggle
-					if (!sdl.fullscreen)
-					{
-						sdl.width = 1920; // or your default width
-						sdl.height = 1080; // or your default height
-						SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
-					}
-					break;
-				}
+				break;
+			}
 			}
 		}
 		else if (e.type == SDL_EVENT_WINDOW_RESIZED)
@@ -115,7 +115,7 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 		// Change the screen state
 		game.screen = ScreenState::homePause;
 	}
-	
+
 	// Play Button
 	if (game.ui.play.isReleased())
 	{
@@ -212,6 +212,16 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 
 	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
+
+	// Update the character's nick name
+	string name = game.fullCharactersNickNames.at(game.currentCharacter);
+	replace(name.begin(), name.end(), '_', ' ');
+	game.characterName->setText(name);
+	game.characterName->setColor(255, 255, 255);    // White text
+	game.characterNamePos = CHARACTER_NAME_POSITION;
+
+	// Render the character's name
+	renderWorldLabel(game.characterName.get(), game.characterNamePos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions, true);
 }
 
 // ----- II/ PLAYING FRAME -----
@@ -560,6 +570,16 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
 
+	// Update the character's nick name
+	string name = game.fullCharactersNickNames.at(game.currentCharacter);
+	replace(name.begin(), name.end(), '_', ' ');
+	game.characterName->setText(name);
+	game.characterName->setColor(255, 255, 255);    // White text
+	game.characterNamePos = CHARACTER_NAME_POSITION;
+
+	// Render the character's name
+	renderWorldLabel(game.characterName.get(), game.characterNamePos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions, true);
+
 	// Assign nowTime to prevTime to update the time
 	prevTime = nowTime;
 }
@@ -755,6 +775,16 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
+
+	// Update the character's nick name
+	string name = game.fullCharactersNickNames.at(game.currentCharacter);
+	replace(name.begin(), name.end(), '_', ' ');
+	game.characterName->setText(name);
+	game.characterName->setColor(255, 255, 255);    // White text
+	game.characterNamePos = CHARACTER_NAME_POSITION;
+
+	// Render the character's name
+	renderWorldLabel(game.characterName.get(), game.characterNamePos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions, true);
 }
 
 // ----- IV/ PLAYING PAUSE SCREEN -----
@@ -976,6 +1006,16 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
+
+	// Update the character's nick name
+	string name = game.fullCharactersNickNames.at(game.currentCharacter);
+	replace(name.begin(), name.end(), '_', ' ');
+	game.characterName->setText(name);
+	game.characterName->setColor(255, 255, 255);    // White text
+	game.characterNamePos = CHARACTER_NAME_POSITION;
+
+	// Render the character's name
+	renderWorldLabel(game.characterName.get(), game.characterNamePos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions, true);
 }
 
 // ----- V/ GAME OVER SCREEN -----
@@ -1179,6 +1219,16 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 	game.ui.render(sdl);
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
+	
+	// Update the character's nick name
+	string name = game.fullCharactersNickNames.at(game.currentCharacter);
+	replace(name.begin(), name.end(), '_', ' ');
+	game.characterName->setText(name);
+	game.characterName->setColor(255, 255, 255);    // White text
+	game.characterNamePos = CHARACTER_NAME_POSITION;
+
+	// Render the character's name
+	renderWorldLabel(game.characterName.get(), game.characterNamePos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions, true);
 }
 
 // ----- VI/ TRANSITION SCREEN -----
@@ -1366,19 +1416,19 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		{
 			switch (e.key.scancode)
 			{
-				case SDL_SCANCODE_F11:
+			case SDL_SCANCODE_F11:
+			{
+				sdl.fullscreen = !sdl.fullscreen;
+				SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
+				// Optionally reset window dimensions after fullscreen toggle
+				if (!sdl.fullscreen)
 				{
-					sdl.fullscreen = !sdl.fullscreen;
-					SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
-					// Optionally reset window dimensions after fullscreen toggle
-					if (!sdl.fullscreen)
-					{
-						sdl.width = 1920; // or your default width
-						sdl.height = 1080; // or your default height
-						SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
-					}
-					break;
+					sdl.width = 1920; // or your default width
+					sdl.height = 1080; // or your default height
+					SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
 				}
+				break;
+			}
 			}
 		}
 		else if (e.type == SDL_EVENT_WINDOW_RESIZED)
@@ -1624,4 +1674,23 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 
 	// Render the UI
 	game.ui.render(sdl);
+
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
+
+	// Update the character's nick name
+	string name = game.fullCharactersNickNames.at(game.currentCharacter);
+	replace(name.begin(), name.end(), '_', ' ');
+	game.characterName->setText(name);
+	game.characterName->setColor(255, 255, 255);    // White text
+	game.characterNamePos = CHARACTER_NAME_POSITION_CHANGE;
+
+	glm::vec2 centeredPos = {
+	game.characterNamePos.x - game.characterName->getWidth() / 2.0f + 50.0f,
+	game.characterNamePos.y
+	};
+
+	if (game.cameraZoom == game.targetZoom && game.cameraZoom == 3.0f)
+	{
+		renderWorldLabel(game.characterName.get(), centeredPos,	glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions, true);
+	}
 }
