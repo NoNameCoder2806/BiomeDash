@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 
 #include "ui/UIButton.h"
+#include "ui/AnimatedUIButton.h"
 #include "GameState.h"
 
 // Constants
@@ -74,6 +75,11 @@ const glm::vec2 RIGHT_ARROW_MARGIN({ 0.65, 0.55 });
 const glm::vec2 LEFT_ARROW_SIZE({ 60, 100 });
 const glm::vec2 LEFT_ARROW_MARGIN({ 0.35, 0.55 });
 
+// WINNING SCREEN PANNEL
+const glm::vec2 WINNING_SCREEN_SIZE({ 1001, 504 });        // Frame size
+const glm::vec2 WINNING_SCREEN_FRAME_SIZE({ 143, 72 });    // Pixels size
+const glm::vec2 WINNING_SCREEN_MARGIN({ 0.5, 0.5 });
+
 // UIState struct
 struct UIState
 {
@@ -104,6 +110,9 @@ struct UIState
 	UIButton leftArrow;
 	UIButton rightArrow;
 	UIButton nameTag;
+
+	// Winning pannel
+	AnimatedUIButton winningScreen;
 
 	// Default constructor
 	UIState()
@@ -143,6 +152,11 @@ struct UIState
 		leftArrow = UIButton(renderer, res, "leftArrow", LEFT_ARROW_SIZE, LEFT_ARROW_MARGIN);
 		rightArrow = UIButton(renderer, res, "rightArrow", RIGHT_ARROW_SIZE, RIGHT_ARROW_MARGIN);
 		nameTag = UIButton(renderer, res, "nameTag", NAME_TAG_SIZE, NAME_TAG_MARGIN);
+	
+		// Winning screen
+		winningScreen = AnimatedUIButton(renderer, res, "winningScreen", WINNING_SCREEN_SIZE, WINNING_SCREEN_MARGIN, WINNING_SCREEN_FRAME_SIZE);
+		Animation anim(3, 1.0f, true);
+		winningScreen.setAnimation(anim);
 	}
 
 	void render(const SDLState& state) const
@@ -168,9 +182,6 @@ struct UIState
 		restart.render(state);
 		credits.render(state);
 
-		// Main Menu button
-		mainMenu.render(state);
-
 		// Character Avatar and Avatar button
 		avatar.render(state);
 		characterAvatar.render(state);
@@ -181,9 +192,15 @@ struct UIState
 		leftArrow.render(state);
 		rightArrow.render(state);
 		nameTag.render(state);
+
+		// Winning screen
+		winningScreen.render(state);
+
+		// Main Menu button
+		mainMenu.render(state);
 	}
 
-	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl)
+	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl, float deltaTime = 0.0f)
 	{
 		// Check each buttons
 		play.updateClicked(mouseX, mouseY, clicked, sdl);
@@ -202,6 +219,8 @@ struct UIState
 		leftArrow.updateClicked(mouseX, mouseY, clicked, sdl);
 		rightArrow.updateClicked(mouseX, mouseY, clicked, sdl);
 		nameTag.updateClicked(mouseX, mouseY, clicked, sdl);
+		winningScreen.stepAnimation(deltaTime);
+		winningScreen.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -271,6 +290,10 @@ struct UIState
 		// ----- NAME TAG -----
 		// Not visible
 		nameTag.setVisible(false);
+
+		// ----- WINNING PANNEL -----
+		// Not visible
+		winningScreen.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -340,6 +363,10 @@ struct UIState
 		// ----- NAME TAG -----
 		// Not visible
 		nameTag.setVisible(false);
+
+		// ----- WINNING PANNEL -----
+		// Not visible
+		winningScreen.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -409,6 +436,10 @@ struct UIState
 		// ----- NAME TAG -----
 		// Not visible
 		nameTag.setVisible(false);
+
+		// ----- WINNING PANNEL -----
+		// Not visible
+		winningScreen.setVisible(false);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -478,6 +509,10 @@ struct UIState
 		// ----- NAME TAG -----
 		// Not visible
 		nameTag.setVisible(false);
+
+		// ----- WINNING PANNEL -----
+		// Not visible
+		winningScreen.setVisible(false);
 	}
 
 	void switchToGameOverScreen()
@@ -547,6 +582,10 @@ struct UIState
 		// ----- NAME TAG -----
 		// Not visible
 		nameTag.setVisible(false);
+
+		// ----- WINNING PANNEL -----
+		// Not visible
+		winningScreen.setVisible(false);
 	}
 
 	void switchToChangePlayerTransitionScreen()
@@ -615,6 +654,10 @@ struct UIState
 		// ----- NAME TAG -----
 		// Not visible
 		nameTag.setVisible(false);
+
+		// ----- WINNING PANNEL -----
+		// Not visible
+		winningScreen.setVisible(false);
 	}
 
 	void switchToChangePlayerScreen()
@@ -683,5 +726,82 @@ struct UIState
 		// ----- NAME TAG -----
 		// Visible
 		nameTag.setVisible(true);
+
+		// ----- WINNING PANNEL -----
+		// Not visible
+		winningScreen.setVisible(false);
+	}
+
+	void switchToWinningScreen()
+	{
+		// ----- PAUSE BUTTON -----
+		// Not visible and not toggled
+		pause.setVisible(true);
+		pause.setToggled(false);
+
+		// ----- PLAY BUTTON -----
+		// Not visible
+		play.setVisible(false);
+
+		// ----- PAUSE PANEL -----
+		// Not visible
+		pausePanel.setVisible(false);
+
+		// ----- EXIT BUTTON -----
+		// Not visible
+		exit.setVisible(false);
+
+		// ----- HOME BUTTON -----
+		// Not visible
+		home.setVisible(false);
+
+		// ----- CONTINUE BUTTON -----
+		// Not visible
+		continueGame.setVisible(false);
+
+		// ----- VOLUME BUTTON -----
+		// Not visible
+		volume.setVisible(false);
+
+		// ----- RESTART BUTTON -----
+		// Not visible
+		restart.setVisible(false);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(false);
+
+		// ----- MAIN MENU BUTTON -----
+		// Visible
+		mainMenu.setVisible(true);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
+
+		// ----- CHARACTER AVATAR -----
+		// Visible
+		characterAvatar.setVisible(true);
+
+		// ----- HEROES BUTTON -----
+		// Not visible
+		heroes.setVisible(false);
+
+		// ----- BACK BUTTON -----
+		// Not visible
+		back.setVisible(false);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Not visible
+		leftArrow.setVisible(false);
+		rightArrow.setVisible(false);
+
+		// ----- NAME TAG -----
+		// Not visible
+		nameTag.setVisible(false);
+
+		// ----- WINNING PANNEL -----
+		// Visible
+		winningScreen.setVisible(true);
 	}
 };

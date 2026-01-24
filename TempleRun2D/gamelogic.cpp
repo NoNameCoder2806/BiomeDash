@@ -36,6 +36,12 @@ void resetForNewBiome(SDLState& state, GameState& gs, Resources& res)
 		{
 			// Then we stop the game because the player has won!
 			cout << "Game won!" << endl;
+
+			// Change the GameState to won
+			gs.screen == ScreenState::won;
+
+			// Change the UI to winning screen
+			gs.ui.switchToWinningScreen();
 		}
 	}
 	// Otherwise

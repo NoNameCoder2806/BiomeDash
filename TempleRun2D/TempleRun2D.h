@@ -26,6 +26,7 @@
 
 // UI
 #include "ui/UIButton.h"
+#include "ui/AnimatedUIButton.h"
 #include "ui/UILabel.h"
 
 // Textures
@@ -69,7 +70,7 @@ const int MAP_ROWS = 10;
 const int MAP_COLS = 15;
 const int CHUNK_SIZE = 5;
 const int TILE_PRELOAD_AHEAD = 5;
-const float ORIGINAL_SPEED = 150.0f;
+const float ORIGINAL_SPEED = 250.0f;
 
 // Collision boxes
 const SDL_FRect RUN_COLLISION = { 7, 10, 16, 22 };
@@ -105,6 +106,7 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
+void runWinningScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime);
 
 // ----- II/ GAME LOGIC -----
 void resetForNewBiome(SDLState& state, GameState& gs, Resources& res);

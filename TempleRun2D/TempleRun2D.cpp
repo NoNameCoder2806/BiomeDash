@@ -153,6 +153,9 @@ int main(int argc, char* argv[])
 	bool running = true;
 	while (running)
 	{
+		// Debug
+		cout << "Game Screen State: " << static_cast<int>(game.screen) << endl;
+
 		// Increment the frame count
 		frames++;
 		uint64_t fpsNow = SDL_GetTicks();
@@ -208,6 +211,12 @@ int main(int argc, char* argv[])
 			case ScreenState::changePlayer:
 			{
 				runChangePlayerScreen(sdl, game, res, scrollPositions, prevTime);
+				break;
+			}
+
+			case ScreenState::won:
+			{
+				runWinningScreen(sdl, game, res, scrollPositions, prevTime);
 				break;
 			}
 

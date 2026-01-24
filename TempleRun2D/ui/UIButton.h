@@ -10,7 +10,7 @@
 // ----- UIBUTTON CLASS -----
 class UIButton
 {
-private:
+protected:
     // Button name
     std::string name;
 
@@ -22,7 +22,8 @@ private:
     glm::vec2 size{ 0, 0 };
     glm::vec2 margin{ 0, 0 };
 
-    // Whether the object is visible and clicked
+private:
+    // Whether the Button is visible, clicked, and toggled
     bool visible = true;
     bool clicked = false;
     bool wasClicked = false;
@@ -45,12 +46,14 @@ public:
     }
 
     // Getters
-    std::string getName() { return name; }
-    glm::vec2 getMargin() { return margin; }
-    glm::vec2 getSize() { return size; }
-    bool isVisible() { return visible; }
-    bool isClicked() { return clicked; }
-    bool isToggled() { return toggled; }
+    std::string getName() const { return name; }
+    glm::vec2 getMargin() const { return margin; }
+    glm::vec2 getSize() const { return size; }
+    SDL_Texture* getTexture() const { return normalTexture; }
+    SDL_Texture* getClickedTexture() const { return clickedTexture; }
+    bool isVisible() const { return visible; }
+    bool isClicked() const { return clicked; }
+    bool isToggled() const { return toggled; }
 
     // Setters
     void setName(std::string n) { name = n; }
