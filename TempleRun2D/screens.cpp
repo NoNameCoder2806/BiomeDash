@@ -1284,6 +1284,11 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 				runPlayingPauseScreen(sdl, game, res, scrollPositions, prevTime);
 				break;
 			}
+			case ScreenState::won:
+			{
+				runWinningScreen(sdl, game, res, scrollPositions, prevTime);
+				break;
+			}
 			default:
 			{
 				break;
@@ -1730,16 +1735,6 @@ void runWinningScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 				//game.changeMonster();
 				break;
 			}
-			case SDL_SCANCODE_ESCAPE:
-			{
-				// Switch the UI to the home pause screen
-				game.ui.switchToHomePauseScreen();
-
-				// Change the screen state
-				game.screen = ScreenState::homePause;
-
-				break;
-			}
 			case SDL_SCANCODE_F11:
 			{
 				sdl.fullscreen = !sdl.fullscreen;
@@ -1784,6 +1779,9 @@ void runWinningScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 	// Main menu button
 	if (game.ui.mainMenu.isReleased())
 	{
+		// Debug
+		cout << "Main menu clicked!" << endl;
+
 		// Change the states for the screen
 		game.prevScreen = ScreenState::won;
 		game.screen = ScreenState::transition;
@@ -1817,7 +1815,7 @@ void runWinningScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 	{
 		float scrollFactor = 0.75f * (i + 1) / layerCount;
 		drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i],
-			game.player().getVelocity().x, scrollPositions[i], scrollFactor, deltaTime);
+			0.0f, scrollPositions[i], scrollFactor, deltaTime);
 	}
 
 	// Draw all objects and update animations using deltaTime

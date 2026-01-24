@@ -301,8 +301,9 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 		// Commander
 		case ObjectType::commander:
 		{
-			// Debug
-			//cout << "Reached the Commander" << endl;
+			// Change the screen state and ui
+			gs.screen = ScreenState::won;
+			gs.ui.switchToWinningScreen();
 
 			// Set player state to won
 			player.setState(PlayerState::won);
@@ -317,6 +318,10 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 			// Set the commander to be grounded, meaning that 
 			// the player has collided with the commander
 			commander.setGrounded(true);
+
+			// Reverse the animation and texture
+			commander.setTexture(res.commander_reversed);
+			commander.setCurrentAnimation(res.ANIM_COMMANDER_REVERSED);
 
 			break;
 		}

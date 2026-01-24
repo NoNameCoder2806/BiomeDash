@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
 	while (running)
 	{
 		// Debug
-		cout << "Game Screen State: " << static_cast<int>(game.screen) << endl;
+		//cout << "Game Screen State: " << static_cast<int>(game.screen) << endl;
 
 		// Increment the frame count
 		frames++;
@@ -171,9 +171,6 @@ int main(int argc, char* argv[])
 		{
 			case ScreenState::home:
 			{
-				// Debug
-				//cout << "Entered Home Screen" << endl;
-
 				runHomeScreen(sdl, game, res, scrollPositions, prevTime); // update currentScreen if user starts game
 				break;
 			}

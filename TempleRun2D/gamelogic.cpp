@@ -209,7 +209,7 @@ void drawObject(const SDLState& state, GameState& gs, GameObject& obj, float del
 
 	}
 	else if (obj.getType() == ObjectType::commander)
-	{
+	{		
 		SDL_FRect src
 		{
 			.x = srcX,
