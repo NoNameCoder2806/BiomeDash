@@ -224,9 +224,6 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		// --- RENDER TITLE LABEL ---
-		//titleLabel.render();
-
 		// Dark blue: #173F6C
 		SDL_SetRenderDrawColor(sdl.renderer, 23, 63, 108, 255);
 

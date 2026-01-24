@@ -28,6 +28,7 @@ private:
     bool clicked = false;
     bool wasClicked = false;
     bool toggled = false;
+    bool clickable = true;
 
 public:
     UIButton() = default;
@@ -54,6 +55,7 @@ public:
     bool isVisible() const { return visible; }
     bool isClicked() const { return clicked; }
     bool isToggled() const { return toggled; }
+    bool isClickable() const { return clickable; }
 
     // Setters
     void setName(std::string n) { name = n; }
@@ -64,6 +66,7 @@ public:
     void setVisible(bool v) { visible = v; }
     void setClicked(bool c) { clicked = c; }
     void setToggled(bool t) { toggled = t; }
+    void setClickable(bool c) { clickable = c; }
 
     // Helper functions
     bool isReleased() const
@@ -150,7 +153,11 @@ public:
 
         // Select the right texture to render
         SDL_Texture* texToDraw = nullptr;
-        if (clicked || toggled)
+        if (!clickable)
+        {
+            texToDraw = normalTexture;
+        }
+        else if (clicked || toggled)
         {
             texToDraw = clickedTexture;
         }

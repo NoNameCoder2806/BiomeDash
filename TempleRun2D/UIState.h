@@ -229,6 +229,7 @@ struct UIState
 		// Visible, not toggled
 		pause.setVisible(true);
 		pause.setToggled(false);
+		pause.setClickable(true);
 
 		// ----- PLAY BUTTON -----
 		// Visible
@@ -302,6 +303,7 @@ struct UIState
 		// Visible, not toggled
 		pause.setVisible(true);
 		pause.setToggled(false);
+		pause.setClickable(true);
 
 		// ----- PLAY BUTTON -----
 		// Not visible
@@ -375,6 +377,7 @@ struct UIState
 		// Visible and toggled
 		pause.setVisible(true);
 		pause.setToggled(true);
+		pause.setClickable(true);
 
 		// ----- PLAY BUTTON -----
 		// Not visible
@@ -448,6 +451,7 @@ struct UIState
 		// Visible and toggled
 		pause.setVisible(true);
 		pause.setToggled(true);
+		pause.setClickable(true);
 
 		// ----- PLAY BUTTON -----
 		// Not visible
@@ -521,6 +525,7 @@ struct UIState
 		// Visible and not toggled
 		pause.setVisible(true);
 		pause.setToggled(false);
+		pause.setClickable(true);
 
 		// ----- PLAY BUTTON -----
 		// Not visible
@@ -738,6 +743,7 @@ struct UIState
 		// Not visible and not toggled
 		pause.setVisible(true);
 		pause.setToggled(false);
+		pause.setClickable(false);
 
 		// ----- PLAY BUTTON -----
 		// Not visible
