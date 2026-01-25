@@ -80,6 +80,10 @@ const glm::vec2 WINNING_SCREEN_SIZE({ 1001, 504 });        // Frame size
 const glm::vec2 WINNING_SCREEN_FRAME_SIZE({ 143, 72 });    // Pixels size
 const glm::vec2 WINNING_SCREEN_MARGIN({ 0.5, 0.5 });
 
+// STARS
+const glm::vec2 STARS_SIZE({ 44, 44 });
+const glm::vec2 STARS_MARGIN({ 0.175, 0.1575 });
+
 // UIState struct
 struct UIState
 {
@@ -113,6 +117,9 @@ struct UIState
 
 	// Winning pannel
 	AnimatedUIButton winningScreen;
+
+	// Stars
+	UIButton stars;
 
 	// Default constructor
 	UIState()
@@ -157,6 +164,9 @@ struct UIState
 		winningScreen = AnimatedUIButton(renderer, res, "winningScreen", WINNING_SCREEN_SIZE, WINNING_SCREEN_MARGIN, WINNING_SCREEN_FRAME_SIZE);
 		Animation anim(3, 1.0f, true);
 		winningScreen.setAnimation(anim);
+
+		// Stars
+		stars = UIButton(renderer, res, "star", STARS_SIZE, STARS_MARGIN);
 	}
 
 	void render(const SDLState& state) const
@@ -198,6 +208,9 @@ struct UIState
 
 		// Main Menu button
 		mainMenu.render(state);
+
+		// Stars
+		stars.render(state);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl, float deltaTime = 0.0f)
