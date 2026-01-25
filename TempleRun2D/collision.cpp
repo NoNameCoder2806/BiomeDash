@@ -301,9 +301,21 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 		// Commander
 		case ObjectType::commander:
 		{
+			// Debug
+			cout << "Reached the commander!" << endl;
+
 			// Change the screen state and ui
 			gs.screen = ScreenState::won;
 			gs.ui.switchToWinningScreen();
+
+			// Increase the difficulty
+			if (gs.difficulty != Difficulty::hard)
+			{
+				gs.difficulty = static_cast<Difficulty>(static_cast<int>(gs.difficulty) + 1);
+			}
+
+			// Set the new difficulty speed
+			ORIGINAL_SPEED = gs.getOriginalSpeed();
 
 			// Set player state to won
 			player.setState(PlayerState::won);

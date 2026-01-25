@@ -58,6 +58,8 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 	screen = ScreenState::home;
 	nextScreen = ScreenState::home;
 
+	difficulty = Difficulty::easy;
+
 	cameraZoom = 1.0f;
 	targetZoom = 3.0f;
 }
@@ -75,6 +77,22 @@ int GameState::biomeCount()
 float GameState::getScore()
 {
 	return player().getPosition().x - 265;
+}
+
+float GameState::getOriginalSpeed()
+{
+	if (difficulty == Difficulty::easy)
+	{
+		return 125.0f;
+	}
+	else if (difficulty == Difficulty::medium)
+	{
+		return 150.0f;
+	}
+	else if (difficulty == Difficulty::hard)
+	{
+		return 175.0f;
+	}
 }
 
 Monster& GameState::monster()
@@ -570,7 +588,7 @@ void GameState::displayPlayerInformation(SDLState& state)
 	}
 	SDL_RenderDebugText(state.renderer, 5, 5, std::format("----- Player -----").c_str());
 	SDL_RenderDebugText(state.renderer, 5, 25, std::format("State: {}\n", strState).c_str());
-	SDL_RenderDebugText(state.renderer, 5, 45, std::format("Velocity: {:.0f}", player().getVelocity().x).c_str());
+	SDL_RenderDebugText(state.renderer, 5, 125, std::format("Velocity: {:.0f}", player().getVelocity().x).c_str());
 	SDL_RenderDebugText(state.renderer, 5, 65, std::format("X-position: {:.0f}", player().getPosition().x).c_str());
 	SDL_RenderDebugText(state.renderer, 5, 85, std::format("Y-position: {:.0f}", player().getPosition().y).c_str());
 	SDL_RenderDebugText(state.renderer, 5, 105, std::format("Invincible: {}", invincibleMode).c_str());

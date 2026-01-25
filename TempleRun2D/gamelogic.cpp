@@ -465,6 +465,17 @@ void updateObject(const SDLState& state, GameState& gs, Resources& res, GameObje
 				break;
 			}
 
+			case PlayerState::won:
+			{
+				player.setTexture(res.playerIdle);
+				player.setCurrentAnimation(res.ANIM_PLAYER_IDLE);
+				player.clearCollider();
+				player.addCollider(RUN_COLLISION);
+				player.setAlive(true);
+
+				break;
+			}
+
 			/*case PlayerState::speeding:
 			{
 				player.setTexture(res.playerSpeeding);
@@ -709,6 +720,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 				{
 					auto monster = std::make_unique<Monster>(res);
 					monster->setPosition(glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r - 1) * TILE_SIZE));
+					monster->setSpeed(ORIGINAL_SPEED);
 					gs.layers[LAYER_IDX_MONSTER].push_back(std::move(monster));
 					std::cout << "Spawned monster at row " << r << " col " << c
 						<< " pos (" << c * TILE_SIZE << ", " << state.logH - (MAP_ROWS - r - 1) * TILE_SIZE << ")\n";

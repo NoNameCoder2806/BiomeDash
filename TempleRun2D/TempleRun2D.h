@@ -70,7 +70,6 @@ const int MAP_ROWS = 10;
 const int MAP_COLS = 15;
 const int CHUNK_SIZE = 5;
 const int TILE_PRELOAD_AHEAD = 5;
-const float ORIGINAL_SPEED = 250.0f;
 
 // Collision boxes
 const SDL_FRect RUN_COLLISION = { 7, 10, 16, 22 };
@@ -88,6 +87,7 @@ extern int FLOOR_TILES;
 extern bool PLAYING;
 extern bool BIOME_UPDATE;
 extern int CURRENT_MAP_SIZE;
+extern float ORIGINAL_SPEED;
 extern std::vector<UIButton> buttons;
 extern glm::vec2 GAME_TITLE_POSITION;
 extern glm::vec2 CHARACTER_NAME_POSITION;

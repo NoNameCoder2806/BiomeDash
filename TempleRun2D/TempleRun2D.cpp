@@ -14,6 +14,7 @@ int FLOOR_TILES = 0;
 bool PLAYING = false;
 bool BIOME_UPDATE = true;
 int CURRENT_MAP_SIZE = 0;
+float ORIGINAL_SPEED = 125.0f;
 glm::vec2 GAME_TITLE_POSITION = { 0, 0 };
 glm::vec2 CHARACTER_NAME_POSITION = { 70, 16 };
 glm::vec2 CHARACTER_NAME_POSITION_CHANGE = { 222, 68 };
@@ -136,6 +137,9 @@ int main(int argc, char* argv[])
 	// Set the title world position
 	GAME_TITLE_POSITION = { game.player().getPosition().x - 260, game.player().getPosition().y / 3 };
 	game.titleWorldPos = GAME_TITLE_POSITION;
+
+	// Set the player speed based on the difficulty
+	ORIGINAL_SPEED = game.getOriginalSpeed();
 
 	// Store the time into prevTime
 	uint64_t prevTime = SDL_GetTicks();
