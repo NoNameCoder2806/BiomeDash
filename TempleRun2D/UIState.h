@@ -53,7 +53,7 @@ const glm::vec2 AVATAR_MARGIN({ 0.06, 0.08 });
 
 // CHARACTER AVATAR
 const glm::vec2 CHARACTER_AVATAR_SIZE({ 120, 120 });
-const glm::vec2 CHARACTER_AVATAR_MARGIN({ 0.06, 0.09 });
+const glm::vec2 CHARACTER_AVATAR_MARGIN({ 0.055, 0.09 });
 
 // HEROES BUTTON
 const glm::vec2 HEROES_SIZE({ 260, 80 });
