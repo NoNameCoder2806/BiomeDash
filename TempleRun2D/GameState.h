@@ -97,6 +97,9 @@ struct GameState
 	// Difficulty
 	Difficulty difficulty;
 
+	// Stars
+	int stars = 0;
+
 	// Transition
 	Transition transition;
 

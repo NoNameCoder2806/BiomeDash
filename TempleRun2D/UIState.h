@@ -169,7 +169,7 @@ struct UIState
 		stars = UIButton(renderer, res, "star", STARS_SIZE, STARS_MARGIN);
 	}
 
-	void render(const SDLState& state) const
+	void render(const SDLState& state)
 	{
 		// Debug
 		//std::cout << "Reached the render function in UIState..." << std::endl;
@@ -210,7 +210,22 @@ struct UIState
 		mainMenu.render(state);
 
 		// Stars
-		stars.render(state);
+		renderStars(state, 3);
+	}
+
+	void renderStars(const SDLState& state, int numStars)
+	{
+		// Render the stars based on the number of stars
+		for (int i = 0; i < numStars; i++)
+		{
+			glm::vec2 newMargin = STARS_MARGIN;
+			newMargin.x = newMargin.x + i * 0.03;
+			stars.setMargin(newMargin);
+			stars.render(state);
+		}
+
+		// Reset the margin
+		stars.setMargin(STARS_MARGIN);
 	}
 
 	void updateButtons(float mouseX, float mouseY, bool clicked, SDLState sdl, float deltaTime = 0.0f)
