@@ -697,6 +697,7 @@ void manageTiles(const SDLState& state, GameState& gs, Resources& res, bool isUp
 						player->setState(PlayerState::idle);
 						player->setCurrentAnimation(res.ANIM_PLAYER_IDLE);
 						player->setName(gs.defaultCharacterName);
+						player->setSpeed(ORIGINAL_SPEED);
 						gs.layers[LAYER_IDX_PLAYER].push_back(std::move(player));
 					}
 

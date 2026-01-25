@@ -48,7 +48,7 @@ const glm::vec2 MAIN_MENU_SIZE({ 520, 80 });
 const glm::vec2 MAIN_MENU_MARGIN({ 0.5, 0.67 });
 
 // AVATAR BUTTON
-const glm::vec2 AVATAR_SIZE({ 522, 150 });
+const glm::vec2 AVATAR_SIZE({ 534, 150 });
 const glm::vec2 AVATAR_MARGIN({ 0.06, 0.08 });
 
 // CHARACTER AVATAR

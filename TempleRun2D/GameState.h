@@ -76,8 +76,8 @@ struct GameState
 	//const std::vector<std::string> biomeList = { "Swamp" };
 	//std::vector<std::string> unusedBiomes = { "Swamp" };
 
-	const std::vector<std::string> fullCharactersList = { "hooded_hero", "red_meppo", "bad_meppo", "soldier_meppo" };
-	const std::vector<std::string> fullCharactersNickNames = { "RED HOODIE", "RED MEPPO", "CIGAREPPO", "FIGHTYEPPO" };
+	const std::vector<std::string> fullCharactersList = { "hooded_hero", "red_meppo", "bad_meppo", "soldier_meppo", "spring_trap"};
+	const std::vector<std::string> fullCharactersNickNames = { "RED HOODIE", "RED MEPPO", "CIGAREPPO", "FIGHTYEPPO", "SPRINGTRAP"};
 	const std::string defaultCharacterName = "hooded_hero";
 
 	// Current character index
