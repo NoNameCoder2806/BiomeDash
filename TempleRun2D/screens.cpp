@@ -3,7 +3,7 @@
 using namespace std;
 
 // FUNCTION IMPLEMENTATIONS
-// ----- HOME SCREEN -----
+// ----- I/ HOME SCREEN -----
 void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
 	// Make sure the game uses the correct render state
@@ -209,6 +209,9 @@ void runHomeScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<f
 
 	// Draw the buttons
 	game.ui.render(sdl);
+
+	// Draw the stars
+	game.ui.renderStars(sdl, game.stars);
 
 	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
@@ -561,11 +564,14 @@ void runPlayingFrame(SDLState& sdl, GameState& game, Resources& res,
 		game.player().addCollider(INVINCIBLE_COLLISION);
 	}
 
-	// Temporarily switch to “real pixels” for UI
+	// Temporarily switch to "real pixels" for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
 
 	// Draw the buttons
 	game.ui.render(sdl);
+
+	// Draw the stars
+	game.ui.renderStars(sdl, game.stars);
 
 	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
@@ -771,9 +777,16 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 	glm::vec2 shadowPos = game.titleWorldPos;
 	renderWorldLabel(game.titleShadow.get(), shadowPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 
-	// Draw UI
+	// Temporarily switch to "real pixels" for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+
+	// Draw the buttons
 	game.ui.render(sdl);
+
+	// Draw the stars
+	game.ui.renderStars(sdl, game.stars);
+
+	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
 
 	// Update the character's nick name
@@ -1002,9 +1015,16 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		renderWorldLabel(game.titleShadow.get(), shadowPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 	}
 
-	// Draw UI
+	// Temporarily switch to "real pixels" for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+
+	// Draw the buttons
 	game.ui.render(sdl);
+
+	// Draw the stars
+	game.ui.renderStars(sdl, game.stars);
+
+	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
 
 	// Update the character's nick name
@@ -1215,11 +1235,18 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 		}
 	}
 
-	// Draw UI
+	// Temporarily switch to "real pixels" for UI
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+
+	// Draw the buttons
 	game.ui.render(sdl);
+
+	// Draw the stars
+	game.ui.renderStars(sdl, game.stars);
+
+	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
-	
+
 	// Update the character's nick name
 	string name = game.fullCharactersNickNames.at(game.currentCharacter);
 	replace(name.begin(), name.end(), '_', ' ');
@@ -1846,6 +1873,9 @@ void runWinningScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 
 	// Draw the buttons
 	game.ui.render(sdl);
+
+	// Draw the stars
+	game.ui.renderStars(sdl, game.stars);
 
 	// Restore logical presentation so everything else still uses your world scaling
 	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);

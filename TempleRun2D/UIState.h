@@ -208,9 +208,6 @@ struct UIState
 
 		// Main Menu button
 		mainMenu.render(state);
-
-		// Stars
-		renderStars(state, 3);
 	}
 
 	void renderStars(const SDLState& state, int numStars)
@@ -249,6 +246,7 @@ struct UIState
 		nameTag.updateClicked(mouseX, mouseY, clicked, sdl);
 		winningScreen.stepAnimation(deltaTime);
 		winningScreen.updateClicked(mouseX, mouseY, clicked, sdl);
+		stars.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -302,6 +300,10 @@ struct UIState
 		// ----- CHARACTER AVATAR -----
 		// Visible
 		characterAvatar.setVisible(true);
+
+		// ----- STARS -----
+		// Visible
+		stars.setVisible(true);
 
 		// ----- HEROES BUTTON -----
 		// Visible
@@ -372,6 +374,10 @@ struct UIState
 		// ----- AVATAR BUTTON -----
 		// Visible
 		avatar.setVisible(true);
+
+		// ----- STARS -----
+		// Visible
+		stars.setVisible(true);
 
 		// ----- CHARACTER AVATAR -----
 		// Visible
@@ -447,6 +453,10 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
+		// ----- STARS -----
+		// Visible
+		stars.setVisible(true);
+
 		// ----- CHARACTER AVATAR -----
 		// Visible
 		characterAvatar.setVisible(true);
@@ -520,6 +530,10 @@ struct UIState
 		// ----- AVATAR BUTTON -----
 		// Visible
 		avatar.setVisible(true);
+
+		// ----- STARS -----
+		// Visible
+		stars.setVisible(true);
 
 		// ----- CHARACTER AVATAR -----
 		// Visible
@@ -595,6 +609,10 @@ struct UIState
 		// Visible
 		avatar.setVisible(true);
 
+		// ----- STARS -----
+		// Visible
+		stars.setVisible(true);
+
 		// ----- CHARACTER AVATAR -----
 		// Visible
 		characterAvatar.setVisible(true);
@@ -667,6 +685,10 @@ struct UIState
 		// Not visible
 		avatar.setVisible(false);
 
+		// ----- STARS -----
+		// Not visible
+		stars.setVisible(false);
+
 		// ----- CHARACTER AVATAR -----
 		// Not visible
 		characterAvatar.setVisible(false);
@@ -738,6 +760,10 @@ struct UIState
 		// ----- AVATAR BUTTON -----
 		// Not visible
 		avatar.setVisible(false);
+
+		// ----- STARS -----
+		// Not visible
+		stars.setVisible(false);
 
 		// ----- CHARACTER AVATAR -----
 		// Not visible
@@ -812,6 +838,10 @@ struct UIState
 		// ----- AVATAR BUTTON -----
 		// Visible
 		avatar.setVisible(true);
+
+		// ----- STARS -----
+		// Visible
+		stars.setVisible(true);
 
 		// ----- CHARACTER AVATAR -----
 		// Visible

@@ -314,6 +314,12 @@ void collisionResponse(SDLState& state, GameState& gs, Resources& res, GameObjec
 				gs.difficulty = static_cast<Difficulty>(static_cast<int>(gs.difficulty) + 1);
 			}
 
+			// Increase the stars
+			if (gs.stars < 3)
+			{
+				gs.stars++;
+			}
+
 			// Set the new difficulty speed
 			ORIGINAL_SPEED = gs.getOriginalSpeed();
 
