@@ -84,6 +84,14 @@ const glm::vec2 WINNING_SCREEN_MARGIN({ 0.5, 0.5 });
 const glm::vec2 STARS_SIZE({ 44, 44 });
 const glm::vec2 STARS_MARGIN({ 0.175, 0.1575 });
 
+// CREDITS SCREEN
+const glm::vec2 CREDITS_SCREEN_SIZE({ 775, 560 });
+const glm::vec2 CREDITS_SCREEN_MARGIN({ 0.5, 0.9 });
+
+// EXIT CROSS
+const glm::vec2 EXIT_CROSS_SIZE({ 63, 63 });
+const glm::vec2 EXIT_CROSS_MARGIN({ 0.7, 0.45 });
+
 // UIState struct
 struct UIState
 {
@@ -106,7 +114,7 @@ struct UIState
 	// Top left avatar
 	UIButton avatar;
 	UIButton characterAvatar;
-	//UIButton changeName;
+	UIButton stars;
 
 	// Change heroes
 	UIButton heroes;
@@ -118,8 +126,9 @@ struct UIState
 	// Winning pannel
 	AnimatedUIButton winningScreen;
 
-	// Stars
-	UIButton stars;
+	// Credits screen
+	UIButton creditsScreen;
+	UIButton exitCross;
 
 	// Default constructor
 	UIState()
@@ -149,9 +158,10 @@ struct UIState
 		// Main Menu button
 		mainMenu = UIButton(renderer, res, "mainMenu", MAIN_MENU_SIZE, MAIN_MENU_MARGIN);
 	
-		// Character Avatar and Avatar button
+		// Character Avatar, Avatar, Stars
 		avatar = UIButton(renderer, res, "avatar", AVATAR_SIZE, AVATAR_MARGIN);
 		characterAvatar = UIButton(renderer, res, "characterAvatar", CHARACTER_AVATAR_SIZE, CHARACTER_AVATAR_MARGIN);
+		stars = UIButton(renderer, res, "star", STARS_SIZE, STARS_MARGIN);
 
 		// Heroes change buttons
 		heroes = UIButton(renderer, res, "heroes", HEROES_SIZE, HEROES_MARGIN);
@@ -165,8 +175,9 @@ struct UIState
 		Animation anim(3, 1.0f, true);
 		winningScreen.setAnimation(anim);
 
-		// Stars
-		stars = UIButton(renderer, res, "star", STARS_SIZE, STARS_MARGIN);
+		// Credits screen
+		creditsScreen = UIButton(renderer, res, "creditsScreen", CREDITS_SCREEN_SIZE, CREDITS_SCREEN_MARGIN);
+		exitCross = UIButton(renderer, res, "exitCross", EXIT_CROSS_SIZE, EXIT_CROSS_MARGIN);
 	}
 
 	void render(const SDLState& state)
@@ -208,6 +219,10 @@ struct UIState
 
 		// Main Menu button
 		mainMenu.render(state);
+
+		// Credits Screen
+		creditsScreen.render(state);
+		exitCross.render(state);
 	}
 
 	void renderStars(const SDLState& state, int numStars)
@@ -237,16 +252,18 @@ struct UIState
 		restart.updateClicked(mouseX, mouseY, clicked, sdl);
 		credits.updateClicked(mouseX, mouseY, clicked, sdl);
 		mainMenu.updateClicked(mouseX, mouseY, clicked, sdl);
-		avatar.updateClicked(mouseX, mouseY, clicked, sdl);
-		characterAvatar.updateClicked(mouseX, mouseY, clicked, sdl);
+		//avatar.updateClicked(mouseX, mouseY, clicked, sdl);
+		//characterAvatar.updateClicked(mouseX, mouseY, clicked, sdl);
 		heroes.updateClicked(mouseX, mouseY, clicked, sdl);
 		back.updateClicked(mouseX, mouseY, clicked, sdl);
 		leftArrow.updateClicked(mouseX, mouseY, clicked, sdl);
 		rightArrow.updateClicked(mouseX, mouseY, clicked, sdl);
-		nameTag.updateClicked(mouseX, mouseY, clicked, sdl);
+		//nameTag.updateClicked(mouseX, mouseY, clicked, sdl);
 		winningScreen.stepAnimation(deltaTime);
 		winningScreen.updateClicked(mouseX, mouseY, clicked, sdl);
-		stars.updateClicked(mouseX, mouseY, clicked, sdl);
+		//stars.updateClicked(mouseX, mouseY, clicked, sdl);
+		//creditsScreen.updateClicked(mouseX, mouseY, clicked, sdl);
+		exitCross.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -325,6 +342,14 @@ struct UIState
 		// ----- WINNING PANNEL -----
 		// Not visible
 		winningScreen.setVisible(false);
+
+		// ----- CREDITS SCREEN -----
+		// Not visible
+		creditsScreen.setVisible(false);
+
+		// ----- EXIT CROSS -----
+		// Not visible
+		exitCross.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -403,6 +428,14 @@ struct UIState
 		// ----- WINNING PANNEL -----
 		// Not visible
 		winningScreen.setVisible(false);
+
+		// ----- CREDITS SCREEN -----
+		// Not visible
+		creditsScreen.setVisible(false);
+
+		// ----- EXIT CROSS -----
+		// Not visible
+		exitCross.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -481,6 +514,14 @@ struct UIState
 		// ----- WINNING PANNEL -----
 		// Not visible
 		winningScreen.setVisible(false);
+
+		// ----- CREDITS SCREEN -----
+		// Not visible
+		creditsScreen.setVisible(false);
+
+		// ----- EXIT CROSS -----
+		// Not visible
+		exitCross.setVisible(false);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -559,6 +600,14 @@ struct UIState
 		// ----- WINNING PANNEL -----
 		// Not visible
 		winningScreen.setVisible(false);
+
+		// ----- CREDITS SCREEN -----
+		// Not visible
+		creditsScreen.setVisible(false);
+
+		// ----- EXIT CROSS -----
+		// Not visible
+		exitCross.setVisible(false);
 	}
 
 	void switchToGameOverScreen()
@@ -637,6 +686,14 @@ struct UIState
 		// ----- WINNING PANNEL -----
 		// Not visible
 		winningScreen.setVisible(false);
+
+		// ----- CREDITS SCREEN -----
+		// Not visible
+		creditsScreen.setVisible(false);
+
+		// ----- EXIT CROSS -----
+		// Not visible
+		exitCross.setVisible(false);
 	}
 
 	void switchToChangePlayerTransitionScreen()
@@ -713,6 +770,14 @@ struct UIState
 		// ----- WINNING PANNEL -----
 		// Not visible
 		winningScreen.setVisible(false);
+
+		// ----- CREDITS SCREEN -----
+		// Not visible
+		creditsScreen.setVisible(false);
+
+		// ----- EXIT CROSS -----
+		// Not visible
+		exitCross.setVisible(false);
 	}
 
 	void switchToChangePlayerScreen()
@@ -789,6 +854,14 @@ struct UIState
 		// ----- WINNING PANNEL -----
 		// Not visible
 		winningScreen.setVisible(false);
+
+		// ----- CREDITS SCREEN -----
+		// Not visible
+		creditsScreen.setVisible(false);
+
+		// ----- EXIT CROSS -----
+		// Not visible
+		exitCross.setVisible(false);
 	}
 
 	void switchToWinningScreen()
@@ -867,5 +940,13 @@ struct UIState
 		// ----- WINNING PANNEL -----
 		// Visible
 		winningScreen.setVisible(true);
+
+		// ----- CREDITS SCREEN -----
+		// Not visible
+		creditsScreen.setVisible(false);
+
+		// ----- EXIT CROSS -----
+		// Not visible
+		exitCross.setVisible(false);
 	}
 };
