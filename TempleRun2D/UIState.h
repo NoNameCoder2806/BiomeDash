@@ -949,4 +949,90 @@ struct UIState
 		// Not visible
 		exitCross.setVisible(false);
 	}
+
+	void switchToCreditsScreen()
+	{
+		// ----- PAUSE BUTTON -----
+		// Not visible and not toggled
+		pause.setVisible(true);
+		pause.setToggled(false);
+		pause.setClickable(false);
+
+		// ----- PLAY BUTTON -----
+		// Not visible
+		play.setVisible(false);
+
+		// ----- PAUSE PANEL -----
+		// Not visible
+		pausePanel.setVisible(false);
+
+		// ----- EXIT BUTTON -----
+		// Not visible
+		exit.setVisible(false);
+
+		// ----- HOME BUTTON -----
+		// Not visible
+		home.setVisible(false);
+
+		// ----- CONTINUE BUTTON -----
+		// Not visible
+		continueGame.setVisible(false);
+
+		// ----- VOLUME BUTTON -----
+		// Not visible
+		volume.setVisible(false);
+
+		// ----- RESTART BUTTON -----
+		// Not visible
+		restart.setVisible(false);
+
+		// ----- CREDITS BUTTON -----
+		// Not visible
+		credits.setVisible(false);
+
+		// ----- MAIN MENU BUTTON -----
+		// Not visible
+		mainMenu.setVisible(false);
+
+		// ----- AVATAR BUTTON -----
+		// Visible
+		avatar.setVisible(true);
+
+		// ----- STARS -----
+		// Visible
+		stars.setVisible(true);
+
+		// ----- CHARACTER AVATAR -----
+		// Visible
+		characterAvatar.setVisible(true);
+
+		// ----- HEROES BUTTON -----
+		// Not visible
+		heroes.setVisible(false);
+
+		// ----- BACK BUTTON -----
+		// Not visible
+		back.setVisible(false);
+
+		// ----- LEFT AND RIGHT ARROWS -----
+		// Not visible
+		leftArrow.setVisible(false);
+		rightArrow.setVisible(false);
+
+		// ----- NAME TAG -----
+		// Not visible
+		nameTag.setVisible(false);
+
+		// ----- WINNING PANNEL -----
+		// Not visible
+		winningScreen.setVisible(false);
+
+		// ----- CREDITS SCREEN -----
+		// Visible
+		creditsScreen.setVisible(true);
+
+		// ----- EXIT CROSS -----
+		// Visible
+		exitCross.setVisible(true);
+	}
 };

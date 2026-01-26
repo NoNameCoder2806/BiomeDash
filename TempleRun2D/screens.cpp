@@ -709,7 +709,11 @@ void runHomePauseScreen(SDLState& sdl, GameState& game, Resources& res, std::vec
 		// Debug
 		cout << "Credits pannel pops up" << endl;
 
-		// Do something else here
+		// Switch to the credits ui
+		game.ui.switchToCreditsScreen();
+
+		// Change the screen state to credits
+		game.screen = ScreenState::credits;
 	}
 
 	// Continue button
@@ -1727,6 +1731,7 @@ void runChangePlayerScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	}
 }
 
+// ----- VIII/ WINNING SCREEN -----
 void runWinningScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
 {
 	// Make sure the game uses the correct render state
@@ -1843,6 +1848,179 @@ void runWinningScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 		float scrollFactor = 0.75f * (i + 1) / layerCount;
 		drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i],
 			0.0f, scrollPositions[i], scrollFactor, deltaTime);
+	}
+
+	// Draw all objects and update animations using deltaTime
+	for (auto& layer : game.layers)
+	{
+		for (auto& objPtr : layer)
+		{
+			GameObject& obj = *objPtr;
+
+			if (obj.getCurrentAnimation() != -1)
+				obj.getAnimations().at(obj.getCurrentAnimation()).step(deltaTime);
+
+			drawObject(sdl, game, obj, deltaTime);
+		}
+	}
+
+	// Convert player world position to screen position
+	float px = game.player().getPosition().x - game.mapViewport.x;
+	float py = game.player().getPosition().y - game.mapViewport.y;
+
+	// Render the game title
+	renderWorldLabel(game.title.get(), game.titleWorldPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
+	glm::vec2 shadowPos = game.titleWorldPos;
+	renderWorldLabel(game.titleShadow.get(), shadowPos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
+
+	// Temporarily switch to "real pixels" for UI
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.width, sdl.height, SDL_LOGICAL_PRESENTATION_DISABLED);
+
+	// Draw the buttons
+	game.ui.render(sdl);
+
+	// Draw the stars
+	game.ui.renderStars(sdl, game.stars);
+
+	// Restore logical presentation so everything else still uses your world scaling
+	SDL_SetRenderLogicalPresentation(sdl.renderer, sdl.logW, sdl.logH, SDL_LOGICAL_PRESENTATION_STRETCH);
+
+	// Update the character's nick name
+	string name = game.fullCharactersNickNames.at(game.currentCharacter);
+	replace(name.begin(), name.end(), '_', ' ');
+	game.characterName->setText(name);
+	game.characterName->setColor(255, 255, 255);    // White text
+	game.characterNamePos = CHARACTER_NAME_POSITION;
+
+	// Render the character's name
+	renderWorldLabel(game.characterName.get(), game.characterNamePos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions, true);
+}
+
+// ----- IX/ CREDITS SCREEN -----
+void runCreditsScreen(SDLState& sdl, GameState& game, Resources& res, std::vector<float>& scrollPositions, uint64_t& prevTime)
+{
+	// Make sure the game uses the correct render state
+	SDL_SetRenderTarget(sdl.renderer, nullptr);
+	SDL_SetRenderViewport(sdl.renderer, nullptr);
+
+	SDL_SetRenderLogicalPresentation(
+		sdl.renderer,
+		sdl.logW,
+		sdl.logH,
+		SDL_LOGICAL_PRESENTATION_STRETCH
+	);
+
+	// Events update
+	SDL_Event e;
+	while (SDL_PollEvent(&e))
+	{
+		if (e.type == SDL_EVENT_QUIT)
+		{
+			exit(0);
+		}
+		else if (e.type == SDL_EVENT_KEY_UP)
+		{
+			switch (e.key.scancode)
+			{
+				case SDL_SCANCODE_C:
+				{
+					//game.changeCharacter();
+					break;
+				}
+				case SDL_SCANCODE_M:
+				{
+					//game.changeMonster();
+					break;
+				}
+				case SDL_SCANCODE_ESCAPE:
+				{
+					// Switch to the home screen
+					game.ui.switchToHomeScreen();
+
+					// Change the Screen State
+					game.screen = ScreenState::home;
+
+					break;
+				}
+				case SDL_SCANCODE_F11:
+				{
+					sdl.fullscreen = !sdl.fullscreen;
+					SDL_SetWindowFullscreen(sdl.window, sdl.fullscreen);
+					// Optionally reset window dimensions after fullscreen toggle
+					if (!sdl.fullscreen)
+					{
+						sdl.width = 1920; // or your default width
+						sdl.height = 1080; // or your default height
+						SDL_SetWindowSize(sdl.window, sdl.width, sdl.height);
+					}
+					break;
+				}
+			}
+		}
+		else if (e.type == SDL_EVENT_WINDOW_RESIZED)
+		{
+			sdl.width = e.window.data1;
+			sdl.height = e.window.data2;
+		}
+	}
+
+	// UI Buttons logic update
+	float mouseX;
+	float mouseY;
+
+	// Get the mouse state
+	Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+
+	// Whether the mouse was left-clicked
+	bool leftPressed = mouseState & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
+
+	// Update the UI Buttons
+	game.ui.updateButtons(mouseX, mouseY, leftPressed, sdl);
+
+	// Check which buttons were clicked and act immediately
+	// Exit Button
+	if (game.ui.exitCross.isReleased())
+	{
+		// Switch to the home screen
+		game.ui.switchToHomeScreen();
+
+		// Change the Screen State
+		game.screen = ScreenState::home;
+	}
+
+	// Compute deltaTime like runPlayingFrame
+	uint64_t nowTime = SDL_GetTicks();
+	float deltaTime = (float)(nowTime - prevTime) / 1000.0f;
+	prevTime = nowTime;
+
+	// Center viewport on player
+	game.mapViewport.x = (game.player().getPosition().x + TILE_SIZE / 2) - game.mapViewport.w / 2;
+	game.mapViewport.y = (game.player().getPosition().y + TILE_SIZE / 2) - game.mapViewport.h / 2;
+
+	// Clear background
+	SDL_SetRenderDrawColor(sdl.renderer, 128, 0, 128, 255);
+	SDL_RenderClear(sdl.renderer);
+
+	// Draw main background
+	SDL_RenderTexture(sdl.renderer, res.background, nullptr, nullptr);
+
+	// Draw parallax backgrounds
+	int layerCount = std::stoi(game.currentBiome->parallaxBackgrounds);
+	if (scrollPositions.size() != res.parallaxBackgrounds.size())
+	{
+		scrollPositions.resize(res.parallaxBackgrounds.size(), 0.0f);
+	}
+
+	// Debug
+	//cout << "Layers: " << layerCount << endl;
+	//cout << "Biome: " << game.currentBiome.name << endl;
+	//cout << "Backgrounds: " << game.currentBiome.parallaxBackgrounds << endl;
+
+	for (int i = 0; i < layerCount; i++)
+	{
+		float scrollFactor = 0.75f * (i + 1) / layerCount;
+		drawParalaxBackground(sdl.renderer, res.parallaxBackgrounds[i],
+			game.player().getVelocity().x, scrollPositions[i], scrollFactor, deltaTime);
 	}
 
 	// Draw all objects and update animations using deltaTime
