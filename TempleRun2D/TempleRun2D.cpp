@@ -16,6 +16,7 @@ bool BIOME_UPDATE = true;
 int CURRENT_MAP_SIZE = 0;
 float ORIGINAL_SPEED = 125.0f;
 glm::vec2 GAME_TITLE_POSITION = { 0, 0 };
+glm::vec2 CREDITS_TITLE_POSITION = { 0, 0 };
 glm::vec2 CHARACTER_NAME_POSITION = { 70, 16 };
 glm::vec2 CHARACTER_NAME_POSITION_CHANGE = { 222, 68 };
 
@@ -70,10 +71,11 @@ int main(int argc, char* argv[])
 	game.characterName->setColor(255, 255, 255);    // White text
 	game.characterNamePos = CHARACTER_NAME_POSITION;
 
-	//float visualOffsetX = 45.0f; // tweak based on the font
-	//float xCoordinate = sdl.width / 2 - game.title->getWidth() / 2 - visualOffsetX;
-	//float yCoordinate = sdl.height / 2 - game.title->getHeight() / 2;
-	//game.title->setPosition(140.5, yCoordinate);
+	//Create the credits title
+	game.creditsTitle = std::make_unique<UILabel>(sdl.renderer, "assets/fonts/ArcadeIn.ttf", 32);
+	string title = "CREDITS";
+	game.creditsTitle->setText(title);
+	game.creditsTitle->setColor(0, 255, 255);
 
 	// Set up the UI and the Transition
 	game.ui.setup(sdl.renderer, res);
@@ -137,6 +139,12 @@ int main(int argc, char* argv[])
 	// Set the title world position
 	GAME_TITLE_POSITION = { game.player().getPosition().x - 260, game.player().getPosition().y / 3.5 };
 	game.titleWorldPos = GAME_TITLE_POSITION;
+
+	// Set the credits title world position
+	CREDITS_TITLE_POSITION = GAME_TITLE_POSITION;
+	CREDITS_TITLE_POSITION.y += 65;
+	CREDITS_TITLE_POSITION.x += 95;
+	game.creditsTitlePos = CREDITS_TITLE_POSITION;
 
 	// Set the player speed based on the difficulty
 	ORIGINAL_SPEED = game.getOriginalSpeed();

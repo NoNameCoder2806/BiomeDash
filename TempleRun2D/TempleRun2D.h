@@ -90,6 +90,7 @@ extern int CURRENT_MAP_SIZE;
 extern float ORIGINAL_SPEED;
 extern std::vector<UIButton> buttons;
 extern glm::vec2 GAME_TITLE_POSITION;
+extern glm::vec2 CREDITS_TITLE_POSITION;
 extern glm::vec2 CHARACTER_NAME_POSITION;
 extern glm::vec2 CHARACTER_NAME_POSITION_CHANGE;
 

@@ -100,6 +100,13 @@ struct GameState
 	// Stars
 	int stars = 0;
 
+	// Credits
+	std::unique_ptr<UILabel> creditsTitle;
+	glm::vec2 creditsTitlePos;
+	std::vector<std::unique_ptr<UILabel>> creditLines;
+	SDL_FRect creditRect;
+	float creditScrollSpeed = 30.0f;
+
 	// Transition
 	Transition transition;
 

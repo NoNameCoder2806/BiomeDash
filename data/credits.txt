@@ -1,0 +1,19 @@
+# title
+Biome Dash
+
+# section
+Programming
+Dat Hoang Vien
+
+# section
+Art & Assets
+OpenGameArt.org
+Kenney.nl
+
+# section
+Libraries
+SDL3
+SDL_ttf
+
+# section
+Special Thanks
