@@ -88,10 +88,12 @@ extern bool PLAYING;
 extern bool BIOME_UPDATE;
 extern int CURRENT_MAP_SIZE;
 extern float ORIGINAL_SPEED;
+extern std::string CREDITS_FILE;
 extern std::vector<UIButton> buttons;
 extern glm::vec2 GAME_TITLE_POSITION;
 extern glm::vec2 CHARACTER_NAME_POSITION;
 extern glm::vec2 CHARACTER_NAME_POSITION_CHANGE;
+extern SDL_FRect CREDITS_BOX;
 
 // All textures (Biomes, Characters, Monsters)
 extern std::unordered_map<std::string, Biome> biomeTexturesMap;
@@ -129,3 +131,4 @@ void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float x
 void cleanupOffscreenObjects(GameState& gs);
 //void countObjectsWithTexture(const GameState& game);
 void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos, std::vector<float>& scrollPositions, bool followCamera = false);
+void renderCredits(const GameState& game);

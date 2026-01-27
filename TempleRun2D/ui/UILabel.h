@@ -116,6 +116,8 @@ public:
     float getWidth() const { return static_cast<float>(textW); }
     float getHeight() const { return static_cast<float>(textH); }
 
+    glm::vec2 getPosition() const { return { x, y }; }
+
     // Optional: access current text
     const std::string& getText() const { return currentText; }
 };

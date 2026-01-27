@@ -517,6 +517,54 @@ void GameState::deleteTiles()
 	}
 }
 
+void GameState::loadCredits(SDLState& state, const std::string& filepath)
+{
+	std::ifstream file(filepath);
+	if (!file.is_open()) {
+		SDL_Log("Failed to open credits file: %s", filepath.c_str());
+		return;
+	}
+
+	std::string line;
+	float yOffset = 0.0f;  // Starting vertical position
+	float spacing = 20.0f; // Space between lines
+
+	while (std::getline(file, line))
+	{
+		if (line.empty()) continue;
+
+		bool isHeader = false;
+		std::string text = line;
+
+		// Check for section header
+		if (line[0] == '#')
+		{
+			isHeader = true;
+			text = line.substr(1); // Remove '#' symbol
+		}
+
+		// Create UILabel
+		auto label = std::make_unique<UILabel>(
+			state.renderer,
+			isHeader ? "assets/fonts/ArcadeIn.ttf" : "assets/fonts/VirtupetPixies.ttf",
+			isHeader ? 48.0f : 32.0f
+		);
+
+		label->setText(text);
+		if (isHeader)
+			label->setColor(0, 255, 255); // Cyan for headers
+		else
+			label->setColor(255, 255, 255); // White for content
+
+		label->setPosition(50.0f, yOffset);
+		yOffset += label->getHeight() + spacing;
+
+		creditLines.push_back(std::move(label));
+	}
+
+	file.close();
+}
+
 void GameState::displayPlayerInformation(SDLState& state)
 {
 	std::string strState = "";

@@ -1,19 +1,27 @@
-# title
-Biome Dash
-
 # section
-Programming
+----- Developer -----
 Dat Hoang Vien
 
 # section
-Art & Assets
-OpenGameArt.org
-Kenney.nl
+----- Game Textures -----
+Author: Free Game Assets (GUI, Sprite, Tilesets)
+Available on Itch.io
 
 # section
-Libraries
+----- Character Textures -----
+Red Hoodie: Penzilla
+The Meppos: Segnah
+Spring Trap: The Pixel Professional
+
+# section
+----- Music and Sound -----
+
+# section
+----- Libraries -----
 SDL3
+SDL_image
 SDL_ttf
+SDL_mixer
 
 # section
-Special Thanks
+Thank you for playing this game!

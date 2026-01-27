@@ -15,9 +15,11 @@ bool PLAYING = false;
 bool BIOME_UPDATE = true;
 int CURRENT_MAP_SIZE = 0;
 float ORIGINAL_SPEED = 125.0f;
+string CREDITS_FILE = "data/credits.txt";
 glm::vec2 GAME_TITLE_POSITION = { 0, 0 };
 glm::vec2 CHARACTER_NAME_POSITION = { 70, 16 };
 glm::vec2 CHARACTER_NAME_POSITION_CHANGE = { 222, 68 };
+SDL_FRect CREDITS_BOX = { 320.0f, 80.0f, 480.0f, 200.0f };
 
 // All textures (Biomes, Characters, Monsters)
 unordered_map<string, Biome> biomeTexturesMap;
@@ -122,6 +124,12 @@ int main(int argc, char* argv[])
 	
 	// Set a new name for the biome
 	game.currentBiome = &biomeTexturesMap["Transition"];
+
+	// ----- PRELOAD ALL THE CREDITS -----
+	game.loadCredits(sdl, CREDITS_FILE);
+
+	// Set the credits box
+	game.creditRect = CREDITS_BOX;
 
 	// Start the map size at 0
 	CURRENT_MAP_SIZE = 0;

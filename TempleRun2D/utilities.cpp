@@ -110,3 +110,45 @@ void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2
 	label->setPosition(screenX, screenY);
 	label->render();
 }
+
+// ----- RENDER THE CREDIT LINES -----
+void renderCredits(const GameState& game)
+{
+	// Debug
+	//cout << "Rendering credits..." << endl;
+
+	if (game.creditLines.empty()) return;
+
+	SDL_FRect viewport = game.creditRect;
+
+	for (const auto& label : game.creditLines)
+	{
+		if (!label)
+		{
+			// Debug
+			//cout << "No text!" << endl;
+
+			continue;
+		}
+
+		// Debug
+		//cout << "Displaying: " << label->getText();
+
+		// Get label position and size
+		glm::vec2 pos = label->getPosition();
+		SDL_FRect rect;
+		rect.x = pos.x;
+		rect.y = pos.y;
+		rect.w = label->getWidth();
+		rect.h = label->getHeight();
+
+		// Check if label intersects the viewport
+		bool insideX = rect.x + rect.w >= viewport.x && rect.x <= viewport.x + viewport.w;
+		bool insideY = rect.y + rect.h >= viewport.y && rect.y <= viewport.y + viewport.h;
+
+		if (insideX && insideY)
+		{
+			label->render();
+		}
+	}
+}

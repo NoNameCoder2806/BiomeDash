@@ -144,6 +144,8 @@ struct GameState
 
 	void deleteTiles();
 
+	void loadCredits(SDLState& state, const std::string& filepath);
+
 	void displayPlayerInformation(SDLState& state);
 
 	void displayGameInformation(SDLState& state);
