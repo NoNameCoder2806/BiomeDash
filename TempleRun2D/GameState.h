@@ -75,12 +75,12 @@ struct GameState
 	glm::vec2 characterNamePos;
 
 	const std::vector<std::string> fullBiomeList = { "Transition", "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
-	//const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
-	//std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
+	const std::vector<std::string> biomeList = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
+	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	
 	// Debug
-	const std::vector<std::string> biomeList = { "Swamp" };
-	std::vector<std::string> unusedBiomes = { "Swamp" };
+	//const std::vector<std::string> biomeList = { "Swamp" };
+	//std::vector<std::string> unusedBiomes = { "Swamp" };
 
 	const std::vector<std::string> fullCharactersList = { "hooded_hero", "red_meppo", "bad_meppo", "soldier_meppo", "spring_trap"};
 	const std::vector<std::string> fullCharactersNickNames = { "RED HOODIE", "RED MEPPO", "CIGAREPPO", "FIGHTYEPPO", "SPRINGTRAP"};
@@ -101,8 +101,6 @@ struct GameState
 	int stars = 0;
 
 	// Credits
-	std::unique_ptr<UILabel> creditsTitle;
-	glm::vec2 creditsTitlePos;
 	std::vector<std::unique_ptr<UILabel>> creditLines;
 	SDL_FRect creditRect;
 	float creditScrollSpeed = 30.0f;

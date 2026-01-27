@@ -92,6 +92,10 @@ const glm::vec2 CREDITS_SCREEN_MARGIN({ 0.5, 0.9 });
 const glm::vec2 EXIT_CROSS_SIZE({ 63, 63 });
 const glm::vec2 EXIT_CROSS_MARGIN({ 0.7, 0.45 });
 
+// CREDITS TITLE
+const glm::vec2 CREDITS_TITLE_SIZE({ 102*6, 15*6 });
+const glm::vec2 CREDITS_TITLE_MARGIN({ 0.5, 0.535 });
+
 // UIState struct
 struct UIState
 {
@@ -129,6 +133,7 @@ struct UIState
 	// Credits screen
 	UIButton creditsScreen;
 	UIButton exitCross;
+	UIButton creditsTitle;
 
 	// Default constructor
 	UIState()
@@ -178,6 +183,7 @@ struct UIState
 		// Credits screen
 		creditsScreen = UIButton(renderer, res, "creditsScreen", CREDITS_SCREEN_SIZE, CREDITS_SCREEN_MARGIN);
 		exitCross = UIButton(renderer, res, "exitCross", EXIT_CROSS_SIZE, EXIT_CROSS_MARGIN);
+		creditsTitle = UIButton(renderer, res, "creditsTitle", CREDITS_TITLE_SIZE, CREDITS_TITLE_MARGIN);
 	}
 
 	void render(const SDLState& state)
@@ -223,6 +229,7 @@ struct UIState
 		// Credits Screen
 		creditsScreen.render(state);
 		exitCross.render(state);
+		creditsTitle.render(state);
 	}
 
 	void renderStars(const SDLState& state, int numStars)
@@ -264,6 +271,7 @@ struct UIState
 		//stars.updateClicked(mouseX, mouseY, clicked, sdl);
 		//creditsScreen.updateClicked(mouseX, mouseY, clicked, sdl);
 		exitCross.updateClicked(mouseX, mouseY, clicked, sdl);
+		creditsTitle.updateClicked(mouseX, mouseY, clicked, sdl);
 	}
 
 	void switchToHomeScreen()
@@ -350,6 +358,10 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Not visible
 		exitCross.setVisible(false);
+
+		// ----- CREDITS TITLE -----
+		// Not visible
+		creditsTitle.setVisible(false);
 	}
 
 	void switchToPlayScreen()
@@ -436,6 +448,10 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Not visible
 		exitCross.setVisible(false);
+
+		// ----- CREDITS TITLE -----
+		// Not visible
+		creditsTitle.setVisible(false);
 	}
 
 	void switchToHomePauseScreen()
@@ -522,6 +538,10 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Not visible
 		exitCross.setVisible(false);
+
+		// ----- CREDITS TITLE -----
+		// Not visible
+		creditsTitle.setVisible(false);
 	}
 
 	void switchToPlayingPauseScreen()
@@ -608,6 +628,10 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Not visible
 		exitCross.setVisible(false);
+
+		// ----- CREDITS TITLE -----
+		// Not visible
+		creditsTitle.setVisible(false);
 	}
 
 	void switchToGameOverScreen()
@@ -694,6 +718,10 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Not visible
 		exitCross.setVisible(false);
+
+		// ----- CREDITS TITLE -----
+		// Not visible
+		creditsTitle.setVisible(false);
 	}
 
 	void switchToChangePlayerTransitionScreen()
@@ -778,6 +806,10 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Not visible
 		exitCross.setVisible(false);
+
+		// ----- CREDITS TITLE -----
+		// Not visible
+		creditsTitle.setVisible(false);
 	}
 
 	void switchToChangePlayerScreen()
@@ -862,6 +894,10 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Not visible
 		exitCross.setVisible(false);
+
+		// ----- CREDITS TITLE -----
+		// Not visible
+		creditsTitle.setVisible(false);
 	}
 
 	void switchToWinningScreen()
@@ -948,6 +984,10 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Not visible
 		exitCross.setVisible(false);
+
+		// ----- CREDITS TITLE -----
+		// Not visible
+		creditsTitle.setVisible(false);
 	}
 
 	void switchToCreditsScreen()
@@ -1034,5 +1074,9 @@ struct UIState
 		// ----- EXIT CROSS -----
 		// Visible
 		exitCross.setVisible(true);
+
+		// ----- CREDITS TITLE -----
+		// Visible
+		creditsTitle.setVisible(true);
 	}
 };

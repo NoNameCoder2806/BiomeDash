@@ -2054,7 +2054,4 @@ void runCreditsScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 
 	// Render the character's name
 	renderWorldLabel(game.characterName.get(), game.characterNamePos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions, true);
-
-	// Render the credits title
-	renderWorldLabel(game.creditsTitle.get(), game.creditsTitlePos, glm::vec2(game.mapViewport.x, game.mapViewport.y), scrollPositions);
 }
