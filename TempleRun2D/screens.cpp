@@ -1975,6 +1975,13 @@ void runCreditsScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 		game.screen = ScreenState::home;
 	}
 
+	// The credits title
+	if (game.ui.creditsTitle.isReleased())
+	{
+		// Change the toggled state
+		game.ui.creditsTitle.setToggled(!game.ui.creditsTitle.isToggled());
+	}
+
 	// Compute deltaTime like runPlayingFrame
 	uint64_t nowTime = SDL_GetTicks();
 	float deltaTime = (float)(nowTime - prevTime) / 1000.0f;
