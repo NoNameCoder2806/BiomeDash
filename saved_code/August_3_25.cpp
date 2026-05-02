@@ -8,7 +8,7 @@
 #include <SDL3_image/SDL_image.h>
 
 // Header files
-#include "TempleRun2D.h"
+#include "BiomeDash.h"
 #include "GameState.h"
 #include "GameObject.h"
 #include "SDLState.h"
