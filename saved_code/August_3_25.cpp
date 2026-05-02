@@ -1,4 +1,4 @@
-﻿// TempleRun2D.cpp : Defines the entry point for the application.
+﻿// BiomeDash.cpp : Defines the entry point for the application.
 //
 
 

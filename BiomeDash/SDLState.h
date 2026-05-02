@@ -40,7 +40,7 @@ struct SDLState
 		}
 
 		// Setup window
-		window = SDL_CreateWindow("TempleRun2D", width, height, SDL_WINDOW_RESIZABLE);
+		window = SDL_CreateWindow("BiomeDash", width, height, SDL_WINDOW_RESIZABLE);
 
 		// Check if the window was created
 		if (!window)

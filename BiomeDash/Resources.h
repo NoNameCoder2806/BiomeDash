@@ -216,7 +216,6 @@ struct Resources
         // Load background 
         background = loadTexture(state.renderer, "data/textures/background/" + biomeName + "/" + biomeName + ".png");
 
-        std::cout << "Parralax Backgrounds: " << parallaxBackgrounds << std::endl;
         // Load parallax backgrounds
         for (int i = 1; i <= std::stoi(parallaxBackgrounds); i++)
         {
