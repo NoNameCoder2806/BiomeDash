@@ -22,7 +22,7 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 
 	creditRect = {
 	100.0f,
-	150.0f,
+	170.0f,
 	345.0f,
 	200.0f
 	};
@@ -541,9 +541,9 @@ void GameState::loadCredits(SDLState& state, const std::string& filepath)
 	std::string line;
 
 	// Start INSIDE the viewport
-	float yOffset = creditRect.y + 20.0f;
+	float yOffset = creditRect.y;
 
-	float spacing = 20.0f;
+	float spacing = 0.0f;
 
 	while (std::getline(file, line))
 	{
@@ -566,7 +566,7 @@ void GameState::loadCredits(SDLState& state, const std::string& filepath)
 			isHeader
 			? "assets/fonts/ArcadeIn.ttf"
 			: "assets/fonts/VirtupetPixies.ttf",
-			isHeader ? 48.0f : 32.0f
+			isHeader ? 32.0f : 32.0f
 		);
 
 		label->setText(text);
