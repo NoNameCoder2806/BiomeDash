@@ -132,13 +132,27 @@ void renderCredits(GameState& game, SDL_Renderer* renderer)
 
 		// Manual viewport culling
 		bool visible =
-			renderY + label->getHeight() >= viewport.y &&
-			renderY <= viewport.y + viewport.h;
+			renderY + label->getHeight() >= viewport.y + 60.0f &&     // Top
+			renderY <= viewport.y + viewport.h - 20.0f;               // Bottom
 
 		if (visible)
 		{
 			// Temporarily move label for rendering
 			label->setPosition(originalPos.x, renderY);
+
+			// Debug
+			/*std::cout
+				<< "Credit Line: \"" << label->getText() << "\" "
+				<< " renderY=" << renderY
+				<< " width=" << label->getWidth()
+				<< " height=" << label->getHeight()
+				<< " viewport=("
+				<< viewport.x << ", "
+				<< viewport.y << ", "
+				<< viewport.w << ", "
+				<< viewport.h << ") "
+				<< "visible=" << visible
+				<< std::endl;*/
 
 			label->render();
 

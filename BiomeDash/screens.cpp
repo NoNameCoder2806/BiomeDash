@@ -2014,9 +2014,9 @@ void runCreditsScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 		game.creditsScrollOffset = 0.0f;
 	}
 
-	if (game.creditsScrollOffset > 450.0f)
+	if (game.creditsScrollOffset > 380.0f)
 	{
-		game.creditsScrollOffset = 450.0f;
+		game.creditsScrollOffset = 380.0f;
 	}
 
 	// Center viewport on player
