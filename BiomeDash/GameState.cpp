@@ -22,9 +22,9 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 
 	creditRect = {
 	100.0f,
-	50.0f,
+	150.0f,
 	345.0f,
-	300.0f
+	200.0f
 	};
 
 	creditsScrollOffset = 0.0f;
