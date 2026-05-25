@@ -1,22 +1,22 @@
 #Developer
 Dat Hoang Vien
-
+ 
 #Game Textures
-Author: Free Game Assets (GUI, Sprite, Tilesets)
+Author: Free Game Assets 
+(GUI, Sprite, Tilesets)
 Available on Itch.io
-
+ 
 #Character Textures
 Red Hoodie: Penzilla
 The Meppos: Segnah
 Spring Trap: The Pixel Professional
-
+  
 #Music & Sound 
-
+ 
 #Libraries
 SDL3
 SDL_image
 SDL_ttf
 SDL_mixer
-
-#---------------
-Thank you for playing this game!
+ 
+Thank you for playing!

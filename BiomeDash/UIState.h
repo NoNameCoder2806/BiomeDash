@@ -85,16 +85,16 @@ const glm::vec2 STARS_SIZE({ 44, 44 });
 const glm::vec2 STARS_MARGIN({ 0.175, 0.1575 });
 
 // CREDITS SCREEN
-const glm::vec2 CREDITS_SCREEN_SIZE({ 775, 560 });
+const glm::vec2 CREDITS_SCREEN_SIZE({ 155*7, 112*7 });
 const glm::vec2 CREDITS_SCREEN_MARGIN({ 0.5, 0.9 });
 
 // EXIT CROSS
 const glm::vec2 EXIT_CROSS_SIZE({ 63, 63 });
-const glm::vec2 EXIT_CROSS_MARGIN({ 0.7, 0.45 });
+const glm::vec2 EXIT_CROSS_MARGIN({ 0.78, 0.25 });
 
 // CREDITS TITLE
 const glm::vec2 CREDITS_TITLE_SIZE({ 102*6, 15*6 });
-const glm::vec2 CREDITS_TITLE_MARGIN({ 0.5, 0.535 });
+const glm::vec2 CREDITS_TITLE_MARGIN({ 0.5, 0.34 });
 
 // UIState struct
 struct UIState

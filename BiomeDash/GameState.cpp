@@ -22,7 +22,7 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 
 	creditRect = {
 	100.0f,
-	170.0f,
+	115.0f,
 	345.0f,
 	200.0f
 	};
@@ -541,7 +541,7 @@ void GameState::loadCredits(SDLState& state, const std::string& filepath)
 	std::string line;
 
 	// Start INSIDE the viewport
-	float yOffset = creditRect.y;
+	float yOffset = creditRect.y + 5.0;
 
 	float spacing = 0.0f;
 
