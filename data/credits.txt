@@ -9,14 +9,12 @@ Available on Itch.io
 #Character Textures
 Red Hoodie: Penzilla
 The Meppos: Segnah
-Spring Trap: The Pixel Professional
+Spring Trap: Pixel Professional
   
-#Music & Sound 
+#Music And Sound
  
 #Libraries
-SDL3
-SDL_image
-SDL_ttf
-SDL_mixer
+SDL3, SDL_image
+SDL_ttf, SDL_mixer
  
 Thank you for playing!

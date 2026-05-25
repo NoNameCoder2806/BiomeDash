@@ -1987,6 +1987,38 @@ void runCreditsScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 	float deltaTime = (float)(nowTime - prevTime) / 1000.0f;
 	prevTime = nowTime;
 
+	// Credits scrolling
+	const bool* keys = SDL_GetKeyboardState(nullptr);
+
+	float scrollSpeed = 300.0f;
+
+	// Scroll DOWN
+	if (keys[SDL_SCANCODE_DOWN])
+	{
+		game.creditsScrollOffset += scrollSpeed * deltaTime;
+		// Debug
+		//std::cout << "Scroll down" << std::endl;
+	}
+
+	// Scroll UP
+	if (keys[SDL_SCANCODE_UP])
+	{
+		game.creditsScrollOffset -= scrollSpeed * deltaTime;
+		// Debug
+		//std::cout << "Scroll up" << std::endl;
+	}
+
+	// Prevent scrolling above top and bottom
+	if (game.creditsScrollOffset < 0.0f)
+	{
+		game.creditsScrollOffset = 0.0f;
+	}
+
+	if (game.creditsScrollOffset > 450.0f)
+	{
+		game.creditsScrollOffset = 450.0f;
+	}
+
 	// Center viewport on player
 	game.mapViewport.x = (game.player().getPosition().x + TILE_SIZE / 2) - game.mapViewport.w / 2;
 	game.mapViewport.y = (game.player().getPosition().y + TILE_SIZE / 2) - game.mapViewport.h / 2;
