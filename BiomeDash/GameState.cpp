@@ -20,6 +20,15 @@ GameState::GameState(const SDLState& state, std::string biomeName) : playerIndex
 		.h = static_cast<float>(state.logH)
 	};
 
+	creditRect = {
+	100.0f,
+	50.0f,
+	345.0f,
+	300.0f
+	};
+
+	creditsScrollOffset = 0.0f;
+
 	backgroundScroll = 0.f;
 	debugMode = false;
 	invincibleMode = false;
@@ -520,43 +529,61 @@ void GameState::deleteTiles()
 void GameState::loadCredits(SDLState& state, const std::string& filepath)
 {
 	std::ifstream file(filepath);
-	if (!file.is_open()) {
+
+	if (!file.is_open())
+	{
 		SDL_Log("Failed to open credits file: %s", filepath.c_str());
 		return;
 	}
 
+	creditLines.clear();
+
 	std::string line;
-	float yOffset = 0.0f;  // Starting vertical position
-	float spacing = 20.0f; // Space between lines
+
+	// Start INSIDE the viewport
+	float yOffset = creditRect.y + 20.0f;
+
+	float spacing = 20.0f;
 
 	while (std::getline(file, line))
 	{
-		if (line.empty()) continue;
+		if (line.empty())
+			continue;
 
 		bool isHeader = false;
 		std::string text = line;
 
-		// Check for section header
+		// Header line
 		if (line[0] == '#')
 		{
 			isHeader = true;
-			text = line.substr(1); // Remove '#' symbol
+			text = line.substr(1);
 		}
 
-		// Create UILabel
+		// Create label
 		auto label = std::make_unique<UILabel>(
 			state.renderer,
-			isHeader ? "assets/fonts/ArcadeIn.ttf" : "assets/fonts/VirtupetPixies.ttf",
+			isHeader
+			? "assets/fonts/ArcadeIn.ttf"
+			: "assets/fonts/VirtupetPixies.ttf",
 			isHeader ? 48.0f : 32.0f
 		);
 
 		label->setText(text);
-		if (isHeader)
-			label->setColor(0, 255, 255); // Cyan for headers
-		else
-			label->setColor(255, 255, 255); // White for content
 
-		label->setPosition(50.0f, yOffset);
+		if (isHeader)
+			label->setColor(0, 255, 255);
+		else
+			label->setColor(255, 255, 255);
+
+		// CENTER the text in the credit rectangle
+		float centeredX =
+			creditRect.x +
+			(creditRect.w - label->getWidth()) / 2.0f;
+
+		label->setPosition(centeredX, yOffset);
+
+		// Move downward for next line
 		yOffset += label->getHeight() + spacing;
 
 		creditLines.push_back(std::move(label));

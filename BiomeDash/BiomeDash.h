@@ -131,4 +131,4 @@ void drawParalaxBackground(SDL_Renderer* renderer, SDL_Texture* texture, float x
 void cleanupOffscreenObjects(GameState& gs);
 //void countObjectsWithTexture(const GameState& game);
 void renderWorldLabel(UILabel* label, const glm::vec2& worldPos, const glm::vec2& cameraPos, std::vector<float>& scrollPositions, bool followCamera = false);
-void renderCredits(const GameState& game);
+void renderCredits(GameState& game, SDL_Renderer* renderer);

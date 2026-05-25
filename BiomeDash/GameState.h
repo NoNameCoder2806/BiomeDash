@@ -103,6 +103,7 @@ struct GameState
 	// Credits
 	std::vector<std::unique_ptr<UILabel>> creditLines;
 	SDL_FRect creditRect;
+	float creditsScrollOffset = 0.0f;
 	float creditScrollSpeed = 30.0f;
 
 	// Transition
