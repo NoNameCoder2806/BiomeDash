@@ -7,7 +7,7 @@
         "inherits": "x64-debug",
         "cacheVariables": {
           "CMAKE_PREFIX_PATH": 
-          "C:\\SDL3\\SDL3-3.2.18\\cmake;C:\\SDL3\\SDL3_image-3.2.4\\cmake;C:\\GLM\\glm-1.0.1-VC;C:\\SDL3\\SDL_mixer_VC\\cmake;C:\\SDL3\\SDL_ttf\\build"
+          "C:\\SDL3\\SDL3-3.2.18\\cmake;C:\\SDL3\\SDL3_image-3.2.4\\cmake;C:\\GLM\\glm-1.0.1-VC;C:\\libs\\SDL3_mixer;C:\\SDL3\\SDL_ttf\\build"
         }
       }
     ]

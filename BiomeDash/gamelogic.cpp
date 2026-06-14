@@ -970,6 +970,9 @@ void resetGame(SDLState& state, GameState& game, Resources& res, std::vector<flo
 	{
 		game.ui.switchToPlayScreen();
 	}
+
+	// Signal that the game no longer needs reseting
+	game.needReset = false;
 }
 
 // ----- VII/ SWITCH CHARACTER TEXTURES -----

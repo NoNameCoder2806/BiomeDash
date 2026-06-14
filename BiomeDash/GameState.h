@@ -63,6 +63,7 @@ struct GameState
 	bool needTransition;
 	bool portalGenerated;
 	bool worldReady = true;
+	bool needReset = false;
 
 	// UIState
 	UIState ui;
@@ -79,6 +80,7 @@ struct GameState
 	std::vector<std::string> unusedBiomes = { "Swamp", "Industrial_Zone", "Pirate_Bay", "Power_Station" };
 	
 	// Debug
+	//const std::vector<std::string> fullBiomeList = { "Transition", "Swamp" };
 	//const std::vector<std::string> biomeList = { "Swamp" };
 	//std::vector<std::string> unusedBiomes = { "Swamp" };
 

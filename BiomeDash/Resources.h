@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <SDL3_mixer/SDL_mixer.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -84,6 +85,9 @@ struct Resources
 
     // ----- VIII/ CHARACTER AVATAR -----
     SDL_Texture* avatar = nullptr;
+
+    // ----- IX / AUDIO CHUNKS -----
+    //std::vector<MIX_Audio> chunks;
 
     std::vector<SDL_Texture*> textures;  // Keeps track of all loaded textures (for cleanup)
 

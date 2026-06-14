@@ -927,6 +927,9 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 		game.prevScreen = ScreenState::playingPause;
 		game.screen = ScreenState::transition;
 		game.nextScreen = ScreenState::playing;
+
+		// Signal that the game needs reseting
+		game.needReset = true;
 	}
 
 	// Continue button
@@ -943,12 +946,15 @@ void runPlayingPauseScreen(SDLState& sdl, GameState& game, Resources& res, std::
 	if (game.ui.home.isReleased())
 	{
 		// Debug
-		cout << "Exiting to home..." << endl;
+		//cout << "Exiting to home..." << endl;
 
 		// Change the states for the screen
 		game.prevScreen = ScreenState::playingPause;
 		game.screen = ScreenState::transition;
 		game.nextScreen = ScreenState::home;
+
+		// Signal that the game needs reseting
+		game.needReset = true;
 	}
 
 	// Render frame
@@ -1145,6 +1151,9 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 		game.prevScreen = ScreenState::playingPause;
 		game.screen = ScreenState::transition;
 		game.nextScreen = ScreenState::playing;
+
+		// Signal that the game needs reseting
+		game.needReset = true;
 	}
 
 	// Main menu button
@@ -1157,6 +1166,9 @@ void runGameOverScreen(SDLState& sdl, GameState& game, Resources& res, std::vect
 		game.prevScreen = ScreenState::gameOver;
 		game.screen = ScreenState::transition;
 		game.nextScreen = ScreenState::home;
+
+		// Signal that the game needs reseting
+		game.needReset = true;
 	}
 
 	// Render frame
@@ -1308,10 +1320,13 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 	// --- Phase 2: Black pause (1s - 1.5s) ---
 	else if (t <= 1.5f)
 	{
-		if (t >= 1.00001f && t <= 1.01f)
+		if (game.needReset)
 		{
 			// Reset the game
 			resetGame(sdl, game, res, scrollPositions);
+
+			// Debug
+			std::cout << "Resetted the game and UI!" << std::endl;
 		}
 
 		SDL_SetRenderDrawColor(sdl.renderer, 0, 0, 0, 255);
@@ -1385,6 +1400,27 @@ void runTransitionScreen(SDLState& sdl, GameState& game, Resources& res, std::ve
 
 			// Set monster to chasing state
 			game.monster().setState(MonsterState::chasing);
+		}
+		else if (game.screen == ScreenState::home)
+		{
+			// Debug
+			cout << "Restarted! Back to home..." << endl;
+
+			// Reset the game
+			resetGame(sdl, game, res, scrollPositions);
+
+			// Start the game immidiately
+			// Switch the UI to the play screen
+			game.ui.switchToHomeScreen();
+
+			// Change the screen state
+			game.screen = ScreenState::home;
+
+			// Set the player to the running state
+			game.player().setState(PlayerState::idle);
+
+			// Set monster to chasing state
+			game.monster().setState(MonsterState::idle);
 		}
 	}
 }
@@ -1805,6 +1841,9 @@ void runWinningScreen(SDLState& sdl, GameState& game, Resources& res, std::vecto
 		game.prevScreen = ScreenState::won;
 		game.screen = ScreenState::transition;
 		game.nextScreen = ScreenState::home;
+
+		// Signal that the game needs reseting
+		game.needReset = true;
 	}
 
 	// Center viewport on player
