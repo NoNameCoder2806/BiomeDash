@@ -45,5 +45,3 @@ The project is structured around modular systems:
 - `GameObject` acts as a base class for all entities
 - Derived entity classes handle specific behaviors (Player, Monster, etc.)
 - Separate systems handle rendering, input, collision, and UI
-
-## 📁 Project Structure (simplified)
