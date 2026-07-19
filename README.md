@@ -2,6 +2,9 @@
 
 BiomeDash is a 2D side-scrolling game built in C++ using SDL3. The project focuses on building a modular game architecture with systems for rendering, input handling, collision detection, and game state management.
 
+## 🎥 Project Demo
+Watch the trailer and gameplay here: https://www.youtube.com/playlist?list=PLaPQ6WUreP_c
+
 ## 🎮 Features
 
 ### Core Gameplay Systems
